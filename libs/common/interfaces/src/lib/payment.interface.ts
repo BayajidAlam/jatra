@@ -14,21 +14,21 @@ export interface Payment {
 }
 
 export enum PaymentMethod {
-  SSLCOMMERZ = 'SSLCOMMERZ',
-  BKASH = 'BKASH',
-  NAGAD = 'NAGAD',
-  ROCKET = 'ROCKET',
-  CREDIT_CARD = 'CREDIT_CARD',
-  DEBIT_CARD = 'DEBIT_CARD',
+  SSLCOMMERZ = "SSLCOMMERZ",
+  BKASH = "BKASH",
+  NAGAD = "NAGAD",
+  ROCKET = "ROCKET",
+  CREDIT_CARD = "CREDIT_CARD",
+  DEBIT_CARD = "DEBIT_CARD",
 }
 
 export enum PaymentStatus {
-  PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
-  REFUNDED = 'REFUNDED',
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  SUCCESS = "SUCCESS",
+  FAILED = "FAILED",
+  CANCELLED = "CANCELLED",
+  REFUNDED = "REFUNDED",
 }
 
 export interface SSLCommerzPayment {

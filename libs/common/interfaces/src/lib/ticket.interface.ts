@@ -12,10 +12,10 @@ export interface Ticket {
 }
 
 export enum TicketStatus {
-  ACTIVE = 'ACTIVE',
-  USED = 'USED',
-  CANCELLED = 'CANCELLED',
-  EXPIRED = 'EXPIRED',
+  ACTIVE = "ACTIVE",
+  USED = "USED",
+  CANCELLED = "CANCELLED",
+  EXPIRED = "EXPIRED",
 }
 
 export interface TicketValidation {

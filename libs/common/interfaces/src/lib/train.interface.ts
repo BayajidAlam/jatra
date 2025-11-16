@@ -9,16 +9,16 @@ export interface Train {
 }
 
 export enum TrainType {
-  INTERCITY = 'INTERCITY',
-  MAIL_EXPRESS = 'MAIL_EXPRESS',
-  LOCAL = 'LOCAL',
-  COMMUTER = 'COMMUTER',
+  INTERCITY = "INTERCITY",
+  MAIL_EXPRESS = "MAIL_EXPRESS",
+  LOCAL = "LOCAL",
+  COMMUTER = "COMMUTER",
 }
 
 export enum TrainStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  MAINTENANCE = 'MAINTENANCE',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  MAINTENANCE = "MAINTENANCE",
 }
 
 export interface TrainSchedule {
@@ -53,7 +53,7 @@ export interface Station {
   name: string;
   code: string;
   city: string;
-  region: 'EASTERN' | 'WESTERN';
+  region: "EASTERN" | "WESTERN";
 }
 
 export interface Coach {
@@ -65,12 +65,12 @@ export interface Coach {
 }
 
 export enum CoachType {
-  AC_CHAIR = 'AC_CHAIR',
-  AC_BERTH = 'AC_BERTH',
-  FIRST_CLASS = 'FIRST_CLASS',
-  SNIGDHA = 'SNIGDHA',
-  SHOVAN = 'SHOVAN',
-  SHULOV = 'SHULOV',
+  AC_CHAIR = "AC_CHAIR",
+  AC_BERTH = "AC_BERTH",
+  FIRST_CLASS = "FIRST_CLASS",
+  SNIGDHA = "SNIGDHA",
+  SHOVAN = "SHOVAN",
+  SHULOV = "SHULOV",
 }
 
 export interface Seat {

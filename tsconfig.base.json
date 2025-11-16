@@ -23,7 +23,9 @@
       "@jatra/database/postgres": ["libs/database/postgres/src/index.ts"],
       "@jatra/database/redis": ["libs/database/redis/src/index.ts"],
       "@jatra/messaging/rabbitmq": ["libs/messaging/rabbitmq/src/index.ts"],
-      "@jatra/telemetry/opentelemetry": ["libs/telemetry/opentelemetry/src/index.ts"],
+      "@jatra/telemetry/opentelemetry": [
+        "libs/telemetry/opentelemetry/src/index.ts"
+      ],
       "@jatra/sms": ["libs/sms/src/index.ts"],
       "@jatra/qr-code": ["libs/qr-code/src/index.ts"],
       "@jatra/testing/helpers": ["libs/testing/helpers/src/index.ts"]

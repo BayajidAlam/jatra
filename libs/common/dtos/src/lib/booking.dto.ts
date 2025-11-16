@@ -1,5 +1,13 @@
-import { IsString, IsDateString, IsArray, ValidateNested, IsNumber, Min, Max } from 'class-validator';
-import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsDateString,
+  IsArray,
+  ValidateNested,
+  IsNumber,
+  Min,
+  Max,
+} from "class-validator";
+import { Type } from "class-transformer";
 
 export class PassengerDto {
   @IsString()
@@ -11,7 +19,7 @@ export class PassengerDto {
   age: number;
 
   @IsString()
-  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  gender: "MALE" | "FEMALE" | "OTHER";
 }
 
 export class CreateBookingDto {

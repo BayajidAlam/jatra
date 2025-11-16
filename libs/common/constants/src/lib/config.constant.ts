@@ -5,9 +5,9 @@
 export const APP_CONFIG = {
   // JWT Configuration
   JWT: {
-    ACCESS_TOKEN_EXPIRY: '15m',
-    REFRESH_TOKEN_EXPIRY: '7d',
-    ALGORITHM: 'HS256' as const,
+    ACCESS_TOKEN_EXPIRY: "15m",
+    REFRESH_TOKEN_EXPIRY: "7d",
+    ALGORITHM: "HS256" as const,
   },
 
   // OTP Configuration
@@ -34,7 +34,7 @@ export const APP_CONFIG = {
 
   // Payment
   PAYMENT: {
-    CURRENCY: 'BDT',
+    CURRENCY: "BDT",
     TIMEOUT_SECONDS: 1800, // 30 minutes
   },
 
@@ -52,7 +52,7 @@ export const APP_CONFIG = {
   // File Upload
   FILE_UPLOAD: {
     MAX_SIZE_MB: 5,
-    ALLOWED_TYPES: ['image/jpeg', 'image/png', 'application/pdf'],
+    ALLOWED_TYPES: ["image/jpeg", "image/png", "application/pdf"],
   },
 } as const;
 

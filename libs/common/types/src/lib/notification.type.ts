@@ -12,26 +12,26 @@ export interface Notification {
 }
 
 export enum NotificationType {
-  OTP = 'OTP',
-  BOOKING_CONFIRMATION = 'BOOKING_CONFIRMATION',
-  PAYMENT_SUCCESS = 'PAYMENT_SUCCESS',
-  PAYMENT_FAILED = 'PAYMENT_FAILED',
-  TICKET_GENERATED = 'TICKET_GENERATED',
-  BOOKING_CANCELLED = 'BOOKING_CANCELLED',
-  SEAT_EXPIRY_WARNING = 'SEAT_EXPIRY_WARNING',
+  OTP = "OTP",
+  BOOKING_CONFIRMATION = "BOOKING_CONFIRMATION",
+  PAYMENT_SUCCESS = "PAYMENT_SUCCESS",
+  PAYMENT_FAILED = "PAYMENT_FAILED",
+  TICKET_GENERATED = "TICKET_GENERATED",
+  BOOKING_CANCELLED = "BOOKING_CANCELLED",
+  SEAT_EXPIRY_WARNING = "SEAT_EXPIRY_WARNING",
 }
 
 export enum NotificationChannel {
-  EMAIL = 'EMAIL',
-  SMS = 'SMS',
-  BOTH = 'BOTH',
+  EMAIL = "EMAIL",
+  SMS = "SMS",
+  BOTH = "BOTH",
 }
 
 export enum NotificationStatus {
-  PENDING = 'PENDING',
-  SENT = 'SENT',
-  FAILED = 'FAILED',
-  RETRY = 'RETRY',
+  PENDING = "PENDING",
+  SENT = "SENT",
+  FAILED = "FAILED",
+  RETRY = "RETRY",
 }
 
 export interface OTPNotification {
@@ -39,7 +39,7 @@ export interface OTPNotification {
   email?: string;
   otp: string;
   expiresIn: number; // seconds
-  purpose: 'LOGIN' | 'REGISTRATION' | 'BOOKING_VERIFICATION';
+  purpose: "LOGIN" | "REGISTRATION" | "BOOKING_VERIFICATION";
 }
 
 export interface BookingNotification {

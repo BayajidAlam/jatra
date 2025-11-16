@@ -13,18 +13,18 @@ export interface Booking {
 }
 
 export enum BookingStatus {
-  PENDING = 'PENDING',
-  SEAT_RESERVED = 'SEAT_RESERVED',
-  PAYMENT_PENDING = 'PAYMENT_PENDING',
-  CONFIRMED = 'CONFIRMED',
-  CANCELLED = 'CANCELLED',
-  EXPIRED = 'EXPIRED',
+  PENDING = "PENDING",
+  SEAT_RESERVED = "SEAT_RESERVED",
+  PAYMENT_PENDING = "PAYMENT_PENDING",
+  CONFIRMED = "CONFIRMED",
+  CANCELLED = "CANCELLED",
+  EXPIRED = "EXPIRED",
 }
 
 export interface BookingPassenger {
   name: string;
   age: number;
-  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  gender: "MALE" | "FEMALE" | "OTHER";
   seatNumber: string;
   coachNumber: string;
 }
@@ -47,5 +47,5 @@ export interface SeatReservation {
   userId: string;
   bookingId?: string;
   expiresAt: Date;
-  status: 'RESERVED' | 'CONFIRMED' | 'RELEASED';
+  status: "RESERVED" | "CONFIRMED" | "RELEASED";
 }

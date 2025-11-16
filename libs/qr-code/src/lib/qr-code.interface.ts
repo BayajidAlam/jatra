@@ -10,8 +10,8 @@ export interface QRCodeData {
 }
 
 export interface QRCodeOptions {
-  errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H';
-  type?: 'image/png' | 'image/jpeg';
+  errorCorrectionLevel?: "L" | "M" | "Q" | "H";
+  type?: "image/png" | "image/jpeg";
   quality?: number;
   margin?: number;
   width?: number;
@@ -23,7 +23,7 @@ export interface QRCodeOptions {
 
 export interface QRCodeResult {
   dataUrl: string; // Base64 encoded QR code
-  buffer?: Buffer;
+  buffer?: any; // Buffer type
   svg?: string;
 }
 

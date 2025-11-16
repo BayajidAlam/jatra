@@ -7,7 +7,7 @@ export const REDIS_KEYS = {
   // Seat Reservation Keys
   SEAT_LOCK: (trainId: string, coachId: string, seatId: string, date: string) =>
     `seat:lock:${trainId}:${coachId}:${seatId}:${date}`,
-  
+
   SEAT_AVAILABILITY: (trainId: string, scheduleId: string, date: string) =>
     `seat:available:${trainId}:${scheduleId}:${date}`,
 
@@ -17,24 +17,24 @@ export const REDIS_KEYS = {
 
   // Session Keys
   USER_SESSION: (userId: string) => `session:user:${userId}`,
-  REFRESH_TOKEN: (userId: string, tokenId: string) => 
+  REFRESH_TOKEN: (userId: string, tokenId: string) =>
     `token:refresh:${userId}:${tokenId}`,
 
   // Cache Keys
   TRAIN_SCHEDULE: (trainId: string) => `cache:train:schedule:${trainId}`,
   TRAIN_SEARCH: (from: string, to: string, date: string) =>
     `cache:search:${from}:${to}:${date}`,
-  STATION_LIST: 'cache:stations:all',
-  ROUTE_LIST: 'cache:routes:all',
+  STATION_LIST: "cache:stations:all",
+  ROUTE_LIST: "cache:routes:all",
 
   // Booking Keys
   BOOKING_TEMP: (bookingId: string) => `booking:temp:${bookingId}`,
   PAYMENT_SESSION: (sessionId: string) => `payment:session:${sessionId}`,
 
   // Rate Limiting Keys
-  RATE_LIMIT: (userId: string, endpoint: string) => 
+  RATE_LIMIT: (userId: string, endpoint: string) =>
     `ratelimit:${userId}:${endpoint}`,
-  RATE_LIMIT_IP: (ip: string, endpoint: string) => 
+  RATE_LIMIT_IP: (ip: string, endpoint: string) =>
     `ratelimit:ip:${ip}:${endpoint}`,
 } as const;
 

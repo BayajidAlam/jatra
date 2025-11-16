@@ -9,16 +9,16 @@ export interface User {
 }
 
 export enum UserRole {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-  MANAGER = 'MANAGER',
-  STAFF = 'STAFF',
+  USER = "USER",
+  ADMIN = "ADMIN",
+  MANAGER = "MANAGER",
+  STAFF = "STAFF",
 }
 
 export interface Passenger {
   name: string;
   age: number;
-  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  gender: "MALE" | "FEMALE" | "OTHER";
   nid?: string;
   passport?: string;
 }

@@ -10,7 +10,7 @@ export interface SMSResponse {
 }
 
 export interface SMSConfig {
-  provider: 'SSL_WIRELESS' | 'BULKSMS_BD' | 'TWILIO';
+  provider: "SSL_WIRELESS" | "BULKSMS_BD" | "TWILIO";
   apiKey: string;
   apiSecret: string;
   senderId: string;

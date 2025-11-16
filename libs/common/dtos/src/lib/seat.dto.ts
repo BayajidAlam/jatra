@@ -1,4 +1,4 @@
-import { IsString, IsDateString, IsArray } from 'class-validator';
+import { IsString, IsDateString, IsArray } from "class-validator";
 
 export class ReserveSeatDto {
   @IsString()

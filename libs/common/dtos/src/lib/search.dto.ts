@@ -1,4 +1,4 @@
-import { IsString, IsDateString, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsDateString, IsOptional, IsEnum } from "class-validator";
 
 export class SearchTrainsDto {
   @IsString()
@@ -11,7 +11,14 @@ export class SearchTrainsDto {
   journeyDate: string;
 
   @IsOptional()
-  @IsEnum(['AC_CHAIR', 'AC_BERTH', 'FIRST_CLASS', 'SNIGDHA', 'SHOVAN', 'SHULOV'])
+  @IsEnum([
+    "AC_CHAIR",
+    "AC_BERTH",
+    "FIRST_CLASS",
+    "SNIGDHA",
+    "SHOVAN",
+    "SHULOV",
+  ])
   coachType?: string;
 }
 

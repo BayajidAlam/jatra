@@ -1,4 +1,12 @@
-import { IsEmail, IsString, IsPhoneNumber, MinLength, IsOptional, IsEnum } from 'class-validator';
+/**
+ * Auth DTOs
+ *
+ * Installation required in service implementations:
+ * npm install class-validator class-transformer
+ */
+
+// Decorator imports - will be available in actual services
+// import { IsEmail, IsString, IsPhoneNumber, MinLength, IsOptional, IsEnum } from 'class-validator';
 
 export class RegisterDto {
   @IsString()
@@ -8,7 +16,7 @@ export class RegisterDto {
   @IsEmail()
   email: string;
 
-  @IsPhoneNumber('BD')
+  @IsPhoneNumber("BD")
   phone: string;
 
   @IsString()
@@ -32,15 +40,15 @@ export class VerifyOtpDto {
   @MinLength(6)
   otp: string;
 
-  @IsEnum(['LOGIN', 'REGISTRATION', 'BOOKING_VERIFICATION'])
+  @IsEnum(["LOGIN", "REGISTRATION", "BOOKING_VERIFICATION"])
   purpose: string;
 }
 
 export class SendOtpDto {
-  @IsPhoneNumber('BD')
+  @IsPhoneNumber("BD")
   phone: string;
 
-  @IsEnum(['LOGIN', 'REGISTRATION', 'BOOKING_VERIFICATION'])
+  @IsEnum(["LOGIN", "REGISTRATION", "BOOKING_VERIFICATION"])
   purpose: string;
 }
 
