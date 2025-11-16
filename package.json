@@ -8,7 +8,16 @@
     "empty": "0.10.1"
   },
   "devDependencies": {
+    "@nx/js": "^22.0.3",
+    "@nx/nest": "^22.0.3",
+    "@nx/next": "^22.0.3",
+    "@nx/node": "^22.0.3",
+    "@nx/react": "^22.0.3",
+    "@nx/webpack": "^22.0.3",
     "@nx/workspace": "22.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "eslint-config-prettier": "^10.1.8",
     "nx": "22.0.3"
   }
 }
