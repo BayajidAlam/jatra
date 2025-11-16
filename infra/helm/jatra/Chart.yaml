@@ -1,0 +1,14 @@
+apiVersion: v2
+name: jatra
+description: Jatra Railway Ticketing System Helm Chart
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - jatra
+  - railway
+  - ticketing
+  - microservices
+maintainers:
+  - name: Jatra Team
+    email: team@jatra.com

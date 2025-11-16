@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jatra
+  labels:
+    name: jatra
+    environment: production

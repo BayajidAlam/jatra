@@ -45,14 +45,42 @@ jatra-railway/
 ### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/BayajidAlam/jatra.git
+cd jatra
+
 # Install dependencies
 pnpm install
 
-# Start infrastructure services
+# Copy environment configuration
+cp .env.example .env
+# Edit .env with your configuration
+
+# Start infrastructure services (PostgreSQL, Redis, RabbitMQ)
 docker-compose up -d
 
-# Start a service
+# Verify services are running
+docker-compose ps
+
+# Start a microservice (once implemented)
 pnpm nx serve <service-name>
+```
+
+### Quick Start
+
+```bash
+# Start all infrastructure
+docker-compose up -d
+
+# Access services:
+# - PostgreSQL: localhost:5432
+# - Redis: localhost:6379
+# - RabbitMQ Management: http://localhost:15672
+
+# Start optional management tools
+docker-compose --profile tools up -d
+# - PgAdmin: http://localhost:5050
+# - Redis Commander: http://localhost:8081
 ```
 
 ## 📦 Nx Commands

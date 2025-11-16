@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # PostgreSQL - Primary Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: jatra-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jatra_user
+      POSTGRES_PASSWORD: jatra_password
+      POSTGRES_DB: jatra_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jatra_user -d jatra_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cluster - Cache & Seat Locks
+  redis:
+    image: redis:7-alpine
+    container_name: jatra-redis
+    restart: unless-stopped
+    command: redis-server --requirepass jatra_redis_pass --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RabbitMQ - Message Queue
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: jatra-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: jatra_user
+      RABBITMQ_DEFAULT_PASS: jatra_password
+      RABBITMQ_DEFAULT_VHOST: jatra
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PgAdmin - PostgreSQL Management (Optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: jatra-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@jatra.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    profiles:
+      - tools
+
+  # Redis Commander - Redis Management (Optional)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: jatra-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:jatra_redis_pass
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    profiles:
+      - tools
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  default:
+    name: jatra-network
+    driver: bridge

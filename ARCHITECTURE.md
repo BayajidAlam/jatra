@@ -41,6 +41,7 @@ Mobile/Web App → API Gateway (Go) → Microservices
 ```
 
 **API Gateway Responsibilities:**
+
 - ✅ JWT Authentication
 - ✅ Rate Limiting (prevent ticket scalping bots)
 - ✅ Request Routing
@@ -58,21 +59,23 @@ Mobile/Web App → API Gateway (Go) → Microservices
 
 ```typescript
 // Example: Booking Service → Seat Reservation Service
-const response = await httpClient.post('http://seat-reservation-service:3004/reserve', {
-  trainId: 'TR123',
-  coachId: 'A1',
-  seatNumber: '12A',
-  userId: 'user-123'
+const response = await httpClient.post("http://seat-reservation-service:3004/reserve", {
+  trainId: "TR123",
+  coachId: "A1",
+  seatNumber: "12A",
+  userId: "user-123",
 });
 ```
 
 **Use Cases:**
+
 - 🎫 Seat Reservation (MUST be immediate - Redis atomic lock)
 - 💳 Payment Processing (need confirmation before proceeding)
 - 🎟️ Ticket Generation (user waits for ticket)
 - 👤 User Verification (Auth Service ↔ User Service)
 
 **Why Synchronous?**
+
 - ✅ Immediate response required
 - ✅ Simple error handling
 - ✅ User is waiting for result
@@ -94,20 +97,21 @@ const response = await httpClient.post('http://seat-reservation-service:3004/res
 
 ```typescript
 // Example: Payment Service publishes event
-await rabbitMQ.publish('payment.completed', {
-  bookingId: 'BK123',
+await rabbitMQ.publish("payment.completed", {
+  bookingId: "BK123",
   amount: 1500,
-  userId: 'user-123',
-  timestamp: new Date()
+  userId: "user-123",
+  timestamp: new Date(),
 });
 
 // Notification Service listens
-rabbitMQ.subscribe('payment.completed', async (data) => {
+rabbitMQ.subscribe("payment.completed", async (data) => {
   await smsService.send(data.userId, `Payment successful! Amount: ${data.amount} BDT`);
 });
 ```
 
 **Use Cases:**
+
 - 📱 SMS Notifications (don't block booking flow)
 - 📧 Email Confirmations
 - 📊 Analytics Events (fire-and-forget)
@@ -115,12 +119,14 @@ rabbitMQ.subscribe('payment.completed', async (data) => {
 - 📈 Reporting Data
 
 **Why Asynchronous?**
+
 - ✅ Don't block critical path
 - ✅ Retry capability (if SMS fails, retry 3 times)
 - ✅ System decoupling
 - ✅ Better resilience
 
 **RabbitMQ Events:**
+
 ```yaml
 Events:
   - payment.completed      → Notification Service
@@ -141,37 +147,37 @@ Events:
    ↓
    Mobile App → API Gateway (validates JWT, rate limits)
    ↓
-   
+
 2. API Gateway → Booking Service
    ↓
-   
+
 3. Booking Service → Seat Reservation Service (HTTP - Synchronous)
    └─ Redis: SET seat:TR123:A1:12A "user-123" NX EX 300
    └─ Response: { reserved: true, expiresIn: 300 } ✅
    ↓
-   
+
 4. Booking Service → Payment Service (HTTP - Synchronous)
    └─ SSLCommerz API call
    └─ Response: { status: 'SUCCESS', transactionId: 'TXN789' } ✅
    ↓
-   
+
 5. Payment Service → RabbitMQ (Asynchronous)
    └─ Publish: payment.completed event
    └─ Notification Service (listening) → Sends SMS ✅
    └─ Analytics Service (listening) → Records metrics ✅
    ↓
-   
+
 6. Booking Service → Ticket Service (HTTP - Synchronous)
    └─ Generate QR Code with HMAC signature
    └─ Response: { ticketId: 'TCK456', qrCode: '...' } ✅
    ↓
-   
+
 7. Ticket Service → RabbitMQ (Asynchronous)
    └─ Publish: ticket.generated event
    └─ Notification Service → Sends ticket via SMS ✅
    └─ Reporting Service → Updates daily stats ✅
    ↓
-   
+
 8. Booking Service → API Gateway → Mobile App
    └─ Return: { ticket, qrCode, status: 'CONFIRMED' } ✅
 
@@ -203,7 +209,7 @@ Total Time: ~2-3 seconds
 // Seat Reservation Service
 async reserveSeat(trainId: string, coachId: string, seatNumber: string, userId: string) {
   const key = `seat:${trainId}:${coachId}:${seatNumber}`;
-  
+
   // Redis SET with NX (Not eXists) - ATOMIC operation
   const locked = await redis.set(
     key,           // seat:TR123:A1:12A
@@ -212,13 +218,13 @@ async reserveSeat(trainId: string, coachId: string, seatNumber: string, userId: 
     'EX',          // Set expiry
     300            // 5 minutes (auto-release if payment not completed)
   );
-  
+
   if (!locked) {
     throw new Error('Seat already reserved by another user');
   }
-  
-  return { 
-    reserved: true, 
+
+  return {
+    reserved: true,
     expiresIn: 300,
     message: 'Seat reserved! Complete payment within 5 minutes'
   };
@@ -226,6 +232,7 @@ async reserveSeat(trainId: string, coachId: string, seatNumber: string, userId: 
 ```
 
 **Why This Works:**
+
 - ✅ **Atomic:** Redis SET NX is a single operation (no race condition)
 - ✅ **Fast:** Redis is in-memory = 5-10ms response time
 - ✅ **Auto-expiry:** If user doesn't pay in 5 minutes, seat is released
@@ -285,13 +292,13 @@ spec:
 
 ### Can This Architecture Handle Your Requirements?
 
-| Requirement | Target | Solution | Status |
-|-------------|--------|----------|--------|
-| **30M requests in 30 min** | 16,666 req/sec | API Gateway HPA (3-10 pods) | ✅ Yes |
-| **1,187 attempts per seat** | Concurrent locks | Redis atomic SET NX | ✅ Yes |
-| **10,000 concurrent bookings** | Seat locking | Redis Cluster (3-5 nodes) | ✅ Yes |
-| **100,000 SMS per hour** | Notification queue | RabbitMQ + scaled consumers | ✅ Yes |
-| **99.9% uptime** | High availability | Multi-pod, auto-restart, health checks | ✅ Yes |
+| Requirement                    | Target             | Solution                               | Status |
+| ------------------------------ | ------------------ | -------------------------------------- | ------ |
+| **30M requests in 30 min**     | 16,666 req/sec     | API Gateway HPA (3-10 pods)            | ✅ Yes |
+| **1,187 attempts per seat**    | Concurrent locks   | Redis atomic SET NX                    | ✅ Yes |
+| **10,000 concurrent bookings** | Seat locking       | Redis Cluster (3-5 nodes)              | ✅ Yes |
+| **100,000 SMS per hour**       | Notification queue | RabbitMQ + scaled consumers            | ✅ Yes |
+| **99.9% uptime**               | High availability  | Multi-pod, auto-restart, health checks | ✅ Yes |
 
 ### Horizontal Pod Autoscaler (HPA) Configuration
 
@@ -318,6 +325,7 @@ spec:
 ```
 
 **During Eid Rush:**
+
 - API Gateway: 3 → 10 pods (auto-scales in 30 seconds)
 - Booking Service: 5 → 20 pods
 - Seat Reservation: 5 → 15 pods
@@ -332,6 +340,7 @@ spec:
 **Risk:** Single point of entry for all traffic
 
 **Mitigation:**
+
 - ✅ Run 3-10 API Gateway pods (auto-scaled)
 - ✅ Load Balancer distributes traffic
 - ✅ Health checks replace crashed pods
@@ -346,6 +355,7 @@ spec:
 **Risk:** Booking → Seat → Payment → Ticket (chained delays)
 
 **Mitigation:**
+
 - ✅ Fast Redis operations (5-10ms)
 - ✅ Async notifications (don't block booking)
 - ✅ Timeouts on all HTTP calls (5s max)
@@ -360,6 +370,7 @@ spec:
 **Risk:** All services hitting same database
 
 **Mitigation:**
+
 - ✅ Database per service (isolation)
 - ✅ Redis cache (90% cache hit rate for searches)
 - ✅ Read replicas for read-heavy operations
@@ -374,6 +385,7 @@ spec:
 **Risk:** Events published faster than consumed
 
 **Mitigation:**
+
 - ✅ Multiple consumer instances (5-10 Notification Service pods)
 - ✅ Message priority (OTP > Analytics)
 - ✅ Dead Letter Queue (failed messages don't block)
@@ -387,13 +399,13 @@ spec:
 
 ### This Architecture Pattern is Used By:
 
-| Company | Use Case | Pattern |
-|---------|----------|---------|
-| **Netflix** | Video streaming | API Gateway (Zuul) + Microservices + Kafka |
-| **Uber** | Ride booking | API Gateway + gRPC + Kafka events |
-| **BookMyShow** | Ticket booking | API Gateway + Redis locks + Microservices |
-| **Ticketmaster** | Event tickets | Similar pattern with distributed locks |
-| **Airbnb** | Booking system | Microservices + Redis + Message queues |
+| Company          | Use Case        | Pattern                                    |
+| ---------------- | --------------- | ------------------------------------------ |
+| **Netflix**      | Video streaming | API Gateway (Zuul) + Microservices + Kafka |
+| **Uber**         | Ride booking    | API Gateway + gRPC + Kafka events          |
+| **BookMyShow**   | Ticket booking  | API Gateway + Redis locks + Microservices  |
+| **Ticketmaster** | Event tickets   | Similar pattern with distributed locks     |
+| **Airbnb**       | Booking system  | Microservices + Redis + Message queues     |
 
 **Your architecture matches industry standards** ✅
 
@@ -403,16 +415,16 @@ spec:
 
 ### Why These Choices?
 
-| Technology | Why? |
-|------------|------|
-| **Go (API Gateway)** | High performance, low memory, handles 10K+ concurrent connections |
-| **NestJS (Services)** | TypeScript, modular, built-in support for microservices |
-| **Redis** | In-memory speed (5-10ms), atomic operations, perfect for seat locks |
-| **RabbitMQ** | Reliable message delivery, retry logic, dead letter queues |
-| **PostgreSQL** | ACID compliance, complex queries, mature ecosystem |
-| **Kubernetes** | Industry standard, auto-scaling, self-healing |
-| **Prometheus + Grafana** | Time-series metrics, beautiful dashboards |
-| **OpenTelemetry** | Distributed tracing across microservices |
+| Technology               | Why?                                                                |
+| ------------------------ | ------------------------------------------------------------------- |
+| **Go (API Gateway)**     | High performance, low memory, handles 10K+ concurrent connections   |
+| **NestJS (Services)**    | TypeScript, modular, built-in support for microservices             |
+| **Redis**                | In-memory speed (5-10ms), atomic operations, perfect for seat locks |
+| **RabbitMQ**             | Reliable message delivery, retry logic, dead letter queues          |
+| **PostgreSQL**           | ACID compliance, complex queries, mature ecosystem                  |
+| **Kubernetes**           | Industry standard, auto-scaling, self-healing                       |
+| **Prometheus + Grafana** | Time-series metrics, beautiful dashboards                           |
+| **OpenTelemetry**        | Distributed tracing across microservices                            |
 
 ---
 
