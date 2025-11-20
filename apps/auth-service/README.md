@@ -24,6 +24,7 @@ Authentication and user management service for Jatra Railway ticketing system.
 ### Authentication
 
 #### Register
+
 ```http
 POST /auth/register
 Content-Type: application/json
@@ -38,6 +39,7 @@ Content-Type: application/json
 ```
 
 #### Login
+
 ```http
 POST /auth/login
 Content-Type: application/json
@@ -49,6 +51,7 @@ Content-Type: application/json
 ```
 
 #### Refresh Token
+
 ```http
 POST /auth/refresh
 Content-Type: application/json
@@ -59,6 +62,7 @@ Content-Type: application/json
 ```
 
 #### Logout
+
 ```http
 POST /auth/logout
 Content-Type: application/json
@@ -71,12 +75,14 @@ Content-Type: application/json
 ### User Profile
 
 #### Get Profile
+
 ```http
 GET /users/me
 Authorization: Bearer <access-token>
 ```
 
 #### Update Profile
+
 ```http
 PATCH /users/me
 Authorization: Bearer <access-token>
@@ -131,15 +137,18 @@ PORT=3001
 ## Validation Rules
 
 ### NID (National ID)
+
 - Must be 10 or 13 digits
 - Numeric only
 
 ### Phone
+
 - Must match Bangladesh format
 - Accepted formats: `+8801XXXXXXXXX` or `01XXXXXXXXX`
 - Must start with +8801 or 01, followed by valid digit (3-9), then 8 more digits
 
 ### Password
+
 - Minimum 8 characters
 - Must contain at least one uppercase letter
 - Must contain at least one lowercase letter

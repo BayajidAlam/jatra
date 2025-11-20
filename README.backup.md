@@ -1,94 +1,12 @@
-# 🚂 Jatra - Scalable Railway Ticketing System
+# Jatra - Scalable Railway Ticketing System
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28%2B-blue)](https://kubernetes.io/)
-[![NestJS](https://img.shields.io/badge/NestJS-10.x-red)](https://nestjs.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-316192)](https://www.postgresql.org/)
-
-> **Solving Bangladesh Railway's Eid Rush Crisis: A Kubernetes-Native, Microservices-Based Ticketing Platform**
-
----
-
-## 📚 Quick Links
-
-- 📋 [Hackathon Problem Statement](docs/HACKATHON_PROBLEM_STATEMENT.md)
-- 🔍 [Shohoz System Analysis](docs/SHOHOZ_ANALYSIS.md)
-- 🏗️ [Architecture Documentation](docs/ARCHITECTURE.md)
-- 🗄️ [Database Schemas](docs/database/SCHEMA.md)
-- 📊 [Entity Relationship Diagram](docs/database/ERD.md)
-- 🎤 [BSc Defense Slides](docs/PROPOSAL_DEFENSE_SLIDES.md)
-
----
-
-## 🌟 Project Origin: BUET CSE Hackathon 2024
-
-### Event Details
-
-- **Event**: Microservice & DevOps Hackathon
-- **Date**: October 24, 2024
-- **Location**: Department of Computer Science and Engineering, BUET
-- **Duration**: 24 hours
-- **Challenge**: Build a scalable ticketing system for Bangladesh Railway
-
-### The Real-World Crisis
-
-**Masum's Story**: A software engineer couldn't book an Eid train ticket home despite being logged in early. The system froze, OTP never arrived after 5 minutes, and multiple retries failed. **He wasn't alone** - thousands faced the same issue.
-
-**Verified Statistics (2024)**:
-
-- **30 million hits in 30 minutes** during Eid-ul-Azha
-- **1,187+ concurrent attempts per single seat**
-- **60-90% booking failure rate** during peak periods
-- **80,000-100,000 tickets sold daily** (normal days)
-- **1.4 million registered users**, 77 stations
-
-**Current System Failures (Shohoz)**:
-
-- 🚨 4 employees arrested for black market ticketing (March 2024)
-- 💰 Tk 2 lakh consumer rights fine for mismanagement
-- 💸 Tk 25 crore advertising revenue lost to Bangladesh Railway
-- ❌ System crashes, OTP delays (5+ minutes), frozen bookings
-
-**Full Analysis**: [SHOHOZ_ANALYSIS.md](docs/SHOHOZ_ANALYSIS.md)
-
----
+A Kubernetes-based microservices architecture for Bangladesh Railway's online ticketing system, designed to handle extreme traffic loads (30M+ hits in 30 minutes) during peak seasons like Eid.
 
 ## 🚀 Project Overview
 
-### The Problem
+**Problem:** Bangladesh Railway's e-ticketing system crashes during Eid with 1,187+ concurrent attempts per seat, leading to failed bookings and poor user experience.
 
-Bangladesh Railway's e-ticketing system (operated by Shohoz) crashes during Eid with extreme traffic:
-
-- **Peak Traffic**: 30M+ hits in 30 minutes
-- **Concurrent Attempts**: 1,187+ users trying to book a single seat
-- **System Response**: Crashes, OTP delays, failed bookings
-- **User Impact**: Unable to purchase tickets despite multiple attempts
-
-### Our Solution
-
-**Jatra** (জাত্রা - Bengali for "journey") is a fault-tolerant, horizontally scalable microservices system featuring:
-
-✅ **11 Microservices**: Independent services for auth, booking, payment, tickets, etc.  
-✅ **Atomic Seat Locking**: Redis `SET NX EX` handles 1,187+ concurrent attempts  
-✅ **Auto-Scaling**: Kubernetes HPA scales 5-20 pods per service during traffic spikes  
-✅ **Database-per-Service**: 11 PostgreSQL databases for isolation  
-✅ **Hybrid Communication**: API Gateway + HTTP (sync) + RabbitMQ (async)  
-✅ **Comprehensive Monitoring**: Prometheus, Grafana, Jaeger, OpenTelemetry  
-✅ **Zero Downtime**: Rolling deployments via Kubernetes  
-✅ **Load Tested**: k6 scripts for breakpoint testing
-
-### Key Innovation
-
-**Redis Atomic Locking** prevents race conditions when 1,187+ users attempt to book the same seat:
-
-```redis
-SET seat:train_123_coach_A_seat_42 user:456 NX EX 300
-# NX = Only set if not exists (atomic)
-# EX 300 = Expires in 5 minutes (auto-release)
-```
-
-**Response Time**: 5-10ms (vs 100-500ms for database locks)  
-**Success Rate Target**: 99.9% during peak traffic
+**Solution:** A fault-tolerant, horizontally scalable microservices system with 11 microservices, atomic seat reservation, SSLCommerz payment, SMS notifications, QR code tickets, and comprehensive observability.
 
 ## 📁 Project Structure
 

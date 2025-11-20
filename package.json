@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "@prisma/client": "^7.0.0",
     "empty": "0.10.1"
   },
   "devDependencies": {
@@ -15,9 +16,11 @@
     "@nx/react": "^22.0.3",
     "@nx/webpack": "^22.0.3",
     "@nx/workspace": "22.0.3",
+    "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.46.4",
     "@typescript-eslint/parser": "^8.46.4",
     "eslint-config-prettier": "^10.1.8",
-    "nx": "22.0.3"
+    "nx": "22.0.3",
+    "prisma": "^7.0.0"
   }
 }

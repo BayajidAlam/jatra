@@ -11,11 +11,11 @@ erDiagram
     %% Auth Service
     users ||--o{ otp_records : "generates"
     users ||--o{ refresh_tokens : "has"
-    
+
     %% User Service
     users ||--|| user_profiles : "has"
     users ||--o{ passengers : "saves"
-    
+
     %% Schedule Service
     stations ||--o{ routes : "origin"
     stations ||--o{ routes : "destination"
@@ -26,37 +26,37 @@ erDiagram
     routes ||--o{ route_stops : "includes"
     routes ||--o{ schedules : "generates"
     coaches ||--o{ seats : "contains"
-    
+
     %% Booking Service
     users ||--o{ bookings : "creates"
     trains ||--o{ bookings : "booked_on"
     bookings ||--o{ booking_passengers : "includes"
     coaches ||--o{ booking_passengers : "assigned"
     seats ||--o{ booking_passengers : "assigned"
-    
+
     %% Payment Service
     users ||--o{ payments : "makes"
     bookings ||--|| payments : "paid_by"
-    
+
     %% Ticket Service
     bookings ||--o{ tickets : "generates"
     booking_passengers ||--|| tickets : "issued_to"
-    
+
     %% Seat Reservation Service
     users ||--o{ seat_reservations : "reserves"
     trains ||--o{ seat_reservations : "reserved_on"
     coaches ||--o{ seat_reservations : "in_coach"
     seats ||--o{ seat_reservations : "locked"
     bookings ||--o{ seat_reservations : "confirmed_by"
-    
+
     %% Notification Service
     users ||--o{ notifications : "receives"
-    
+
     %% Reporting Service
     daily_stats ||--o{ bookings : "aggregates"
 
     %% Table Definitions
-    
+
     users {
         uuid id PK
         string email UK
@@ -71,7 +71,7 @@ erDiagram
         timestamp updated_at
         timestamp deleted_at
     }
-    
+
     otp_records {
         uuid id PK
         uuid user_id FK
@@ -84,7 +84,7 @@ erDiagram
         timestamp verified_at
         timestamp created_at
     }
-    
+
     refresh_tokens {
         uuid id PK
         uuid user_id FK
@@ -93,7 +93,7 @@ erDiagram
         timestamp created_at
         timestamp revoked_at
     }
-    
+
     user_profiles {
         uuid id PK
         uuid user_id UK
@@ -110,7 +110,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     passengers {
         uuid id PK
         uuid user_id FK
@@ -123,7 +123,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     stations {
         uuid id PK
         string name
@@ -135,7 +135,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     trains {
         uuid id PK
         string name
@@ -146,7 +146,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     routes {
         uuid id PK
         uuid train_id FK
@@ -160,7 +160,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     route_stops {
         uuid id PK
         uuid route_id FK
@@ -171,7 +171,7 @@ erDiagram
         string platform_number
         timestamp created_at
     }
-    
+
     coaches {
         uuid id PK
         uuid train_id FK
@@ -182,7 +182,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     seats {
         uuid id PK
         uuid coach_id FK
@@ -191,7 +191,7 @@ erDiagram
         boolean is_available
         timestamp created_at
     }
-    
+
     schedules {
         uuid id PK
         uuid train_id FK
@@ -205,7 +205,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     bookings {
         uuid id PK
         uuid user_id FK
@@ -224,7 +224,7 @@ erDiagram
         timestamp updated_at
         timestamp cancelled_at
     }
-    
+
     booking_passengers {
         uuid id PK
         uuid booking_id FK
@@ -237,7 +237,7 @@ erDiagram
         decimal fare
         timestamp created_at
     }
-    
+
     seat_reservations {
         uuid id PK
         uuid train_id FK
@@ -252,7 +252,7 @@ erDiagram
         timestamp expires_at
         timestamp created_at
     }
-    
+
     payments {
         uuid id PK
         uuid booking_id FK
@@ -269,7 +269,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     tickets {
         uuid id PK
         uuid booking_id FK
@@ -288,7 +288,7 @@ erDiagram
         timestamp validated_at
         timestamp created_at
     }
-    
+
     notifications {
         uuid id PK
         uuid user_id FK
@@ -303,7 +303,7 @@ erDiagram
         timestamp delivered_at
         timestamp created_at
     }
-    
+
     daily_stats {
         uuid id PK
         date stat_date UK
@@ -351,34 +351,41 @@ erDiagram
 ## Key Relationships
 
 ### 1. User-Centric Relationships
+
 - **users** (auth_db) → Referenced by all services via `user_id`
 - No foreign keys across databases (microservices pattern)
 - Services fetch user data via User Service API
 
 ### 2. Train & Schedule Relationships
+
 - **trains** → **coaches** → **seats** (1:N:N)
 - **routes** → **route_stops** (1:N with stop order)
 - **trains** + **routes** → **schedules** (generated daily)
 
 ### 3. Booking Flow Relationships
+
 - **bookings** → **booking_passengers** (1:N)
 - **bookings** ↔ **payments** (1:1)
 - **booking_passengers** ↔ **tickets** (1:1)
 
 ### 4. Seat Locking Flow
+
 - **Redis Lock** (temporary) → **seat_reservations** (audit log) → **bookings** (confirmed)
 
 ## Data Consistency Patterns
 
 ### 1. Eventual Consistency
+
 - Bookings trigger events → Notifications sent asynchronously
 - Analytics updated via event listeners
 
 ### 2. Compensating Transactions (Saga Pattern)
+
 - If payment fails → Release seat locks
 - If booking cancelled → Refund payment → Cancel tickets
 
 ### 3. Idempotency
+
 - All API operations use unique request IDs
 - Duplicate payment attempts return same result
 
@@ -407,32 +414,35 @@ CREATE INDEX idx_tickets_pnr_journey ON tickets(pnr, journey_date, status);
 
 ## Database Size Estimates (1 Year, 1M Users)
 
-| Database | Estimated Size | Notes |
-|----------|---------------|-------|
-| auth_db | ~500 MB | Users, OTPs, tokens |
-| user_db | ~1 GB | Profiles, saved passengers |
-| schedule_db | ~2 GB | Trains, routes, schedules (static + dynamic) |
-| seat_reservation_db | ~5 GB | Audit logs (purge after 30 days) |
-| booking_db | ~10 GB | Main transactional data |
-| payment_db | ~3 GB | Payment records (keep forever) |
-| ticket_db | ~8 GB | Tickets with QR codes |
-| notification_db | ~4 GB | Notification logs (purge after 90 days) |
-| reporting_db | ~500 MB | Aggregated stats |
-| **Total** | **~34 GB** | Excludes indexes (~20% overhead) |
+| Database            | Estimated Size | Notes                                        |
+| ------------------- | -------------- | -------------------------------------------- |
+| auth_db             | ~500 MB        | Users, OTPs, tokens                          |
+| user_db             | ~1 GB          | Profiles, saved passengers                   |
+| schedule_db         | ~2 GB          | Trains, routes, schedules (static + dynamic) |
+| seat_reservation_db | ~5 GB          | Audit logs (purge after 30 days)             |
+| booking_db          | ~10 GB         | Main transactional data                      |
+| payment_db          | ~3 GB          | Payment records (keep forever)               |
+| ticket_db           | ~8 GB          | Tickets with QR codes                        |
+| notification_db     | ~4 GB          | Notification logs (purge after 90 days)      |
+| reporting_db        | ~500 MB        | Aggregated stats                             |
+| **Total**           | **~34 GB**     | Excludes indexes (~20% overhead)             |
 
 ## Scaling Considerations
 
 ### Read Replicas
+
 - **Schedule Service**: 2-3 read replicas (high read traffic)
 - **Search Service**: Use schedule read replica
 - **Reporting Service**: Dedicated replica with replication lag tolerance
 
 ### Partitioning (Future)
+
 - `schedules` table: Partition by `journey_date` (monthly)
 - `bookings` table: Partition by `created_at` (quarterly)
 - `seat_reservations`: Partition by `journey_date` (monthly, purge old)
 
 ### Sharding (Future, if > 10M users)
+
 - Shard `users` by `user_id` hash
 - Shard `bookings` by `user_id` hash (co-locate with user data)
 

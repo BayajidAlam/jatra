@@ -3,20 +3,20 @@ import {
   ConflictException,
   UnauthorizedException,
   NotFoundException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
-import { PrismaService } from '../common/prisma.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import * as bcrypt from "bcrypt";
+import { PrismaService } from "../common/prisma.service";
+import { RegisterDto } from "./dto/register.dto";
+import { LoginDto } from "./dto/login.dto";
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -31,13 +31,13 @@ export class AuthService {
 
     if (existingUser) {
       if (existingUser.nid === nid) {
-        throw new ConflictException('NID already registered');
+        throw new ConflictException("NID already registered");
       }
       if (existingUser.email === email) {
-        throw new ConflictException('Email already registered');
+        throw new ConflictException("Email already registered");
       }
       if (existingUser.phone === phone) {
-        throw new ConflictException('Phone number already registered');
+        throw new ConflictException("Phone number already registered");
       }
     }
 
@@ -81,22 +81,18 @@ export class AuthService {
     // Find user by NID, email, or phone
     const user = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { nid: identifier },
-          { email: identifier },
-          { phone: identifier },
-        ],
+        OR: [{ nid: identifier }, { email: identifier }, { phone: identifier }],
       },
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     // Generate tokens
@@ -122,10 +118,10 @@ export class AuthService {
     let payload;
     try {
       payload = this.jwtService.verify(refreshToken, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        secret: this.configService.get("JWT_REFRESH_SECRET"),
       });
     } catch (error) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException("Invalid refresh token");
     }
 
     // Check if refresh token exists in database
@@ -134,7 +130,7 @@ export class AuthService {
     });
 
     if (!storedToken) {
-      throw new UnauthorizedException('Refresh token not found');
+      throw new UnauthorizedException("Refresh token not found");
     }
 
     // Check if expired
@@ -142,7 +138,7 @@ export class AuthService {
       await this.prisma.refreshToken.delete({
         where: { id: storedToken.id },
       });
-      throw new UnauthorizedException('Refresh token expired');
+      throw new UnauthorizedException("Refresh token expired");
     }
 
     // Generate new tokens
@@ -162,7 +158,7 @@ export class AuthService {
       where: { token: refreshToken },
     });
 
-    return { message: 'Logged out successfully' };
+    return { message: "Logged out successfully" };
   }
 
   private async generateTokens(userId: string) {
@@ -170,14 +166,14 @@ export class AuthService {
 
     // Generate access token
     const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_ACCESS_SECRET'),
-      expiresIn: this.configService.get('JWT_ACCESS_EXPIRY'),
+      secret: this.configService.get("JWT_ACCESS_SECRET"),
+      expiresIn: this.configService.get("JWT_ACCESS_EXPIRY"),
     });
 
     // Generate refresh token
     const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_REFRESH_SECRET'),
-      expiresIn: this.configService.get('JWT_REFRESH_EXPIRY'),
+      secret: this.configService.get("JWT_REFRESH_SECRET"),
+      expiresIn: this.configService.get("JWT_REFRESH_EXPIRY"),
     });
 
     // Store refresh token in database

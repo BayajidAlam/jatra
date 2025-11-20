@@ -6,17 +6,17 @@ Jatra uses **database-per-service** pattern for data isolation and independent s
 
 ## Database List
 
-| Database | Service | Purpose |
-|----------|---------|---------|
-| `auth_db` | Auth Service | User authentication, JWT tokens, OTPs |
-| `user_db` | User Service | User profiles, passenger details |
-| `schedule_db` | Schedule Service | Train schedules, routes, stations, coaches, seats |
-| `seat_reservation_db` | Seat Reservation Service | Seat reservation audit logs |
-| `booking_db` | Booking Service | Bookings, booking passengers |
-| `payment_db` | Payment Service | Payment transactions, SSLCommerz records |
-| `ticket_db` | Ticket Service | Generated tickets, QR codes, validations |
-| `notification_db` | Notification Service | Notification logs, SMS/email delivery status |
-| `reporting_db` | Reporting Service | Analytics, aggregated reports |
+| Database              | Service                  | Purpose                                           |
+| --------------------- | ------------------------ | ------------------------------------------------- |
+| `auth_db`             | Auth Service             | User authentication, JWT tokens, OTPs             |
+| `user_db`             | User Service             | User profiles, passenger details                  |
+| `schedule_db`         | Schedule Service         | Train schedules, routes, stations, coaches, seats |
+| `seat_reservation_db` | Seat Reservation Service | Seat reservation audit logs                       |
+| `booking_db`          | Booking Service          | Bookings, booking passengers                      |
+| `payment_db`          | Payment Service          | Payment transactions, SSLCommerz records          |
+| `ticket_db`           | Ticket Service           | Generated tickets, QR codes, validations          |
+| `notification_db`     | Notification Service     | Notification logs, SMS/email delivery status      |
+| `reporting_db`        | Reporting Service        | Analytics, aggregated reports                     |
 
 ## Schema Design Principles
 
@@ -33,6 +33,7 @@ Jatra uses **database-per-service** pattern for data isolation and independent s
 ### Tables
 
 #### `users`
+
 Primary user authentication table.
 
 ```sql
@@ -57,6 +58,7 @@ CREATE INDEX idx_users_status ON users(status);
 ```
 
 #### `otp_records`
+
 OTP verification records (SMS/Email).
 
 ```sql
@@ -79,6 +81,7 @@ CREATE INDEX idx_otp_expires_at ON otp_records(expires_at);
 ```
 
 #### `refresh_tokens`
+
 JWT refresh tokens for session management.
 
 ```sql
@@ -102,6 +105,7 @@ CREATE INDEX idx_refresh_tokens_token ON refresh_tokens(token);
 ### Tables
 
 #### `user_profiles`
+
 Extended user profile information.
 
 ```sql
@@ -126,6 +130,7 @@ CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
 ```
 
 #### `passengers`
+
 Saved passenger details for quick booking.
 
 ```sql
@@ -152,6 +157,7 @@ CREATE INDEX idx_passengers_user_id ON passengers(user_id);
 ### Tables
 
 #### `stations`
+
 Railway stations.
 
 ```sql
@@ -172,6 +178,7 @@ CREATE INDEX idx_stations_city ON stations(city);
 ```
 
 #### `trains`
+
 Train master data.
 
 ```sql
@@ -191,6 +198,7 @@ CREATE INDEX idx_trains_type ON trains(type);
 ```
 
 #### `routes`
+
 Train routes with origin and destination.
 
 ```sql
@@ -214,6 +222,7 @@ CREATE INDEX idx_routes_destination ON routes(destination_station_id);
 ```
 
 #### `route_stops`
+
 Intermediate stops in a route.
 
 ```sql
@@ -233,6 +242,7 @@ CREATE INDEX idx_route_stops_station_id ON route_stops(station_id);
 ```
 
 #### `coaches`
+
 Coach configurations for trains.
 
 ```sql
@@ -253,6 +263,7 @@ CREATE INDEX idx_coaches_coach_type ON coaches(coach_type);
 ```
 
 #### `seats`
+
 Seat configurations in coaches.
 
 ```sql
@@ -271,6 +282,7 @@ CREATE INDEX idx_seats_seat_number ON seats(seat_number);
 ```
 
 #### `schedules`
+
 Daily train schedules (generated from routes).
 
 ```sql
@@ -301,6 +313,7 @@ CREATE INDEX idx_schedules_route_id ON schedules(route_id);
 ### Tables
 
 #### `seat_reservations`
+
 Audit log of seat reservations (Redis handles actual locks).
 
 ```sql
@@ -332,6 +345,7 @@ CREATE INDEX idx_reservations_status ON seat_reservations(status);
 ### Tables
 
 #### `bookings`
+
 Main booking records.
 
 ```sql
@@ -361,6 +375,7 @@ CREATE INDEX idx_bookings_booking_status ON bookings(booking_status);
 ```
 
 #### `booking_passengers`
+
 Passenger details in each booking.
 
 ```sql
@@ -387,6 +402,7 @@ CREATE INDEX idx_booking_passengers_booking_id ON booking_passengers(booking_id)
 ### Tables
 
 #### `payments`
+
 Payment transaction records.
 
 ```sql
@@ -419,6 +435,7 @@ CREATE INDEX idx_payments_status ON payments(status);
 ### Tables
 
 #### `tickets`
+
 Generated tickets with QR codes.
 
 ```sql
@@ -454,6 +471,7 @@ CREATE INDEX idx_tickets_journey_date ON tickets(journey_date);
 ### Tables
 
 #### `notifications`
+
 Notification delivery logs.
 
 ```sql
@@ -485,6 +503,7 @@ CREATE INDEX idx_notifications_created_at ON notifications(created_at);
 ### Tables
 
 #### `daily_stats`
+
 Daily aggregated statistics.
 
 ```sql
@@ -511,6 +530,7 @@ CREATE INDEX idx_daily_stats_date ON daily_stats(stat_date);
 Redis is used for caching and distributed locking, not persistent storage.
 
 ### Seat Locks
+
 ```
 seat:{trainId}:{coachId}:{seatNumber}:{journeyDate}
 Value: userId
@@ -518,6 +538,7 @@ TTL: 300 seconds (5 minutes)
 ```
 
 ### OTP Cache
+
 ```
 otp:{phone}
 Value: otpCode
@@ -525,6 +546,7 @@ TTL: 300 seconds (5 minutes)
 ```
 
 ### Search Cache
+
 ```
 search:trains:{origin}:{destination}:{date}
 Value: JSON array of trains
@@ -532,6 +554,7 @@ TTL: 3600 seconds (1 hour)
 ```
 
 ### User Session
+
 ```
 session:{userId}:{sessionId}
 Value: JWT refresh token

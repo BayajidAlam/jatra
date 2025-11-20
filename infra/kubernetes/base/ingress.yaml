@@ -10,28 +10,28 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   tls:
-  - hosts:
-    - api.jatra.com
-    - admin.jatra.com
-    secretName: jatra-tls
+    - hosts:
+        - api.jatra.com
+        - admin.jatra.com
+      secretName: jatra-tls
   rules:
-  - host: api.jatra.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: api-gateway
-            port:
-              number: 8080
-  - host: admin.jatra.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: admin-frontend
-            port:
-              number: 3000
+    - host: api.jatra.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+    - host: admin.jatra.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: admin-frontend
+                port:
+                  number: 3000

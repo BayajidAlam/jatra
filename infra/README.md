@@ -58,15 +58,16 @@ docker-compose down -v
 
 ### Access Services
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| PostgreSQL | `localhost:5432` | User: `jatra_user`, Pass: `jatra_password` |
-| Redis | `localhost:6379` | Pass: `jatra_redis_pass` |
-| RabbitMQ Management | `http://localhost:15672` | User: `jatra_user`, Pass: `jatra_password` |
-| PgAdmin (optional) | `http://localhost:5050` | Email: `admin@jatra.com`, Pass: `admin123` |
-| Redis Commander (optional) | `http://localhost:8081` | No auth |
+| Service                    | URL                      | Credentials                                |
+| -------------------------- | ------------------------ | ------------------------------------------ |
+| PostgreSQL                 | `localhost:5432`         | User: `jatra_user`, Pass: `jatra_password` |
+| Redis                      | `localhost:6379`         | Pass: `jatra_redis_pass`                   |
+| RabbitMQ Management        | `http://localhost:15672` | User: `jatra_user`, Pass: `jatra_password` |
+| PgAdmin (optional)         | `http://localhost:5050`  | Email: `admin@jatra.com`, Pass: `admin123` |
+| Redis Commander (optional) | `http://localhost:8081`  | No auth                                    |
 
 **To start optional tools:**
+
 ```bash
 docker-compose --profile tools up -d
 ```
@@ -176,6 +177,7 @@ targetCPUUtilizationPercentage: 70
 ```
 
 **During Eid rush, services auto-scale:**
+
 - API Gateway: 3 → 10 pods
 - Seat Reservation: 5 → 20 pods
 - Booking Service: 3 → 15 pods
@@ -339,6 +341,7 @@ notification.email.send → notification_exchange
 **DO NOT commit secrets to Git!**
 
 **Option 1: Sealed Secrets**
+
 ```bash
 # Install sealed-secrets controller
 kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.24.0/controller.yaml
@@ -354,6 +357,7 @@ kubectl apply -f sealed-secrets.yaml
 ```
 
 **Option 2: External Secrets Operator** (Recommended for AWS/Azure/GCP)
+
 - AWS Secrets Manager
 - Azure Key Vault
 - Google Secret Manager
@@ -409,12 +413,14 @@ pipeline {
 ### Common Issues
 
 **1. Pod not starting**
+
 ```bash
 kubectl describe pod <pod-name> -n jatra
 kubectl logs <pod-name> -n jatra
 ```
 
 **2. Database connection issues**
+
 ```bash
 # Check if PostgreSQL is running
 kubectl get pods -n jatra | grep postgres
@@ -424,12 +430,14 @@ kubectl exec -it <service-pod> -n jatra -- nc -zv postgres-service 5432
 ```
 
 **3. Redis connection issues**
+
 ```bash
 # Test Redis connection
 kubectl exec -it <service-pod> -n jatra -- redis-cli -h redis-service -p 6379 -a jatra_redis_pass ping
 ```
 
 **4. High CPU/Memory**
+
 ```bash
 # Check resource usage
 kubectl top pods -n jatra

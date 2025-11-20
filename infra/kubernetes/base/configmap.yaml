@@ -8,26 +8,26 @@ data:
   POSTGRES_HOST: "postgres-service"
   POSTGRES_PORT: "5432"
   POSTGRES_USER: "jatra_user"
-  
+
   # Redis Configuration
   REDIS_HOST: "redis-service"
   REDIS_PORT: "6379"
-  
+
   # RabbitMQ Configuration
   RABBITMQ_HOST: "rabbitmq-service"
   RABBITMQ_PORT: "5672"
   RABBITMQ_VHOST: "jatra"
-  
+
   # Application Configuration
   NODE_ENV: "production"
   LOG_LEVEL: "info"
-  
+
   # JWT Configuration
   JWT_EXPIRES_IN: "7d"
-  
+
   # SSLCommerz Configuration
   SSLCOMMERZ_IS_SANDBOX: "false"
-  
+
   # SMS Configuration
   SMS_PROVIDER: "SSL_WIRELESS"
   SMS_SENDER_ID: "Jatra"
