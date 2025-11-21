@@ -308,6 +308,7 @@ model Booking {
   journey         Journey       @relation(fields: [journeyId], references: [id])
   reservation     Reservation   @relation(fields: [reservationId], references: [id])
   payment         Payment       @relation(fields: [paymentId], references: [id])
+  ticket          Ticket?
 
   @@index([userId])
   @@index([journeyId])
@@ -336,4 +337,25 @@ enum BookingStatus {
   CANCELLED      // User cancelled
   FAILED         // Payment or process failed
   EXPIRED        // Timeout during process
+}
+
+// Ticket Service Models
+model Ticket {
+  id              String    @id @default(uuid())
+  bookingId       String    @unique
+  ticketNumber    String    @unique @db.VarChar(50) // Format: TKT-YYYYMMDD-XXXXX
+  qrCode          String    @db.Text // Base64 encoded QR code
+  pdfUrl          String?   @db.VarChar(500) // URL to PDF file
+  isValidated     Boolean   @default(false)
+  validatedAt     DateTime?
+  validatedBy     String?   @db.VarChar(255) // Staff ID or system
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  booking         Booking   @relation(fields: [bookingId], references: [id])
+
+  @@index([bookingId])
+  @@index([ticketNumber])
+  @@index([isValidated])
+  @@map("tickets")
 }
