@@ -25,6 +25,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
   bookings      Booking[]
+  notifications Notification[]
 
   @@map("users")
 }
