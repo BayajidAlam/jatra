@@ -1,9 +1,0 @@
-import { defineConfig } from "prisma/config";
-
-export default defineConfig({
-  datasource: {
-    url:
-      process.env.DATABASE_URL ||
-      "postgresql://jatra_user:jatra_password@localhost:5432/jatra_db?schema=public",
-  },
-});
