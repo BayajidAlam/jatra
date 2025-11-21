@@ -1,11 +1,17 @@
-import { IsEnum, IsString, IsNumber, IsOptional, IsObject } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { NotificationType, NotificationChannel } from '@prisma/client';
+import {
+  IsEnum,
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsObject,
+} from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { NotificationType, NotificationChannel } from "@prisma/client";
 
 export class CreateNotificationDto {
-  @ApiProperty()
-  @IsNumber()
-  userId: number;
+  @ApiProperty({ description: 'User UUID' })
+  @IsUUID()
+  userId: string;
 
   @ApiProperty({ enum: NotificationType })
   @IsEnum(NotificationType)
@@ -19,7 +25,10 @@ export class CreateNotificationDto {
   @IsString()
   content: string;
 
-  @ApiProperty({ enum: NotificationChannel, default: NotificationChannel.EMAIL })
+  @ApiProperty({
+    enum: NotificationChannel,
+    default: NotificationChannel.EMAIL,
+  })
   @IsEnum(NotificationChannel)
   @IsOptional()
   channel?: NotificationChannel;

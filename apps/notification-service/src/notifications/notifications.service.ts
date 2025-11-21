@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
-import { CreateNotificationDto } from './dto/create-notification.dto';
-import { QueryNotificationsDto } from './dto/query-notifications.dto';
-import { NotificationStatus } from '@prisma/client';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../common/prisma.service";
+import { CreateNotificationDto } from "./dto/create-notification.dto";
+import { QueryNotificationsDto } from "./dto/query-notifications.dto";
+import { NotificationStatus } from "@prisma/client";
 
 @Injectable()
 export class NotificationsService {
@@ -31,7 +31,7 @@ export class NotificationsService {
     });
   }
 
-  async getNotifications(userId: number, query: QueryNotificationsDto) {
+  async getNotifications(userId: string, query: QueryNotificationsDto) {
     const { type, status, fromDate, toDate, page = 1, limit = 20 } = query;
     const skip = (page - 1) * limit;
 
@@ -50,7 +50,7 @@ export class NotificationsService {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         include: {
           user: {
             select: {
@@ -100,7 +100,7 @@ export class NotificationsService {
     id: number,
     status: NotificationStatus,
     error: string | null = null,
-    retryCount?: number,
+    retryCount?: number
   ) {
     const data: any = { status, error };
 
@@ -118,12 +118,18 @@ export class NotificationsService {
     });
   }
 
-  async getUserNotificationStats(userId: number) {
+  async getUserNotificationStats(userId: string) {
     const [total, sent, failed, pending] = await Promise.all([
       this.prisma.notification.count({ where: { userId } }),
-      this.prisma.notification.count({ where: { userId, status: NotificationStatus.SENT } }),
-      this.prisma.notification.count({ where: { userId, status: NotificationStatus.FAILED } }),
-      this.prisma.notification.count({ where: { userId, status: NotificationStatus.PENDING } }),
+      this.prisma.notification.count({
+        where: { userId, status: NotificationStatus.SENT },
+      }),
+      this.prisma.notification.count({
+        where: { userId, status: NotificationStatus.FAILED },
+      }),
+      this.prisma.notification.count({
+        where: { userId, status: NotificationStatus.PENDING },
+      }),
     ]);
 
     return {

@@ -1,7 +1,13 @@
-import { IsEnum, IsOptional, IsDateString, IsNumber, Min } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { NotificationType, NotificationStatus } from '@prisma/client';
-import { Type } from 'class-transformer';
+import {
+  IsEnum,
+  IsOptional,
+  IsDateString,
+  IsNumber,
+  Min,
+} from "class-validator";
+import { ApiPropertyOptional } from "@nestjs/swagger";
+import { NotificationType, NotificationStatus } from "@prisma/client";
+import { Type } from "class-transformer";
 
 export class QueryNotificationsDto {
   @ApiPropertyOptional({ enum: NotificationType })

@@ -23,17 +23,20 @@ Email notification service with RabbitMQ consumer integration for the Jatra Rail
 RabbitMQ is required for the service to consume booking events.
 
 **Start with Docker Compose:**
+
 ```bash
 docker compose up -d rabbitmq
 ```
 
 **Access RabbitMQ Management UI:**
+
 - URL: http://localhost:15672
 - Username: `jatra_user`
 - Password: `jatra_password`
 - VHost: `/jatra`
 
 **Verify Connection:**
+
 - Queue: `notification_queue`
 - Exchange: `notifications` (type: topic)
 - Routing Key: `booking.#`
@@ -46,6 +49,7 @@ Email sending is **optional**. If SMTP is not configured, notifications will be 
 
 1. Enable 2-Factor Authentication on your Gmail account
 2. Generate an App Password:
+
    - Go to: https://myaccount.google.com/apppasswords
    - Select "Mail" and your device
    - Copy the 16-character password
@@ -57,6 +61,7 @@ Email sending is **optional**. If SMTP is not configured, notifications will be 
    ```
 
 **Other SMTP Providers:**
+
 ```env
 # SendGrid
 SMTP_HOST=smtp.sendgrid.net
@@ -124,6 +129,7 @@ RETRY_DELAY_MS=5000
 ## API Endpoints
 
 ### Create Notification (Manual)
+
 ```http
 POST /notifications
 Content-Type: application/json
@@ -138,21 +144,25 @@ Content-Type: application/json
 ```
 
 ### Get User Notifications
+
 ```http
 GET /notifications/user/:userId?page=1&limit=20&type=BOOKING_CONFIRMED&status=SENT
 ```
 
 ### Get Notification Statistics
+
 ```http
 GET /notifications/user/:userId/stats
 ```
 
 ### Get Single Notification
+
 ```http
 GET /notifications/:id
 ```
 
 ### Resend Failed Notification
+
 ```http
 POST /notifications/:id/resend
 ```
@@ -189,6 +199,7 @@ Templates are located in `src/templates/`:
 ### Template Variables
 
 **booking-confirmed.hbs:**
+
 ```javascript
 {
   userName: string,
@@ -206,9 +217,10 @@ Templates are located in `src/templates/`:
 The service consumes events from the `notifications` exchange with routing pattern `booking.#`.
 
 **Event Structure:**
+
 ```typescript
 interface BookingEvent {
-  type: 'BOOKING_CONFIRMED' | 'BOOKING_CANCELLED' | 'PAYMENT_FAILED';
+  type: "BOOKING_CONFIRMED" | "BOOKING_CANCELLED" | "PAYMENT_FAILED";
   bookingId: number;
   userId: number;
   userEmail: string;
@@ -226,10 +238,11 @@ interface BookingEvent {
 ```
 
 **Publishing Events** (from other services):
+
 ```typescript
 // In booking-service
 await rabbitMQService.publishBookingEvent({
-  type: 'BOOKING_CONFIRMED',
+  type: "BOOKING_CONFIRMED",
   bookingId: booking.id,
   userId: user.id,
   userEmail: user.email,
@@ -239,10 +252,10 @@ await rabbitMQService.publishBookingEvent({
     journeyDate: journey.departureTime,
     trainName: train.name,
     route: `${origin.name} → ${destination.name}`,
-    seatNumbers: booking.seats.map(s => s.seatNumber),
-    totalAmount: booking.totalAmount
+    seatNumbers: booking.seats.map((s) => s.seatNumber),
+    totalAmount: booking.totalAmount,
   },
-  timestamp: new Date().toISOString()
+  timestamp: new Date().toISOString(),
 });
 ```
 
@@ -263,6 +276,7 @@ You can test the service without configuring SMTP:
 **Error:** `Error: connect ECONNREFUSED 127.0.0.1:5672`
 
 **Solution:**
+
 ```bash
 # Start RabbitMQ
 docker compose up -d rabbitmq
@@ -279,6 +293,7 @@ docker compose logs rabbitmq
 **Error:** `Invalid login: 535-5.7.8 Username and Password not accepted`
 
 **Solutions:**
+
 1. **Gmail**: Use App Password, not your account password
 2. **2FA**: Enable 2-Factor Authentication first
 3. **Less Secure Apps**: Disable this setting (not recommended)
@@ -287,12 +302,14 @@ docker compose logs rabbitmq
 ### Notifications Not Being Consumed
 
 **Check:**
+
 1. RabbitMQ is running
 2. Exchange `notifications` exists
 3. Queue `notification_queue` is bound to exchange
 4. Booking service is publishing events
 
 **Debug:**
+
 ```bash
 # Check RabbitMQ logs
 docker compose logs rabbitmq
@@ -304,16 +321,19 @@ docker compose logs rabbitmq
 ## Best Practices
 
 1. **SMTP Configuration**
+
    - Use App Passwords, never account passwords
    - Use environment-specific credentials
    - Keep credentials in `.env`, never commit
 
 2. **Error Handling**
+
    - Service continues running even if SMTP fails
    - Failed notifications are tracked in database
    - Use resend endpoint to retry failed notifications
 
 3. **Monitoring**
+
    - Check notification statistics regularly
    - Monitor failed notification count
    - Review RabbitMQ queue length

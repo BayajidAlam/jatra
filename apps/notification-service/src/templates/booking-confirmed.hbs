@@ -1,119 +1,76 @@
-<!DOCTYPE html>
 <html>
-<head>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 30px;
-      text-align: center;
-      border-radius: 10px 10px 0 0;
-    }
-    .content {
-      background: #f9f9f9;
-      padding: 30px;
-      border: 1px solid #ddd;
-    }
-    .booking-details {
-      background: white;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .detail-label {
-      font-weight: bold;
-      color: #666;
-    }
-    .detail-value {
-      color: #333;
-    }
-    .footer {
-      text-align: center;
-      padding: 20px;
-      color: #666;
-      font-size: 12px;
-      background: #f9f9f9;
-      border-radius: 0 0 10px 10px;
-      border: 1px solid #ddd;
-      border-top: none;
-    }
-    .success-badge {
-      display: inline-block;
-      background: #10b981;
-      color: white;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 14px;
-      margin: 10px 0;
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1>🎉 Booking Confirmed!</h1>
-    <div class="success-badge">✓ Successfully Booked</div>
-  </div>
-  
-  <div class="content">
-    <p>Dear {{userName}},</p>
-    
-    <p>Your train booking has been confirmed successfully. Here are your booking details:</p>
-    
-    <div class="booking-details">
-      <div class="detail-row">
-        <span class="detail-label">Booking Number:</span>
-        <span class="detail-value"><strong>{{bookingNumber}}</strong></span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Train:</span>
-        <span class="detail-value">{{trainName}}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Route:</span>
-        <span class="detail-value">{{route}}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Journey Date:</span>
-        <span class="detail-value">{{journeyDate}}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Seat(s):</span>
-        <span class="detail-value">{{#each seatNumbers}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Total Amount:</span>
-        <span class="detail-value"><strong>৳{{totalAmount}}</strong></span>
-      </div>
+  <head>
+    <style>
+      body { font-family: Arial, sans-serif; line-height: 1.6; color: #333;
+      max-width: 600px; margin: 0 auto; padding: 20px; } .header { background:
+      linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding:
+      30px; text-align: center; border-radius: 10px 10px 0 0; } .content {
+      background: #f9f9f9; padding: 30px; border: 1px solid #ddd; }
+      .booking-details { background: white; padding: 20px; margin: 20px 0;
+      border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); } .detail-row {
+      display: flex; justify-content: space-between; padding: 10px 0;
+      border-bottom: 1px solid #eee; } .detail-label { font-weight: bold; color:
+      #666; } .detail-value { color: #333; } .footer { text-align: center;
+      padding: 20px; color: #666; font-size: 12px; background: #f9f9f9;
+      border-radius: 0 0 10px 10px; border: 1px solid #ddd; border-top: none; }
+      .success-badge { display: inline-block; background: #10b981; color: white;
+      padding: 5px 15px; border-radius: 20px; font-size: 14px; margin: 10px 0; }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🎉 Booking Confirmed!</h1>
+      <div class="success-badge">✓ Successfully Booked</div>
     </div>
-    
-    <p><strong>What's Next?</strong></p>
-    <ul>
-      <li>Your ticket will be generated shortly and available in your account</li>
-      <li>Please arrive at the station at least 30 minutes before departure</li>
-      <li>Carry a valid ID proof along with your ticket</li>
-    </ul>
-    
-    <p>Thank you for choosing Jatra Railway!</p>
-  </div>
-  
-  <div class="footer">
-    <p>This is an automated email. Please do not reply to this message.</p>
-    <p>&copy; 2024 Jatra Railway. All rights reserved.</p>
-  </div>
-</body>
+
+    <div class="content">
+      <p>Dear {{userName}},</p>
+
+      <p>Your train booking has been confirmed successfully. Here are your
+        booking details:</p>
+
+      <div class="booking-details">
+        <div class="detail-row">
+          <span class="detail-label">Booking Number:</span>
+          <span class="detail-value"><strong>{{bookingNumber}}</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Train:</span>
+          <span class="detail-value">{{trainName}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Route:</span>
+          <span class="detail-value">{{route}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Journey Date:</span>
+          <span class="detail-value">{{journeyDate}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Seat(s):</span>
+          <span class="detail-value">{{#each seatNumbers}}{{this}}{{#unless
+                @last
+              }}, {{/unless}}{{/each}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Total Amount:</span>
+          <span class="detail-value"><strong>৳{{totalAmount}}</strong></span>
+        </div>
+      </div>
+
+      <p><strong>What's Next?</strong></p>
+      <ul>
+        <li>Your ticket will be generated shortly and available in your account</li>
+        <li>Please arrive at the station at least 30 minutes before departure</li>
+        <li>Carry a valid ID proof along with your ticket</li>
+      </ul>
+
+      <p>Thank you for choosing Jatra Railway!</p>
+    </div>
+
+    <div class="footer">
+      <p>This is an automated email. Please do not reply to this message.</p>
+      <p>&copy; 2024 Jatra Railway. All rights reserved.</p>
+    </div>
+  </body>
 </html>
