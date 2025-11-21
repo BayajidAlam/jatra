@@ -1,0 +1,32 @@
+{
+  "name": "schedule-service",
+  "version": "1.0.0",
+  "description": "Jatra Railway Schedule and Search Service",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "build": "nest build"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.3.0",
+    "@nestjs/core": "^10.3.0",
+    "@nestjs/platform-express": "^10.3.0",
+    "@nestjs/config": "^3.1.1",
+    "@nestjs/swagger": "^7.1.17",
+    "@prisma/client": "^7.0.0",
+    "class-validator": "^0.14.0",
+    "class-transformer": "^0.5.1",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.2.1",
+    "@nestjs/schematics": "^10.0.3",
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3",
+    "prisma": "^7.0.0"
+  }
+}
