@@ -238,3 +238,46 @@ enum ReservationStatus {
   EXPIRED     // Lock expired without payment
   RELEASED    // Manually released
 }
+
+// Payment Service Models
+model Payment {
+  id                String        @id @default(uuid())
+  reservationId     String        @unique
+  userId            String
+  amount            Float         @db.DoublePrecision
+  currency          String        @default("BDT") @db.VarChar(3)
+  paymentMethod     PaymentMethod
+  status            PaymentStatus @default(PENDING)
+  transactionId     String?       @unique @db.VarChar(100)
+  gatewayResponse   Json?         // Store full gateway response
+  failureReason     String?       @db.VarChar(500)
+  paidAt            DateTime?
+  refundedAt        DateTime?
+  refundAmount      Float?        @db.DoublePrecision
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([reservationId])
+  @@index([transactionId])
+  @@index([status])
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  MOBILE_BANKING    // bKash, Nagad, Rocket
+  NET_BANKING
+  WALLET
+}
+
+enum PaymentStatus {
+  PENDING           // Payment initiated
+  PROCESSING        // Payment in progress
+  COMPLETED         // Payment successful
+  FAILED            // Payment failed
+  REFUNDED          // Payment refunded
+  PARTIALLY_REFUNDED // Partial refund
+  CANCELLED         // Payment cancelled
+}

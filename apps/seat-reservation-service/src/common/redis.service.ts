@@ -47,7 +47,8 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
    * Check if a lock exists and return its value
    */
   async checkLock(key: string): Promise<string | null> {
-    return await this.client.get(key);
+    const result = await this.client.get(key);
+    return result as string | null;
   }
 
   /**
@@ -82,7 +83,8 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
    */
   async mGet(keys: string[]): Promise<(string | null)[]> {
     if (keys.length === 0) return [];
-    return await this.client.mGet(keys);
+    const result = await this.client.mGet(keys);
+    return result as (string | null)[];
   }
 
   /**
