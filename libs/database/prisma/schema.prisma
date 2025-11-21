@@ -309,6 +309,7 @@ model Booking {
   journey         Journey       @relation(fields: [journeyId], references: [id])
   reservation     Reservation   @relation(fields: [reservationId], references: [id])
   payment         Payment       @relation(fields: [paymentId], references: [id])
+  ticket          Ticket?
 
   @@index([userId])
   @@index([journeyId])
@@ -339,48 +340,23 @@ enum BookingStatus {
   EXPIRED        // Timeout during process
 }
 
-// Notification Service Models
-model Notification {
-  id          String              @id @default(uuid())
-  userId      String
-  type        NotificationType
-  channel     NotificationChannel @default(EMAIL)
-  subject     String              @db.VarChar(255)
-  content     String              @db.Text
-  status      NotificationStatus  @default(PENDING)
-  metadata    Json?               // Store booking details, error info, etc.
-  sentAt      DateTime?
-  error       String?             @db.Text
-  retryCount  Int                 @default(0)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+// Ticket Service Models
+model Ticket {
+  id              String    @id @default(uuid())
+  bookingId       String    @unique
+  ticketNumber    String    @unique @db.VarChar(50) // Format: TKT-YYYYMMDD-XXXXX
+  qrCode          String    @db.Text // Base64 encoded QR code
+  pdfUrl          String?   @db.VarChar(500) // URL to PDF file
+  isValidated     Boolean   @default(false)
+  validatedAt     DateTime?
+  validatedBy     String?   @db.VarChar(255) // Staff ID or system
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  user        User                @relation(fields: [userId], references: [id])
+  booking         Booking   @relation(fields: [bookingId], references: [id])
 
-  @@index([userId])
-  @@index([type])
-  @@index([status])
-  @@index([createdAt])
-  @@map("notifications")
-}
-
-enum NotificationType {
-  BOOKING_CONFIRMED
-  BOOKING_CANCELLED
-  PAYMENT_FAILED
-  JOURNEY_REMINDER
-  TICKET_GENERATED
-}
-
-enum NotificationChannel {
-  EMAIL
-  SMS
-  PUSH
-}
-
-enum NotificationStatus {
-  PENDING
-  SENT
-  FAILED
-  RETRYING
+  @@index([bookingId])
+  @@index([ticketNumber])
+  @@index([isValidated])
+  @@map("tickets")
 }
