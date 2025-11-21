@@ -25,6 +25,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
   bookings      Booking[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -336,4 +337,50 @@ enum BookingStatus {
   CANCELLED      // User cancelled
   FAILED         // Payment or process failed
   EXPIRED        // Timeout during process
+}
+
+// Notification Service Models
+model Notification {
+  id          String              @id @default(uuid())
+  userId      String
+  type        NotificationType
+  channel     NotificationChannel @default(EMAIL)
+  subject     String              @db.VarChar(255)
+  content     String              @db.Text
+  status      NotificationStatus  @default(PENDING)
+  metadata    Json?               // Store booking details, error info, etc.
+  sentAt      DateTime?
+  error       String?             @db.Text
+  retryCount  Int                 @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  user        User                @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  PAYMENT_FAILED
+  JOURNEY_REMINDER
+  TICKET_GENERATED
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  RETRYING
 }
