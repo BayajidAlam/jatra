@@ -13,6 +13,7 @@ export interface Notification {
 
 export enum NotificationType {
   OTP = "OTP",
+  BOOKING_CONFIRMED = "BOOKING_CONFIRMED",
   BOOKING_CONFIRMATION = "BOOKING_CONFIRMATION",
   PAYMENT_SUCCESS = "PAYMENT_SUCCESS",
   PAYMENT_FAILED = "PAYMENT_FAILED",
@@ -32,6 +33,7 @@ export enum NotificationStatus {
   SENT = "SENT",
   FAILED = "FAILED",
   RETRY = "RETRY",
+  RETRYING = "RETRYING",
 }
 
 export interface OTPNotification {

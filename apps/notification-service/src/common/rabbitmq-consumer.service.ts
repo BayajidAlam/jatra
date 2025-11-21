@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit, Logger } from "@nestjs/common";
 import * as amqp from "amqplib";
 import { EmailService } from "../email/email.service";
 import { NotificationsService } from "../notifications/notifications.service";
-import { NotificationType } from "@prisma/client";
+import { NotificationType } from "@jatra/common/types";
 
 interface BookingEvent {
   type: "BOOKING_CONFIRMED" | "BOOKING_CANCELLED" | "PAYMENT_FAILED";

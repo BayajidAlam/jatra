@@ -6,7 +6,7 @@ import {
   IsObject,
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
-import { NotificationType, NotificationChannel } from "@prisma/client";
+import { NotificationType, NotificationChannel } from "@jatra/common/types";
 
 export class CreateNotificationDto {
   @ApiProperty({ description: 'User UUID' })

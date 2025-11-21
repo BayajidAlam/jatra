@@ -4,7 +4,7 @@ import * as handlebars from "handlebars";
 import * as fs from "fs";
 import * as path from "path";
 import { NotificationsService } from "../notifications/notifications.service";
-import { NotificationStatus } from "@prisma/client";
+import { NotificationStatus } from "@jatra/common/types";
 
 @Injectable()
 export class EmailService {

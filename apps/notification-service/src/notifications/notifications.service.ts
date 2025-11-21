@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../common/prisma.service";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { QueryNotificationsDto } from "./dto/query-notifications.dto";
-import { NotificationStatus } from "@prisma/client";
+import { NotificationStatus } from "@jatra/common/types";
 
 @Injectable()
 export class NotificationsService {

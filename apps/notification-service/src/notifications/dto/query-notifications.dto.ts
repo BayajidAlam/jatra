@@ -6,7 +6,7 @@ import {
   Min,
 } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { NotificationType, NotificationStatus } from "@prisma/client";
+import { NotificationType, NotificationStatus } from "@jatra/common/types";
 import { Type } from "class-transformer";
 
 export class QueryNotificationsDto {
