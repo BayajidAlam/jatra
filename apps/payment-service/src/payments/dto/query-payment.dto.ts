@@ -1,25 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsEnum, IsInt, Min, IsIn } from 'class-validator';
-
-export enum PaymentStatusQuery {
-  PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  REFUNDED = 'REFUNDED',
-  PARTIALLY_REFUNDED = 'PARTIALLY_REFUNDED',
-  CANCELLED = 'CANCELLED',
-}
+import { PaymentStatus } from '@jatra/common/types';
 
 export class QueryPaymentDto {
   @ApiPropertyOptional({
     description: 'Filter by payment status',
-    enum: PaymentStatusQuery,
+    enum: PaymentStatus,
     example: 'COMPLETED',
   })
   @IsOptional()
-  @IsEnum(PaymentStatusQuery)
-  status?: PaymentStatusQuery;
+  @IsEnum(PaymentStatus)
+  status?: PaymentStatus;
 
   @ApiPropertyOptional({
     description: 'Page number',

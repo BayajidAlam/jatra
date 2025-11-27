@@ -1,14 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsNumber, IsEnum, IsOptional, IsUUID, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-
-export enum PaymentMethodDto {
-  CREDIT_CARD = 'CREDIT_CARD',
-  DEBIT_CARD = 'DEBIT_CARD',
-  MOBILE_BANKING = 'MOBILE_BANKING',
-  NET_BANKING = 'NET_BANKING',
-  WALLET = 'WALLET',
-}
+import { PaymentMethod } from '@jatra/common/types';
 
 export class CardDetailsDto {
   @ApiProperty({ example: '4111111111111111', description: 'Card number (will be masked)' })
@@ -60,11 +53,11 @@ export class InitiatePaymentDto {
 
   @ApiProperty({
     description: 'Payment method',
-    enum: PaymentMethodDto,
-    example: PaymentMethodDto.MOBILE_BANKING,
+    enum: PaymentMethod,
+    example: PaymentMethod.MOBILE_BANKING,
   })
-  @IsEnum(PaymentMethodDto)
-  paymentMethod: PaymentMethodDto;
+  @IsEnum(PaymentMethod)
+  paymentMethod: PaymentMethod;
 
   @ApiPropertyOptional({
     description: 'Card details (required for card payments)',
