@@ -1,12 +1,11 @@
 import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { PrismaService } from '../common/prisma.service';
 import { RabbitMQService } from '../common/rabbitmq.service';
+import { HttpRetryService } from '../common/http-retry.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { ConfirmBookingDto } from './dto/confirm-booking.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
 import { QueryBookingsDto } from './dto/query-bookings.dto';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class BookingsService {
@@ -16,7 +15,7 @@ export class BookingsService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly httpService: HttpService,
+    private readonly httpRetry: HttpRetryService,
     private readonly rabbitMQ: RabbitMQService,
   ) {}
 
@@ -30,32 +29,38 @@ export class BookingsService {
     let paymentId: string;
 
     try {
-      // Step 1: Lock seats in reservation service
-      const lockResponse = await firstValueFrom(
-        this.httpService.post(`${this.seatReservationUrl}/locks/acquire`, {
+      // Step 1: Lock seats in reservation service with retry
+      const lockResponse = await this.httpRetry.post<any>(
+        `${this.seatReservationUrl}/locks/acquire`,
+        {
           userId: dto.userId,
           journeyId: dto.journeyId,
           seatIds: dto.seatIds,
           fromStationId: dto.fromStationId,
           toStationId: dto.toStationId,
-        })
+        },
+        'Seat Reservation Service',
+        { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 15000 }
       );
 
-      reservationId = lockResponse.data.lockId || lockResponse.data.id;
+      reservationId = lockResponse.lockId || lockResponse.id;
       this.logger.log(`✅ Seats locked: ${reservationId}`);
 
-      // Step 2: Initiate payment
-      const paymentResponse = await firstValueFrom(
-        this.httpService.post(`${this.paymentUrl}/payments/initiate`, {
+      // Step 2: Initiate payment with retry
+      const paymentResponse = await this.httpRetry.post<any>(
+        `${this.paymentUrl}/payments/initiate`,
+        {
           userId: dto.userId,
           reservationId,
           amount: dto.totalAmount,
           paymentMethod: dto.paymentMethod,
           ...dto.paymentDetails,
-        })
+        },
+        'Payment Service',
+        { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 20000 }
       );
 
-      paymentId = paymentResponse.data.id;
+      paymentId = paymentResponse.id;
       this.logger.log(`✅ Payment initiated: ${paymentId}`);
 
       // Step 3: Create booking record
@@ -111,11 +116,14 @@ export class BookingsService {
       // Rollback: Release seats if payment initiation failed
       if (reservationId && !paymentId) {
         try {
-          await firstValueFrom(
-            this.httpService.post(`${this.seatReservationUrl}/locks/release`, {
+          await this.httpRetry.post(
+            `${this.seatReservationUrl}/locks/release`,
+            {
               lockId: reservationId,
               userId: dto.userId,
-            })
+            },
+            'Seat Reservation Service',
+            { maxRetries: 2, initialDelayMs: 500, timeoutMs: 10000 }
           );
           this.logger.log('🔄 Seats released after payment failure');
         } catch (releaseError) {
@@ -158,20 +166,26 @@ export class BookingsService {
     }
 
     try {
-      // Step 1: Confirm payment in payment service
-      await firstValueFrom(
-        this.httpService.post(`${this.paymentUrl}/payments/confirm`, {
+      // Step 1: Confirm payment in payment service with retry
+      await this.httpRetry.post(
+        `${this.paymentUrl}/payments/confirm`,
+        {
           paymentId: dto.paymentId,
           transactionId: dto.transactionId,
-        })
+        },
+        'Payment Service',
+        { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 20000 }
       );
 
-      // Step 2: Confirm reservation
-      await firstValueFrom(
-        this.httpService.post(`${this.seatReservationUrl}/reservations/confirm`, {
+      // Step 2: Confirm reservation with retry
+      await this.httpRetry.post(
+        `${this.seatReservationUrl}/reservations/confirm`,
+        {
           lockId: booking.reservationId,
           userId: booking.userId,
-        })
+        },
+        'Seat Reservation Service',
+        { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 15000 }
       );
 
       // Step 3: Update booking status
@@ -378,27 +392,36 @@ export class BookingsService {
     }
 
     try {
-      // Step 1: Cancel/Refund payment if completed
+      // Step 1: Cancel/Refund payment if completed with retry
       if (booking.payment.status === 'COMPLETED') {
-        await firstValueFrom(
-          this.httpService.post(`${this.paymentUrl}/payments/${booking.paymentId}/refund`, {
+        await this.httpRetry.post(
+          `${this.paymentUrl}/payments/${booking.paymentId}/refund`,
+          {
             amount: booking.totalAmount,
             reason: dto.reason,
-          })
+          },
+          'Payment Service',
+          { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 20000 }
         );
         this.logger.log('✅ Payment refunded');
       } else {
-        await firstValueFrom(
-          this.httpService.post(`${this.paymentUrl}/payments/${booking.paymentId}/cancel`)
+        await this.httpRetry.post(
+          `${this.paymentUrl}/payments/${booking.paymentId}/cancel`,
+          {},
+          'Payment Service',
+          { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 15000 }
         );
         this.logger.log('✅ Payment cancelled');
       }
 
-      // Step 2: Cancel reservation
-      await firstValueFrom(
-        this.httpService.post(`${this.seatReservationUrl}/reservations/${booking.reservationId}/cancel`, {
+      // Step 2: Cancel reservation with retry
+      await this.httpRetry.post(
+        `${this.seatReservationUrl}/reservations/${booking.reservationId}/cancel`,
+        {
           userId: booking.userId,
-        })
+        },
+        'Seat Reservation Service',
+        { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 15000 }
       );
       this.logger.log('✅ Reservation cancelled');
 
