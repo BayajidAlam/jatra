@@ -4,3 +4,4 @@ export * from "./lib/notification.type";
 export * from "./lib/train.type";
 export * from "./lib/reservation.type";
 export * from "./lib/payment.type";
+export * from "./lib/booking.type";

@@ -1,16 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsIn } from 'class-validator';
+import { IsString, IsOptional, IsIn, IsEnum } from 'class-validator';
+import { BookingStatus } from '@jatra/common/types';
 
 export class QueryBookingsDto {
   @ApiPropertyOptional({ 
     example: 'CONFIRMED', 
     description: 'Filter by booking status',
-    enum: ['DRAFT', 'SEATS_LOCKED', 'PAYMENT_PENDING', 'CONFIRMED', 'CANCELLED', 'FAILED', 'EXPIRED']
+    enum: BookingStatus
   })
   @IsOptional()
-  @IsString()
-  @IsIn(['DRAFT', 'SEATS_LOCKED', 'PAYMENT_PENDING', 'CONFIRMED', 'CANCELLED', 'FAILED', 'EXPIRED'])
-  status?: string;
+  @IsEnum(BookingStatus)
+  status?: BookingStatus;
 
   @ApiPropertyOptional({ example: '1', description: 'Page number', default: '1' })
   @IsOptional()
