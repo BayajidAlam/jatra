@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import * as amqp from 'amqplib';
-import { randomBytes } from 'crypto';
+import { randomUUID } from 'crypto';
 import { 
   DomainEvent, 
   Exchanges, 
@@ -37,7 +37,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   }
 
   private generateEventId(): string {
-    return `${Date.now()}-${randomBytes(8).toString('hex')}`;
+    return randomUUID();
   }
 
   async publishEvent(event: DomainEvent, exchange: string): Promise<void> {
