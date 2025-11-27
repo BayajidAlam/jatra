@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEnum, IsBoolean, IsOptional } from 'class-validator';
-
-enum TrainType {
-  INTERCITY = 'INTERCITY',
-  MAIL_EXPRESS = 'MAIL_EXPRESS',
-  COMMUTER = 'COMMUTER',
-  LOCAL = 'LOCAL',
-}
+import { TrainType } from '@jatra/common/types';
 
 export class CreateTrainDto {
   @ApiProperty({ example: 'SUBORNO-EXPRESS-701', description: 'Unique train number' })

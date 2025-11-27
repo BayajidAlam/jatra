@@ -1,0 +1,19 @@
+export enum TrainType {
+  INTERCITY = 'INTERCITY',
+  MAIL_EXPRESS = 'MAIL_EXPRESS',
+  COMMUTER = 'COMMUTER',
+  LOCAL = 'LOCAL',
+}
+
+export enum CoachType {
+  AC_BERTH = 'AC_BERTH',
+  AC_SEAT = 'AC_SEAT',
+  AC_CHAIR = 'AC_CHAIR',
+  SNIGDHA = 'SNIGDHA',
+  F_BERTH = 'F_BERTH',
+  F_SEAT = 'F_SEAT',
+  F_CHAIR = 'F_CHAIR',
+  S_CHAIR = 'S_CHAIR',
+  SHOVAN = 'SHOVAN',
+  SHULOV = 'SHULOV',
+}
