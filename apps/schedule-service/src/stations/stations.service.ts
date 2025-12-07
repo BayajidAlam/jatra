@@ -1,15 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import { CreateStationDto } from './dto/create-station.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class StationsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createStationDto: CreateStationDto) {
-    return this.prisma.station.create({
-      data: createStationDto,
+    // Check if station code already exists
+    const existingStation = await this.prisma.station.findUnique({
+      where: { code: createStationDto.code },
     });
+
+    if (existingStation) {
+      throw new ConflictException(
+        `Station with code ${createStationDto.code} already exists`
+      );
+    }
+
+    try {
+      return await this.prisma.station.create({
+        data: createStationDto,
+      });
+    } catch (error) {
+      // Handle any other Prisma unique constraint errors
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new ConflictException(
+            `Station with this ${error.meta?.target} already exists`
+          );
+        }
+      }
+      throw error;
+    }
   }
 
   async findAll() {

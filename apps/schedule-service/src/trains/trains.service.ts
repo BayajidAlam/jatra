@@ -1,15 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
-import { CreateTrainDto } from './dto/create-train.dto';
+import { Injectable, ConflictException } from "@nestjs/common";
+import { PrismaService } from "../common/prisma.service";
+import { CreateTrainDto } from "./dto/create-train.dto";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class TrainsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createTrainDto: CreateTrainDto) {
-    return this.prisma.train.create({
-      data: createTrainDto,
+    // Check if train number already exists
+    const existingTrain = await this.prisma.train.findUnique({
+      where: { trainNumber: createTrainDto.trainNumber },
     });
+
+    if (existingTrain) {
+      throw new ConflictException(
+        `Train with number ${createTrainDto.trainNumber} already exists`
+      );
+    }
+
+    try {
+      return await this.prisma.train.create({
+        data: createTrainDto,
+      });
+    } catch (error) {
+      // Handle any other Prisma unique constraint errors
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
+          throw new ConflictException(
+            `Train with this ${error.meta?.target} already exists`
+          );
+        }
+      }
+      throw error;
+    }
   }
 
   async findAll() {
@@ -22,7 +46,7 @@ export class TrainsService {
           },
         },
       },
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
   }
 

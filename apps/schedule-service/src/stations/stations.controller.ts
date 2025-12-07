@@ -12,6 +12,7 @@ export class StationsController {
   @ApiOperation({ summary: 'Create a new station' })
   @ApiResponse({ status: 201, description: 'Station created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 409, description: 'Station code already exists' })
   create(@Body() createStationDto: CreateStationDto) {
     return this.stationsService.create(createStationDto);
   }

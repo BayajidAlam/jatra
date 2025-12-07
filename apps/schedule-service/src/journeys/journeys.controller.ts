@@ -1,12 +1,23 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { JourneysService } from './journeys.service';
 import { SearchJourneysDto } from './dto/search-journeys.dto';
+import { CreateJourneyDto } from './dto/create-journey.dto';
 
 @ApiTags('journeys')
 @Controller('journeys')
 export class JourneysController {
   constructor(private readonly journeysService: JourneysService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new journey' })
+  @ApiResponse({ status: 201, description: 'Journey created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request - invalid data or departure time after arrival time' })
+  @ApiResponse({ status: 404, description: 'Train or route not found' })
+  @ApiResponse({ status: 409, description: 'Journey already exists for this train, route, and date' })
+  create(@Body() createJourneyDto: CreateJourneyDto) {
+    return this.journeysService.create(createJourneyDto);
+  }
 
   @Get('search')
   @ApiOperation({ summary: 'Search for available train journeys' })
