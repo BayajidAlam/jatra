@@ -44,7 +44,7 @@ func main() {
 	log.Println("🔐 JWT authentication enabled")
 	log.Println("⚡ Rate limiting enabled")
 	log.Println("🌐 CORS enabled")
-	
+
 	if err := router.Run(":" + config.AppConfig.Port); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

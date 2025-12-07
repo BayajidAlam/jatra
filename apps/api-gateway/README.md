@@ -86,11 +86,13 @@ RATE_LIMIT_WINDOW_SECONDS=60
 ### Public Routes (No Authentication)
 
 #### Auth
+
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 - `POST /api/auth/refresh-token` - Refresh access token
 
 #### Schedule (Read)
+
 - `GET /api/trains` - List all trains
 - `GET /api/trains/:id` - Get train details
 - `GET /api/stations` - List all stations
@@ -98,16 +100,19 @@ RATE_LIMIT_WINDOW_SECONDS=60
 - `GET /api/journeys/search` - Search journeys
 
 #### Payment Webhook
+
 - `POST /api/gateway/webhook` - Payment gateway callback
 
 ### Protected Routes (Requires JWT)
 
 #### User
+
 - `GET /api/users/me` - Get current user profile
 - `PATCH /api/users/me` - Update user profile
 - `POST /api/auth/logout` - Logout user
 
 #### Bookings
+
 - `POST /api/bookings/create` - Create booking
 - `GET /api/bookings` - List user bookings
 - `GET /api/bookings/:id` - Get booking details
@@ -115,17 +120,20 @@ RATE_LIMIT_WINDOW_SECONDS=60
 - `POST /api/bookings/:id/cancel` - Cancel booking
 
 #### Seat Locks
+
 - `POST /api/locks/acquire` - Lock seats
 - `GET /api/locks/availability` - Check availability
 - `POST /api/locks/extend` - Extend lock TTL
 - `DELETE /api/locks/:lockId` - Release lock
 
 #### Payments
+
 - `POST /api/payments/initiate` - Initiate payment
 - `GET /api/payments/:id` - Get payment status
 - `POST /api/payments/:id/refund` - Process refund
 
 #### Tickets
+
 - `GET /api/tickets/:id` - Get ticket details
 - `GET /api/tickets/:id/pdf` - Download PDF ticket
 - `POST /api/tickets/:id/validate` - Validate ticket
@@ -141,6 +149,7 @@ Authorization: Bearer <your-jwt-token>
 ```
 
 The gateway validates tokens and forwards user context to services via headers:
+
 - `X-User-ID` - User ID from JWT
 - `X-User-Email` - User email
 - `X-User-Role` - User role
@@ -205,6 +214,7 @@ api-gateway/
 3. Use `proxy.ProxyRequest()` to forward to service
 
 Example:
+
 ```go
 api.GET("/new-endpoint", middleware.JWTAuth(), proxy.ProxyRequest(config.AppConfig.ServiceURL))
 ```
@@ -214,12 +224,14 @@ api.GET("/new-endpoint", middleware.JWTAuth(), proxy.ProxyRequest(config.AppConf
 ### Request Logs
 
 All requests are logged with:
+
 - HTTP method and path
 - Status code
 - Latency
 - Client IP
 
 Example log:
+
 ```
 [GET] /api/trains HTTP/1.1 | Status: 200 | Latency: 45ms | IP: 127.0.0.1
 ```
@@ -246,6 +258,7 @@ Example log:
 **Issue**: `{"error": "Service unavailable", "service": "service-name"}`
 
 **Solution**: Ensure the target service is running:
+
 ```bash
 # Check if service is running
 curl http://localhost:300X/health
@@ -255,7 +268,8 @@ curl http://localhost:300X/health
 
 **Issue**: `{"error": "Invalid or expired token"}`
 
-**Solution**: 
+**Solution**:
+
 - Ensure JWT_ACCESS_SECRET matches auth-service
 - Check token expiration
 - Get new token via `/api/auth/login`

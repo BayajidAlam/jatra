@@ -85,16 +85,16 @@ cd apps/api-gateway
 
 ## Service URLs
 
-| Service          | Port | URL                   | API Docs                       |
-| ---------------- | ---- | --------------------- | ------------------------------ |
+| Service          | Port     | URL                       | API Docs                                |
+| ---------------- | -------- | ------------------------- | --------------------------------------- |
 | **API Gateway**  | **3000** | **http://localhost:3000** | **Single entry point for all services** |
-| Auth             | 3001 | http://localhost:3001 | http://localhost:3001/api/docs |
-| Schedule         | 3002 | http://localhost:3002 | http://localhost:3002/api/docs |
-| Seat Reservation | 3003 | http://localhost:3003 | http://localhost:3003/api/docs |
-| Payment          | 3004 | http://localhost:3004 | http://localhost:3004/api/docs |
-| Booking          | 3005 | http://localhost:3005 | http://localhost:3005/api/docs |
-| Ticket           | 3006 | http://localhost:3006 | http://localhost:3006/api/docs |
-| Notification     | 3007 | http://localhost:3007 | http://localhost:3007/api/docs |
+| Auth             | 3001     | http://localhost:3001     | http://localhost:3001/api/docs          |
+| Schedule         | 3002     | http://localhost:3002     | http://localhost:3002/api/docs          |
+| Seat Reservation | 3003     | http://localhost:3003     | http://localhost:3003/api/docs          |
+| Payment          | 3004     | http://localhost:3004     | http://localhost:3004/api/docs          |
+| Booking          | 3005     | http://localhost:3005     | http://localhost:3005/api/docs          |
+| Ticket           | 3006     | http://localhost:3006     | http://localhost:3006/api/docs          |
+| Notification     | 3007     | http://localhost:3007     | http://localhost:3007/api/docs          |
 
 ## External Services
 
@@ -120,6 +120,7 @@ curl http://localhost:3000/health
 ```
 
 **Features:**
+
 - JWT authentication for protected routes
 - Rate limiting (100 req/60sec per IP)
 - Request logging with latency
