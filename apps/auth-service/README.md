@@ -1,6 +1,6 @@
-# Auth & User Service
+# Auth Service
 
-Authentication and user management service for Jatra Railway ticketing system.
+Authentication service for Jatra Railway ticketing system.
 
 ## Features
 
@@ -9,8 +9,10 @@ Authentication and user management service for Jatra Railway ticketing system.
 - ✅ JWT access and refresh tokens
 - ✅ Token refresh mechanism
 - ✅ Logout (token invalidation)
-- ✅ User profile management
+- ✅ Token verification endpoint
 - ✅ Bangladesh-specific validation (NID: 10/13 digits, Phone: +880 or 01 format)
+
+**Note:** User profile management (update, preferences, saved passengers, travel history) is handled by the User Service (port 3008)
 
 ## Tech Stack
 
@@ -72,27 +74,16 @@ Content-Type: application/json
 }
 ```
 
-### User Profile
+### Token Verification
 
-#### Get Profile
+#### Verify Token
 
 ```http
-GET /users/me
+GET /users/verify-token
 Authorization: Bearer <access-token>
 ```
 
-#### Update Profile
-
-```http
-PATCH /users/me
-Authorization: Bearer <access-token>
-Content-Type: application/json
-
-{
-  "name": "Updated Name",
-  "phone": "+8801812345678"
-}
-```
+Returns user information if token is valid. Used by other services to verify authentication.
 
 ## Setup
 
