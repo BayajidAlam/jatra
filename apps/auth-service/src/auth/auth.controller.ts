@@ -1,4 +1,12 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Res, Req } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Res,
+  Req,
+} from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
@@ -24,14 +32,14 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response
   ) {
     const result = await this.authService.register(registerDto);
-    
+
     // Set cookies
     this.setCookies(response, result.accessToken, result.refreshToken);
-    
+
     // Return user data without tokens
     return {
       user: result.user,
-      message: "Registration successful"
+      message: "Registration successful",
     };
   }
 
@@ -48,14 +56,14 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response
   ) {
     const result = await this.authService.login(loginDto);
-    
+
     // Set cookies
     this.setCookies(response, result.accessToken, result.refreshToken);
-    
+
     // Return user data without tokens
     return {
       user: result.user,
-      message: "Login successful"
+      message: "Login successful",
     };
   }
 
@@ -70,18 +78,18 @@ export class AuthController {
   ) {
     // Get refresh token from cookie
     const refreshToken = request.cookies?.refreshToken;
-    
+
     if (!refreshToken) {
       throw new Error("Refresh token not found");
     }
-    
+
     const result = await this.authService.refreshToken(refreshToken);
-    
+
     // Set new cookies
     this.setCookies(response, result.accessToken, result.refreshToken);
-    
+
     return {
-      message: "Token refreshed successfully"
+      message: "Token refreshed successfully",
     };
   }
 
@@ -96,23 +104,27 @@ export class AuthController {
   ) {
     // Get refresh token from cookie
     const refreshToken = request.cookies?.refreshToken;
-    
+
     if (refreshToken) {
       await this.authService.logout(refreshToken);
     }
-    
+
     // Clear cookies
     this.clearCookies(response);
-    
+
     return {
-      message: "Logged out successfully"
+      message: "Logged out successfully",
     };
   }
 
   // Helper method to set cookies
-  private setCookies(response: Response, accessToken: string, refreshToken: string) {
+  private setCookies(
+    response: Response,
+    accessToken: string,
+    refreshToken: string
+  ) {
     const isProduction = process.env.NODE_ENV === "production";
-    
+
     // Set access token cookie (15 minutes)
     response.cookie("accessToken", accessToken, {
       httpOnly: true,
@@ -120,7 +132,7 @@ export class AuthController {
       sameSite: "strict",
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
-    
+
     // Set refresh token cookie (7 days)
     response.cookie("refreshToken", refreshToken, {
       httpOnly: true,

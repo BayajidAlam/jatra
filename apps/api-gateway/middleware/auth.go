@@ -19,7 +19,7 @@ type Claims struct {
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var tokenString string
-		
+
 		// Try to get token from cookie first
 		if cookie, err := c.Cookie("accessToken"); err == nil && cookie != "" {
 			tokenString = cookie
@@ -31,7 +31,7 @@ func JWTAuth() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			
+
 			parts := strings.Split(authHeader, " ")
 			if len(parts) != 2 || parts[0] != "Bearer" {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization header format"})
@@ -40,24 +40,24 @@ func JWTAuth() gin.HandlerFunc {
 			}
 			tokenString = parts[1]
 		}
-		
+
 		// Parse and validate token
 		token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(config.AppConfig.JWTAccessSecret), nil
 		})
-		
+
 		if err != nil || !token.Valid {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
 			c.Abort()
 			return
 		}
-		
+
 		if claims, ok := token.Claims.(*Claims); ok {
 			c.Set("userId", claims.UserID)
 			c.Set("email", claims.Email)
 			c.Set("role", claims.Role)
 		}
-		
+
 		c.Next()
 	}
 }
