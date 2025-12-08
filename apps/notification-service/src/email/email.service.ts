@@ -1,61 +1,57 @@
 import { Injectable, Logger } from "@nestjs/common";
-import * as nodemailer from "nodemailer";
 import * as handlebars from "handlebars";
 import * as fs from "fs";
 import * as path from "path";
 import { NotificationsService } from "../notifications/notifications.service";
 import { NotificationStatus } from "@jatra/common/types";
+import {
+  IEmailProvider,
+  EmailProvider,
+  MailgunEmailProvider,
+  MockEmailProvider,
+} from "./providers";
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private transporter: nodemailer.Transporter | null = null;
+  private emailProvider: IEmailProvider;
   private templateCache: Map<string, handlebars.TemplateDelegate> = new Map();
-  private isSmtpConfigured = false;
 
   constructor(private readonly notificationsService: NotificationsService) {
-    this.initializeTransporter();
+    this.initializeProvider();
   }
 
-  private initializeTransporter() {
-    // Check if SMTP credentials are configured
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      this.logger.warn(
-        "⚠️  SMTP credentials not configured. Email sending is disabled."
-      );
-      this.logger.warn(
-        "To enable emails, configure SMTP_USER and SMTP_PASS in .env file"
-      );
-      return;
+  private async initializeProvider() {
+    // Determine which provider to use based on environment variable
+    const providerType = (process.env.EMAIL_PROVIDER || EmailProvider.MOCK).toUpperCase();
+
+    this.logger.log(`📧 Initializing email provider: ${providerType}`);
+
+    // Create provider instance
+    switch (providerType) {
+      case EmailProvider.MAILGUN:
+        this.emailProvider = new MailgunEmailProvider();
+        break;
+      case EmailProvider.MOCK:
+      default:
+        this.emailProvider = new MockEmailProvider();
+        break;
     }
 
-    try {
-      this.transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || "smtp.gmail.com",
-        port: parseInt(process.env.SMTP_PORT || "587"),
-        secure: process.env.SMTP_SECURE === "true",
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
-      });
+    // Initialize provider with configuration
+    await this.emailProvider.initialize({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : undefined,
+      secure: process.env.SMTP_SECURE === "true",
+      user: process.env.SMTP_USER,
+      password: process.env.SMTP_PASS,
+      from: process.env.SMTP_FROM,
+    });
 
-      // Verify connection asynchronously
-      this.transporter.verify((error, success) => {
-        if (error) {
-          this.logger.error("❌ SMTP connection failed:", error.message);
-          this.logger.warn(
-            "Email sending is disabled. Check your SMTP credentials."
-          );
-          this.transporter = null;
-        } else {
-          this.logger.log("✅ SMTP server is ready to send emails");
-          this.isSmtpConfigured = true;
-        }
-      });
-    } catch (error) {
-      this.logger.error("❌ Failed to initialize SMTP transporter:", error);
-      this.transporter = null;
+    if (!this.emailProvider.isConfigured()) {
+      this.logger.warn(
+        `⚠️  ${this.emailProvider.getProviderName()} provider not configured. Email sending may be disabled.`
+      );
     }
   }
 
@@ -85,9 +81,9 @@ export class EmailService {
     context: any,
     notificationId: number
   ): Promise<void> {
-    // Check if SMTP is configured
-    if (!this.transporter || !this.isSmtpConfigured) {
-      const errorMsg = "SMTP not configured or connection failed";
+    // Check if provider is configured
+    if (!this.emailProvider.isConfigured()) {
+      const errorMsg = `${this.emailProvider.getProviderName()} provider not configured`;
       this.logger.warn(
         `⚠️  ${errorMsg}. Notification ${notificationId} marked as FAILED.`
       );
@@ -99,7 +95,7 @@ export class EmailService {
         0
       );
 
-      return; // Don't throw error, just log and mark as failed
+      return;
     }
 
     const maxRetries = parseInt(process.env.MAX_RETRY_ATTEMPTS || "3");
@@ -111,15 +107,19 @@ export class EmailService {
         const template = await this.loadTemplate(templateName);
         const html = template(context);
 
-        // Send email
-        const info = await this.transporter.sendMail({
-          from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        // Send email using provider
+        const result = await this.emailProvider.sendEmail({
           to,
           subject,
           html,
+          from: process.env.SMTP_FROM,
         });
 
-        this.logger.log(`✅ Email sent to ${to}: ${info.messageId}`);
+        if (!result.success) {
+          throw new Error(result.error || 'Email sending failed');
+        }
+
+        this.logger.log(`✅ Email sent to ${to}: ${result.messageId}`);
 
         // Update notification status to SENT
         await this.notificationsService.updateNotificationStatus(
@@ -160,7 +160,6 @@ export class EmailService {
               maxRetries + 1
             } attempts for notification ${notificationId}`
           );
-          // Don't throw error, just log it
           return;
         }
       }
