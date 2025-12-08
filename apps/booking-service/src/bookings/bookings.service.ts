@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import { RabbitMQService } from '../common/rabbitmq.service';
 import { HttpRetryService } from '../common/http-retry.service';
@@ -6,9 +6,10 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { ConfirmBookingDto } from './dto/confirm-booking.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
 import { QueryBookingsDto } from './dto/query-bookings.dto';
+import { PaymentFailedEvent } from '@jatra/common/interfaces';
 
 @Injectable()
-export class BookingsService {
+export class BookingsService implements OnModuleInit {
   private readonly logger = new Logger(BookingsService.name);
   private readonly seatReservationUrl = process.env.SEAT_RESERVATION_SERVICE_URL || 'http://localhost:3003';
   private readonly paymentUrl = process.env.PAYMENT_SERVICE_URL || 'http://localhost:3004';
@@ -18,6 +19,11 @@ export class BookingsService {
     private readonly httpRetry: HttpRetryService,
     private readonly rabbitMQ: RabbitMQService,
   ) {}
+
+  async onModuleInit() {
+    // Subscribe to payment failure events when module initializes
+    await this.rabbitMQ.subscribeToPaymentFailures(this.handlePaymentFailed.bind(this));
+  }
 
   /**
    * Create booking - Orchestrates seat locking and payment initiation
@@ -493,5 +499,71 @@ export class BookingsService {
         updatedAt: booking.updatedAt,
       },
     };
+  }
+
+  /**
+   * Handle payment failure events - Rollback booking
+   */
+  private async handlePaymentFailed(event: PaymentFailedEvent) {
+    this.logger.log(`🔄 Handling payment failure for payment ${event.data.paymentId}`);
+
+    try {
+      const { paymentId, reservationId, bookingId, reason } = event.data;
+
+      // Find booking if bookingId is provided, otherwise find by paymentId
+      const booking = bookingId 
+        ? await this.prisma.booking.findUnique({ where: { id: bookingId } })
+        : await this.prisma.booking.findFirst({ where: { paymentId } });
+
+      if (!booking) {
+        this.logger.warn(`Booking not found for payment ${paymentId}, may have been already rolled back`);
+        return;
+      }
+
+      // Skip if already cancelled or completed
+      if (booking.status === 'CANCELLED' || booking.status === 'CONFIRMED') {
+        this.logger.log(`Booking ${booking.id} already ${booking.status}, skipping rollback`);
+        return;
+      }
+
+      // Step 1: Release seats
+      try {
+        await this.httpRetry.post(
+          `${this.seatReservationUrl}/locks/release`,
+          { lockId: reservationId, userId: booking.userId },
+          'Seat Reservation Service',
+          { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 10000 }
+        );
+        this.logger.log(`✅ Released seats for reservation ${reservationId}`);
+      } catch (error) {
+        this.logger.error(`Failed to release seats: ${error.message}`);
+        // Continue with booking cancellation even if seat release fails
+      }
+
+      // Step 2: Update booking status to CANCELLED
+      await this.prisma.booking.update({
+        where: { id: booking.id },
+        data: { 
+          status: 'CANCELLED',
+          updatedAt: new Date(),
+        },
+      });
+
+      this.logger.log(`✅ Booking ${booking.id} rolled back due to payment failure: ${reason}`);
+
+      // Step 3: Emit booking cancelled event for notifications
+      await this.rabbitMQ.publishBookingCancelled({
+        bookingId: booking.id,
+        userId: booking.userId,
+        reservationId,
+        paymentId,
+        refundAmount: 0, // No refund since payment failed
+        reason: `Payment failed: ${reason}`,
+      });
+
+    } catch (error) {
+      this.logger.error(`Failed to rollback booking: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 }

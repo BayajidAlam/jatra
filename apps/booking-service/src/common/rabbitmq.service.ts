@@ -6,7 +6,8 @@ import {
   Exchanges, 
   EventRoutingKeys,
   BookingConfirmedEvent,
-  BookingCancelledEvent 
+  BookingCancelledEvent,
+  PaymentFailedEvent
 } from '@jatra/common/interfaces';
 
 @Injectable()
@@ -24,6 +25,12 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       // Create exchanges
       await this.channel.assertExchange(Exchanges.BOOKING, 'topic', { durable: true });
       await this.channel.assertExchange(Exchanges.NOTIFICATION, 'topic', { durable: true });
+      await this.channel.assertExchange(Exchanges.PAYMENT, 'topic', { durable: true });
+
+      // Create queue for payment failure events
+      const queue = 'booking-service.payment-failed';
+      await this.channel.assertQueue(queue, { durable: true });
+      await this.channel.bindQueue(queue, Exchanges.PAYMENT, EventRoutingKeys.PAYMENT_FAILED);
 
       this.logger.log('✅ RabbitMQ connected and exchanges created');
     } catch (error) {
@@ -89,5 +96,34 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     };
 
     await this.publishEvent(event, Exchanges.BOOKING);
+  }
+
+  // Subscribe to payment failure events
+  async subscribeToPaymentFailures(callback: (event: PaymentFailedEvent) => Promise<void>): Promise<void> {
+    if (!this.channel) {
+      this.logger.warn('RabbitMQ channel not available');
+      return;
+    }
+
+    const queue = 'booking-service.payment-failed';
+    
+    await this.channel.consume(queue, async (msg) => {
+      if (!msg) return;
+
+      try {
+        const event = JSON.parse(msg.content.toString()) as PaymentFailedEvent;
+        this.logger.log(`📥 Received payment.failed event: ${event.eventId}`);
+        
+        await callback(event);
+        
+        this.channel.ack(msg);
+        this.logger.log(`✅ Processed payment.failed event: ${event.eventId}`);
+      } catch (error) {
+        this.logger.error('Failed to process payment.failed event', error);
+        this.channel.nack(msg, false, true); // Requeue on failure
+      }
+    });
+
+    this.logger.log('👂 Subscribed to payment failure events');
   }
 }

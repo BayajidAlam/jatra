@@ -2,9 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from '@jatra/common/errors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Enable global exception filter
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Enable validation
   app.useGlobalPipes(
