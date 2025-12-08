@@ -262,6 +262,9 @@ async function main() {
 
   console.log('✅ Routes created');
 
+  // Delete old journeys
+  await prisma.journey.deleteMany({});
+  
   // Create Journeys for the next 7 days
   const today = new Date();
   today.setHours(0, 0, 0, 0);
