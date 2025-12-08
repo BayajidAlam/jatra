@@ -77,6 +77,25 @@ func SetupRoutes(router *gin.Engine) {
 			tickets.GET("/:id/pdf", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
 		}
 
+		payments := api.Group("/payments")
+		payments.Use(middleware.JWTAuth())
+		{
+			payments.POST("/initiate", proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+			payments.POST("/confirm", proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+			payments.GET("/:id", proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+			payments.GET("/reservation/:reservationId", proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+			payments.GET("/user/:userId", proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+			payments.POST("/:id/refund", proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+			payments.POST("/:id/cancel", proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+		}
+
+		gateway := api.Group("/gateway")
+		{
+			gateway.POST("/webhook/sslcommerz/ipn", proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+			gateway.POST("/webhook", proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+			gateway.GET("/status/:transactionId", middleware.JWTAuth(), proxy.ProxyRequest(config.AppConfig.PaymentServiceURL))
+		}
+
 		user := api.Group("/user")
 		user.Use(middleware.JWTAuth())
 		{
@@ -140,4 +159,3 @@ func SetupRoutes(router *gin.Engine) {
 		}
 	}
 }
-

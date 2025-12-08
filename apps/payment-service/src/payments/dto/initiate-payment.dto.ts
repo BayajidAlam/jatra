@@ -75,4 +75,20 @@ export class InitiatePaymentDto {
   @IsOptional()
   @IsString()
   mobileNumber?: string;
+
+  @ApiPropertyOptional({
+    description: 'Customer name',
+    example: 'John Doe',
+  })
+  @IsOptional()
+  @IsString()
+  customerName?: string;
+
+  @ApiPropertyOptional({
+    description: 'Customer email',
+    example: 'john@example.com',
+  })
+  @IsOptional()
+  @IsString()
+  customerEmail?: string;
 }
