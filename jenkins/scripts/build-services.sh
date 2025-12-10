@@ -64,7 +64,7 @@ for service in "${SERVICES_TO_BUILD[@]}"; do
     
     (
         echo "   Building $service..."
-        if docker build \
+        if /usr/bin/docker build \
             -f /workspace/apps/$service/Dockerfile \
             -t jatra/$service:$IMAGE_TAG \
             -t jatra/$service:latest \
