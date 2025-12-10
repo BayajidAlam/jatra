@@ -8,6 +8,9 @@ CHANGED_SERVICES=$2
 NAMESPACE="jatra"
 MAX_WAIT=300  # 5 minutes
 
+# Set KUBECONFIG for Jenkins
+export KUBECONFIG=${KUBECONFIG:-/var/jenkins_home/.kube/config}
+
 echo "🏥 Running health checks..."
 echo ""
 

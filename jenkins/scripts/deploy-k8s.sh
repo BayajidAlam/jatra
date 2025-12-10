@@ -7,6 +7,9 @@ BUILD_MODE=$1
 CHANGED_SERVICES=$2
 NAMESPACE="jatra"
 
+# Set KUBECONFIG for Jenkins
+export KUBECONFIG=${KUBECONFIG:-/var/jenkins_home/.kube/config}
+
 echo "🚀 Deploying to Kubernetes..."
 echo ""
 
