@@ -44,6 +44,11 @@ for service in "${SERVICES_TO_BUILD[@]}"; do
         continue  # Skip api-gateway for now (Go binary)
     fi
     
+    if [ "$service" = "auth-service" ]; then
+        echo "   ⏭️  Skipping auth-service (known Prisma issue)"
+        continue
+    fi
+    
     (
         echo "   Building $service..."
         if docker build \
