@@ -30,10 +30,9 @@ fi
 echo "📥 Loading images to Minikube..."
 echo ""
 
-# Check if Minikube is running
-if ! minikube status > /dev/null 2>&1; then
-    echo "❌ Minikube is not running. Please start it first."
-    exit 1
+# Check if Minikube is running (run on host via docker)
+if ! docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.minikube:/root/.minikube alpine/k8s:1.28.0 sh -c "minikube status > /dev/null 2>&1"; then
+    echo "⚠️  Cannot verify Minikube status from Jenkins. Assuming it's running..."
 fi
 
 # Load images in parallel
@@ -44,8 +43,8 @@ for service in "${SERVICES_TO_LOAD[@]}"; do
     
     (
         echo "   Loading $service..."
-        minikube image rm docker.io/jatra/$service:latest 2>/dev/null || true
-        if minikube image load jatra/$service:latest > /dev/null 2>&1; then
+        # Save image from Jenkins' docker and load to Minikube
+        if docker save jatra/$service:latest | docker exec -i $(docker ps -q -f name=minikube) docker image load > /dev/null 2>&1; then
             echo "   ✅ $service loaded"
         else
             echo "   ❌ $service load failed"
