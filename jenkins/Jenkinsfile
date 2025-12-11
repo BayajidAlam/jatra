@@ -1,0 +1,141 @@
+pipeline {
+    agent any
+    
+    parameters {
+        choice(
+            name: 'BUILD_MODE',
+            choices: ['CHANGED_ONLY', 'ALL_SERVICES'],
+            description: 'Build only changed services or all services?'
+        )
+        booleanParam(
+            name: 'SKIP_TESTS',
+            defaultValue: false,
+            description: 'Skip running tests?'
+        )
+        booleanParam(
+            name: 'FORCE_DEPLOY',
+            defaultValue: false,
+            description: 'Force deployment even if no changes detected?'
+        )
+    }
+    
+    environment {
+        DOCKER_REGISTRY = 'jatra'
+        IMAGE_TAG = "${env.GIT_COMMIT.take(7)}"
+        NAMESPACE = 'jatra'
+        WORKSPACE_DIR = '/workspace'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    echo "🔄 Checking out code..."
+                    sh 'git --version'
+                    sh 'docker --version'
+                    sh 'kubectl version --client'
+                }
+            }
+        }
+        
+        stage('Detect Changes') {
+            steps {
+                script {
+                    echo "🔍 Detecting changed services..."
+                    sh '''
+                        cp -r ${WORKSPACE_DIR}/jenkins /tmp/
+                        chmod +x /tmp/jenkins/scripts/*.sh
+                        /tmp/jenkins/scripts/detect-changes.sh
+                    '''
+                    
+                    // Read changed services
+                    env.CHANGED_SERVICES = readFile('changed-services.txt').trim()
+                    
+                    if (env.CHANGED_SERVICES == '' && params.BUILD_MODE == 'CHANGED_ONLY' && !params.FORCE_DEPLOY) {
+                        echo "✅ No services changed. Skipping build."
+                        currentBuild.result = 'SUCCESS'
+                        return
+                    }
+                    
+                    echo "📦 Services to build: ${env.CHANGED_SERVICES}"
+                }
+            }
+        }
+        
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    echo "🏗️  Building Docker images..."
+                    sh '''
+                        /tmp/jenkins/scripts/build-services.sh \
+                            "${BUILD_MODE}" \
+                            "${CHANGED_SERVICES}" \
+                            "${IMAGE_TAG}"
+                    '''
+                }
+            }
+        }
+        
+        stage('Load Images to Minikube') {
+            steps {
+                script {
+                    echo "📥 Loading images to Minikube..."
+                    sh '''
+                        docker exec -u root jenkins sh -c "
+                        export PATH=/usr/local/bin:\$PATH
+                        ${WORKSPACE_DIR}/jenkins/scripts/load-to-minikube.sh \
+                            '${BUILD_MODE}' \
+                            '${CHANGED_SERVICES}'
+                        "
+                    '''
+                }
+            }
+        }
+        
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    echo "🚀 Deploying to Kubernetes..."
+                    sh '''
+                        export KUBECONFIG=/var/jenkins_home/.kube/config
+                        ${WORKSPACE_DIR}/jenkins/scripts/deploy-k8s.sh \
+                            "${BUILD_MODE}" \
+                            "${CHANGED_SERVICES}"
+                    '''
+                }
+            }
+        }
+        
+        stage('Health Check') {
+            steps {
+                script {
+                    echo "🏥 Running health checks..."
+                    sh '''
+                        export KUBECONFIG=/var/jenkins_home/.kube/config
+                        ${WORKSPACE_DIR}/jenkins/scripts/health-check.sh \
+                            "${BUILD_MODE}" \
+                            "${CHANGED_SERVICES}"
+                    '''
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo '✅ Pipeline completed successfully!'
+            echo "📊 Build Summary:"
+            sh 'cat build-summary.txt || echo "No summary available"'
+        }
+        failure {
+            echo '❌ Pipeline failed!'
+            sh '''
+                export KUBECONFIG=/var/jenkins_home/.kube/config
+                kubectl get pods -n jatra || echo "Cannot get pod status"
+            '''
+        }
+        always {
+            cleanWs()
+        }
+    }
+}

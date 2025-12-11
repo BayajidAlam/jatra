@@ -1,28 +1,39 @@
-import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException, OnModuleInit } from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
-import { RabbitMQService } from '../common/rabbitmq.service';
-import { HttpRetryService } from '../common/http-retry.service';
-import { CreateBookingDto } from './dto/create-booking.dto';
-import { ConfirmBookingDto } from './dto/confirm-booking.dto';
-import { CancelBookingDto } from './dto/cancel-booking.dto';
-import { QueryBookingsDto } from './dto/query-bookings.dto';
-import { PaymentFailedEvent } from '@jatra/common/interfaces';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  NotFoundException,
+  InternalServerErrorException,
+  OnModuleInit,
+} from "@nestjs/common";
+import { PrismaService } from "../common/prisma.service";
+import { RabbitMQService } from "../common/rabbitmq.service";
+import { HttpRetryService } from "../common/http-retry.service";
+import { CreateBookingDto } from "./dto/create-booking.dto";
+import { ConfirmBookingDto } from "./dto/confirm-booking.dto";
+import { CancelBookingDto } from "./dto/cancel-booking.dto";
+import { QueryBookingsDto } from "./dto/query-bookings.dto";
+import { PaymentFailedEvent } from "@jatra/common/interfaces";
 
 @Injectable()
 export class BookingsService implements OnModuleInit {
   private readonly logger = new Logger(BookingsService.name);
-  private readonly seatReservationUrl = process.env.SEAT_RESERVATION_SERVICE_URL || 'http://localhost:3003';
-  private readonly paymentUrl = process.env.PAYMENT_SERVICE_URL || 'http://localhost:3004';
+  private readonly seatReservationUrl =
+    process.env.SEAT_RESERVATION_SERVICE_URL || "http://localhost:3003";
+  private readonly paymentUrl =
+    process.env.PAYMENT_SERVICE_URL || "http://localhost:3004";
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly httpRetry: HttpRetryService,
-    private readonly rabbitMQ: RabbitMQService,
+    private readonly rabbitMQ: RabbitMQService
   ) {}
 
   async onModuleInit() {
     // Subscribe to payment failure events when module initializes
-    await this.rabbitMQ.subscribeToPaymentFailures(this.handlePaymentFailed.bind(this));
+    await this.rabbitMQ.subscribeToPaymentFailures(
+      this.handlePaymentFailed.bind(this)
+    );
   }
 
   /**
@@ -45,7 +56,7 @@ export class BookingsService implements OnModuleInit {
           fromStationId: dto.fromStationId,
           toStationId: dto.toStationId,
         },
-        'Seat Reservation Service',
+        "Seat Reservation Service",
         { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 15000 }
       );
 
@@ -62,7 +73,7 @@ export class BookingsService implements OnModuleInit {
           paymentMethod: dto.paymentMethod,
           ...dto.paymentDetails,
         },
-        'Payment Service',
+        "Payment Service",
         { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 20000 }
       );
 
@@ -77,9 +88,9 @@ export class BookingsService implements OnModuleInit {
           reservationId,
           paymentId,
           totalAmount: dto.totalAmount,
-          status: 'PAYMENT_PENDING',
+          status: "PAYMENT_PENDING",
           seats: {
-            create: dto.seatIds.map(seatId => ({ seatId })),
+            create: dto.seatIds.map((seatId) => ({ seatId })),
           },
         },
         include: {
@@ -115,10 +126,10 @@ export class BookingsService implements OnModuleInit {
         seats: booking.seats,
         journey: booking.journey,
         payment: booking.payment,
-        message: 'Booking created successfully. Please complete payment.',
+        message: "Booking created successfully. Please complete payment.",
       };
     } catch (error) {
-      this.logger.error('❌ Booking creation failed', error.message);
+      this.logger.error("❌ Booking creation failed", error.message);
 
       // Rollback: Release seats if payment initiation failed
       if (reservationId && !paymentId) {
@@ -129,17 +140,17 @@ export class BookingsService implements OnModuleInit {
               lockId: reservationId,
               userId: dto.userId,
             },
-            'Seat Reservation Service',
+            "Seat Reservation Service",
             { maxRetries: 2, initialDelayMs: 500, timeoutMs: 10000 }
           );
-          this.logger.log('🔄 Seats released after payment failure');
+          this.logger.log("🔄 Seats released after payment failure");
         } catch (releaseError) {
-          this.logger.error('Failed to release seats', releaseError.message);
+          this.logger.error("Failed to release seats", releaseError.message);
         }
       }
 
       throw new InternalServerErrorException(
-        error.response?.data?.message || 'Failed to create booking'
+        error.response?.data?.message || "Failed to create booking"
       );
     }
   }
@@ -161,15 +172,15 @@ export class BookingsService implements OnModuleInit {
     });
 
     if (!booking) {
-      throw new NotFoundException('Booking not found');
+      throw new NotFoundException("Booking not found");
     }
 
-    if (booking.status === 'CONFIRMED') {
-      throw new BadRequestException('Booking already confirmed');
+    if (booking.status === "CONFIRMED") {
+      throw new BadRequestException("Booking already confirmed");
     }
 
-    if (booking.status === 'CANCELLED') {
-      throw new BadRequestException('Cannot confirm cancelled booking');
+    if (booking.status === "CANCELLED") {
+      throw new BadRequestException("Cannot confirm cancelled booking");
     }
 
     try {
@@ -180,7 +191,7 @@ export class BookingsService implements OnModuleInit {
           paymentId: dto.paymentId,
           transactionId: dto.transactionId,
         },
-        'Payment Service',
+        "Payment Service",
         { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 20000 }
       );
 
@@ -191,14 +202,14 @@ export class BookingsService implements OnModuleInit {
           lockId: booking.reservationId,
           userId: booking.userId,
         },
-        'Seat Reservation Service',
+        "Seat Reservation Service",
         { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 15000 }
       );
 
       // Step 3: Update booking status
       const confirmedBooking = await this.prisma.booking.update({
         where: { id: bookingId },
-        data: { status: 'CONFIRMED' },
+        data: { status: "CONFIRMED" },
         include: {
           user: true,
           seats: {
@@ -230,7 +241,7 @@ export class BookingsService implements OnModuleInit {
         phone: confirmedBooking.user.phone,
         journeyId: confirmedBooking.journeyId,
         totalAmount: confirmedBooking.totalAmount,
-        seats: confirmedBooking.seats.map(s => ({
+        seats: confirmedBooking.seats.map((s) => ({
           seatId: s.seat.id,
           seatNumber: s.seat.seatNumber,
           coachNumber: `Coach-${s.seat.coachId}`,
@@ -249,9 +260,9 @@ export class BookingsService implements OnModuleInit {
 
       return confirmedBooking;
     } catch (error) {
-      this.logger.error('❌ Booking confirmation failed', error.message);
+      this.logger.error("❌ Booking confirmation failed", error.message);
       throw new InternalServerErrorException(
-        error.response?.data?.message || 'Failed to confirm booking'
+        error.response?.data?.message || "Failed to confirm booking"
       );
     }
   }
@@ -283,7 +294,7 @@ export class BookingsService implements OnModuleInit {
                     toStation: true,
                   },
                   orderBy: {
-                    stopOrder: 'asc',
+                    stopOrder: "asc",
                   },
                 },
               },
@@ -304,7 +315,7 @@ export class BookingsService implements OnModuleInit {
     });
 
     if (!booking) {
-      throw new NotFoundException('Booking not found');
+      throw new NotFoundException("Booking not found");
     }
 
     return booking;
@@ -330,7 +341,7 @@ export class BookingsService implements OnModuleInit {
         skip,
         take: limit,
         orderBy: {
-          [query.sortBy || 'createdAt']: query.sortOrder || 'desc',
+          [query.sortBy || "createdAt"]: query.sortOrder || "desc",
         },
         include: {
           seats: {
@@ -389,38 +400,40 @@ export class BookingsService implements OnModuleInit {
     });
 
     if (!booking) {
-      throw new NotFoundException('Booking not found');
+      throw new NotFoundException("Booking not found");
     }
 
-    if (booking.status === 'CANCELLED') {
-      throw new BadRequestException('Booking already cancelled');
+    if (booking.status === "CANCELLED") {
+      throw new BadRequestException("Booking already cancelled");
     }
 
-    if (!['PAYMENT_PENDING', 'CONFIRMED'].includes(booking.status)) {
-      throw new BadRequestException(`Cannot cancel booking with status: ${booking.status}`);
+    if (!["PAYMENT_PENDING", "CONFIRMED"].includes(booking.status)) {
+      throw new BadRequestException(
+        `Cannot cancel booking with status: ${booking.status}`
+      );
     }
 
     try {
       // Step 1: Cancel/Refund payment if completed with retry
-      if (booking.payment.status === 'COMPLETED') {
+      if (booking.payment.status === "COMPLETED") {
         await this.httpRetry.post(
           `${this.paymentUrl}/payments/${booking.paymentId}/refund`,
           {
             amount: booking.totalAmount,
             reason: dto.reason,
           },
-          'Payment Service',
+          "Payment Service",
           { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 20000 }
         );
-        this.logger.log('✅ Payment refunded');
+        this.logger.log("✅ Payment refunded");
       } else {
         await this.httpRetry.post(
           `${this.paymentUrl}/payments/${booking.paymentId}/cancel`,
           {},
-          'Payment Service',
+          "Payment Service",
           { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 15000 }
         );
-        this.logger.log('✅ Payment cancelled');
+        this.logger.log("✅ Payment cancelled");
       }
 
       // Step 2: Cancel reservation with retry
@@ -429,15 +442,15 @@ export class BookingsService implements OnModuleInit {
         {
           userId: booking.userId,
         },
-        'Seat Reservation Service',
+        "Seat Reservation Service",
         { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 15000 }
       );
-      this.logger.log('✅ Reservation cancelled');
+      this.logger.log("✅ Reservation cancelled");
 
       // Step 3: Update booking status
       const cancelledBooking = await this.prisma.booking.update({
         where: { id: bookingId },
-        data: { status: 'CANCELLED' },
+        data: { status: "CANCELLED" },
         include: {
           seats: true,
           journey: true,
@@ -459,12 +472,13 @@ export class BookingsService implements OnModuleInit {
 
       return {
         ...cancelledBooking,
-        message: 'Booking cancelled successfully. Refund will be processed within 5-7 business days.',
+        message:
+          "Booking cancelled successfully. Refund will be processed within 5-7 business days.",
       };
     } catch (error) {
-      this.logger.error('❌ Booking cancellation failed', error.message);
+      this.logger.error("❌ Booking cancellation failed", error.message);
       throw new InternalServerErrorException(
-        error.response?.data?.message || 'Failed to cancel booking'
+        error.response?.data?.message || "Failed to cancel booking"
       );
     }
   }
@@ -484,7 +498,7 @@ export class BookingsService implements OnModuleInit {
         departureTime: booking.journey.departureTime,
         arrivalTime: booking.journey.arrivalTime,
       },
-      seats: booking.seats.map(bs => ({
+      seats: booking.seats.map((bs) => ({
         seatNumber: bs.seat.seatNumber,
         coach: bs.seat.coach.coachCode,
         class: bs.seat.coach.coachType,
@@ -505,24 +519,30 @@ export class BookingsService implements OnModuleInit {
    * Handle payment failure events - Rollback booking
    */
   private async handlePaymentFailed(event: PaymentFailedEvent) {
-    this.logger.log(`🔄 Handling payment failure for payment ${event.data.paymentId}`);
+    this.logger.log(
+      `🔄 Handling payment failure for payment ${event.data.paymentId}`
+    );
 
     try {
       const { paymentId, reservationId, bookingId, reason } = event.data;
 
       // Find booking if bookingId is provided, otherwise find by paymentId
-      const booking = bookingId 
+      const booking = bookingId
         ? await this.prisma.booking.findUnique({ where: { id: bookingId } })
         : await this.prisma.booking.findFirst({ where: { paymentId } });
 
       if (!booking) {
-        this.logger.warn(`Booking not found for payment ${paymentId}, may have been already rolled back`);
+        this.logger.warn(
+          `Booking not found for payment ${paymentId}, may have been already rolled back`
+        );
         return;
       }
 
       // Skip if already cancelled or completed
-      if (booking.status === 'CANCELLED' || booking.status === 'CONFIRMED') {
-        this.logger.log(`Booking ${booking.id} already ${booking.status}, skipping rollback`);
+      if (booking.status === "CANCELLED" || booking.status === "CONFIRMED") {
+        this.logger.log(
+          `Booking ${booking.id} already ${booking.status}, skipping rollback`
+        );
         return;
       }
 
@@ -531,7 +551,7 @@ export class BookingsService implements OnModuleInit {
         await this.httpRetry.post(
           `${this.seatReservationUrl}/locks/release`,
           { lockId: reservationId, userId: booking.userId },
-          'Seat Reservation Service',
+          "Seat Reservation Service",
           { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 10000 }
         );
         this.logger.log(`✅ Released seats for reservation ${reservationId}`);
@@ -543,13 +563,15 @@ export class BookingsService implements OnModuleInit {
       // Step 2: Update booking status to CANCELLED
       await this.prisma.booking.update({
         where: { id: booking.id },
-        data: { 
-          status: 'CANCELLED',
+        data: {
+          status: "CANCELLED",
           updatedAt: new Date(),
         },
       });
 
-      this.logger.log(`✅ Booking ${booking.id} rolled back due to payment failure: ${reason}`);
+      this.logger.log(
+        `✅ Booking ${booking.id} rolled back due to payment failure: ${reason}`
+      );
 
       // Step 3: Emit booking cancelled event for notifications
       await this.rabbitMQ.publishBookingCancelled({
@@ -560,9 +582,11 @@ export class BookingsService implements OnModuleInit {
         refundAmount: 0, // No refund since payment failed
         reason: `Payment failed: ${reason}`,
       });
-
     } catch (error) {
-      this.logger.error(`Failed to rollback booking: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to rollback booking: ${error.message}`,
+        error.stack
+      );
       throw error;
     }
   }

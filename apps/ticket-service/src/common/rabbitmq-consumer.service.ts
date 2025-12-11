@@ -29,13 +29,19 @@ export class RabbitMQConsumerService implements OnModuleInit {
       const ticketQueue = "ticket.events";
 
       // Assert exchange
-      await this.channel.assertExchange(bookingExchange, "topic", { durable: true });
+      await this.channel.assertExchange(bookingExchange, "topic", {
+        durable: true,
+      });
 
       // Assert queue
       await this.channel.assertQueue(ticketQueue, { durable: true });
 
       // Bind to booking.confirmed event
-      await this.channel.bindQueue(ticketQueue, bookingExchange, EventRoutingKeys.BOOKING_CONFIRMED);
+      await this.channel.bindQueue(
+        ticketQueue,
+        bookingExchange,
+        EventRoutingKeys.BOOKING_CONFIRMED
+      );
 
       this.logger.log(
         `✅ Connected to RabbitMQ and listening on queue: ${ticketQueue}`
@@ -102,25 +108,16 @@ export class RabbitMQConsumerService implements OnModuleInit {
       // Generate ticket with QR code
       const ticket = await this.ticketsService.generateTicket({
         bookingId: data.bookingId,
-        userId: data.userId,
-        journeyDetails: {
-          trainName: data.journey.trainName,
-          trainNumber: data.journey.trainNumber,
-          departureTime: data.journey.departureTime,
-          arrivalTime: data.journey.arrivalTime,
-          fromStation: data.journey.fromStation,
-          toStation: data.journey.toStation,
-        },
-        seats: data.seats.map(s => ({
-          seatNumber: s.seatNumber,
-          coachNumber: s.coachNumber,
-        })),
-        totalAmount: data.totalAmount,
       });
 
-      this.logger.log(`✅ Ticket generated: ${ticket.pnr} for booking ${data.bookingId}`);
+      this.logger.log(
+        `✅ Ticket generated: ${ticket.ticketNumber} for booking ${data.bookingId}`
+      );
     } catch (error) {
-      this.logger.error(`Failed to generate ticket for booking ${data.bookingId}:`, error);
+      this.logger.error(
+        `Failed to generate ticket for booking ${data.bookingId}:`,
+        error
+      );
       throw error;
     }
   }

@@ -2,6 +2,7 @@ import { Injectable, ConflictException } from "@nestjs/common";
 import { PrismaService } from "../common/prisma.service";
 import { CreateTrainDto } from "./dto/create-train.dto";
 import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 @Injectable()
 export class TrainsService {
@@ -25,7 +26,7 @@ export class TrainsService {
       });
     } catch (error) {
       // Handle any other Prisma unique constraint errors
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === "P2002") {
           throw new ConflictException(
             `Train with this ${error.meta?.target} already exists`

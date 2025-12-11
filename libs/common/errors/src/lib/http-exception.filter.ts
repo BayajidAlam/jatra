@@ -5,7 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
 export interface ErrorResponse {
   statusCode: number;
@@ -43,9 +43,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       errorResponse.error = exception.name;
       const exceptionResponse = exception.getResponse();
-      if (typeof exceptionResponse === 'object' && 'message' in exceptionResponse) {
-        const msg = exceptionResponse['message'];
-        if (typeof msg === 'string' || Array.isArray(msg)) {
+      if (
+        typeof exceptionResponse === "object" &&
+        "message" in exceptionResponse
+      ) {
+        const msg = exceptionResponse["message"];
+        if (typeof msg === "string" || Array.isArray(msg)) {
           errorResponse.message = msg as string | string[];
         }
       }
@@ -56,12 +59,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // Log the error
     if (status >= 500) {
       this.logger.error(
-        `${request.method} ${request.url} - ${status} - ${this.getErrorMessage(exception)}`,
+        `${request.method} ${request.url} - ${status} - ${this.getErrorMessage(
+          exception
+        )}`,
         exception instanceof Error ? exception.stack : undefined
       );
     } else {
       this.logger.warn(
-        `${request.method} ${request.url} - ${status} - ${this.getErrorMessage(exception)}`
+        `${request.method} ${request.url} - ${status} - ${this.getErrorMessage(
+          exception
+        )}`
       );
     }
 
@@ -71,16 +78,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   private getErrorMessage(exception: unknown): string | string[] {
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
-      if (typeof response === 'string') {
+      if (typeof response === "string") {
         return response;
       }
-      if (typeof response === 'object' && 'message' in response) {
-        return response['message'] as string | string[];
+      if (typeof response === "object" && "message" in response) {
+        return response["message"] as string | string[];
       }
     }
     if (exception instanceof Error) {
       return exception.message;
     }
-    return 'Internal server error';
+    return "Internal server error";
   }
 }

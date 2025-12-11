@@ -38,17 +38,37 @@ export class RabbitMQConsumerService implements OnModuleInit {
       const notificationQueue = "notification.events";
 
       // Assert exchanges
-      await this.channel.assertExchange(bookingExchange, "topic", { durable: true });
-      await this.channel.assertExchange(paymentExchange, "topic", { durable: true });
+      await this.channel.assertExchange(bookingExchange, "topic", {
+        durable: true,
+      });
+      await this.channel.assertExchange(paymentExchange, "topic", {
+        durable: true,
+      });
 
       // Assert queue
       await this.channel.assertQueue(notificationQueue, { durable: true });
 
       // Bind queue to multiple events
-      await this.channel.bindQueue(notificationQueue, bookingExchange, EventRoutingKeys.BOOKING_CONFIRMED);
-      await this.channel.bindQueue(notificationQueue, bookingExchange, EventRoutingKeys.BOOKING_CANCELLED);
-      await this.channel.bindQueue(notificationQueue, paymentExchange, EventRoutingKeys.PAYMENT_COMPLETED);
-      await this.channel.bindQueue(notificationQueue, paymentExchange, EventRoutingKeys.PAYMENT_FAILED);
+      await this.channel.bindQueue(
+        notificationQueue,
+        bookingExchange,
+        EventRoutingKeys.BOOKING_CONFIRMED
+      );
+      await this.channel.bindQueue(
+        notificationQueue,
+        bookingExchange,
+        EventRoutingKeys.BOOKING_CANCELLED
+      );
+      await this.channel.bindQueue(
+        notificationQueue,
+        paymentExchange,
+        EventRoutingKeys.PAYMENT_COMPLETED
+      );
+      await this.channel.bindQueue(
+        notificationQueue,
+        paymentExchange,
+        EventRoutingKeys.PAYMENT_FAILED
+      );
 
       this.logger.log(
         `✅ Connected to RabbitMQ and listening on queue: ${notificationQueue}`
@@ -122,7 +142,7 @@ export class RabbitMQConsumerService implements OnModuleInit {
 
     try {
       // Create notification record
-      await this.notificationsService.createNotification({
+      const notification = await this.notificationsService.createNotification({
         userId: data.userId,
         type: NotificationType.BOOKING_CONFIRMED,
         channel: NotificationChannel.EMAIL,
@@ -133,18 +153,23 @@ export class RabbitMQConsumerService implements OnModuleInit {
       });
 
       // Send email
-      await this.emailService.sendBookingConfirmation({
-        to: data.email,
-        bookingId: data.bookingId,
-        trainName: data.journey.trainName,
-        trainNumber: data.journey.trainNumber,
-        departureTime: data.journey.departureTime,
-        arrivalTime: data.journey.arrivalTime,
-        fromStation: data.journey.fromStation,
-        toStation: data.journey.toStation,
-        seats: data.seats,
-        totalAmount: data.totalAmount,
-      });
+      await this.emailService.sendEmail(
+        data.email,
+        `Booking Confirmed - ${data.journey.trainName}`,
+        "booking-confirmation",
+        {
+          bookingId: data.bookingId,
+          trainName: data.journey.trainName,
+          trainNumber: data.journey.trainNumber,
+          departureTime: data.journey.departureTime,
+          arrivalTime: data.journey.arrivalTime,
+          fromStation: data.journey.fromStation,
+          toStation: data.journey.toStation,
+          seats: data.seats,
+          totalAmount: data.totalAmount,
+        },
+        notification.id
+      );
 
       this.logger.log(`✅ Sent booking confirmation to ${data.email}`);
     } catch (error) {
@@ -186,7 +211,10 @@ export class RabbitMQConsumerService implements OnModuleInit {
         recipient: data.userId,
         subject: `Payment Successful`,
         content: `Payment of $${data.amount} completed successfully. Transaction ID: ${data.transactionId}`,
-        metadata: { paymentId: data.paymentId, transactionId: data.transactionId },
+        metadata: {
+          paymentId: data.paymentId,
+          transactionId: data.transactionId,
+        },
       });
 
       this.logger.log(`✅ Sent payment success notification`);

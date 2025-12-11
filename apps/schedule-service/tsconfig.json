@@ -10,7 +10,7 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -18,7 +18,12 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@jatra/common/types": ["libs/common/types/src/index.ts"],
+      "@jatra/common/interfaces": ["libs/common/interfaces/src/index.ts"],
+      "@jatra/common/dtos": ["libs/common/dtos/src/index.ts"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test"]

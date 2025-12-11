@@ -1,14 +1,19 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
-import * as amqp from 'amqplib';
-import { randomUUID } from 'crypto';
-import { 
-  DomainEvent, 
-  Exchanges, 
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+} from "@nestjs/common";
+import * as amqp from "amqplib";
+import { randomUUID } from "crypto";
+import {
+  DomainEvent,
+  Exchanges,
   EventRoutingKeys,
   BookingConfirmedEvent,
   BookingCancelledEvent,
-  PaymentFailedEvent
-} from '@jatra/common/interfaces';
+  PaymentFailedEvent,
+} from "@jatra/common/interfaces";
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
@@ -18,23 +23,33 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     try {
-      const url = process.env.RABBITMQ_URL || 'amqp://localhost:5672';
+      const url = process.env.RABBITMQ_URL || "amqp://localhost:5672";
       this.connection = await amqp.connect(url);
       this.channel = await this.connection.createChannel();
 
       // Create exchanges
-      await this.channel.assertExchange(Exchanges.BOOKING, 'topic', { durable: true });
-      await this.channel.assertExchange(Exchanges.NOTIFICATION, 'topic', { durable: true });
-      await this.channel.assertExchange(Exchanges.PAYMENT, 'topic', { durable: true });
+      await this.channel.assertExchange(Exchanges.BOOKING, "topic", {
+        durable: true,
+      });
+      await this.channel.assertExchange(Exchanges.NOTIFICATION, "topic", {
+        durable: true,
+      });
+      await this.channel.assertExchange(Exchanges.PAYMENT, "topic", {
+        durable: true,
+      });
 
       // Create queue for payment failure events
-      const queue = 'booking-service.payment-failed';
+      const queue = "booking-service.payment-failed";
       await this.channel.assertQueue(queue, { durable: true });
-      await this.channel.bindQueue(queue, Exchanges.PAYMENT, EventRoutingKeys.PAYMENT_FAILED);
+      await this.channel.bindQueue(
+        queue,
+        Exchanges.PAYMENT,
+        EventRoutingKeys.PAYMENT_FAILED
+      );
 
-      this.logger.log('✅ RabbitMQ connected and exchanges created');
+      this.logger.log("✅ RabbitMQ connected and exchanges created");
     } catch (error) {
-      this.logger.error('❌ Failed to connect to RabbitMQ', error);
+      this.logger.error("❌ Failed to connect to RabbitMQ", error);
     }
   }
 
@@ -49,49 +64,52 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
   async publishEvent(event: DomainEvent, exchange: string): Promise<void> {
     if (!this.channel) {
-      this.logger.warn('RabbitMQ channel not available, skipping event publish');
+      this.logger.warn(
+        "RabbitMQ channel not available, skipping event publish"
+      );
       return;
     }
 
     try {
       const message = JSON.stringify(event);
 
-      this.channel.publish(
-        exchange,
-        event.eventType,
-        Buffer.from(message),
-        { 
-          persistent: true,
-          contentType: 'application/json',
-          messageId: event.eventId
-        }
-      );
+      this.channel.publish(exchange, event.eventType, Buffer.from(message), {
+        persistent: true,
+        contentType: "application/json",
+        messageId: event.eventId,
+      });
 
-      this.logger.log(`📤 Published event: ${event.eventType} (ID: ${event.eventId})`);
+      this.logger.log(
+        `📤 Published event: ${event.eventType} (ID: ${event.eventId})`
+      );
     } catch (error) {
       this.logger.error(`Failed to publish event: ${event.eventType}`, error);
       throw error;
     }
   }
 
-  async publishBookingConfirmed(data: BookingConfirmedEvent['data']): Promise<void> {
+  async publishBookingConfirmed(
+    data: BookingConfirmedEvent["data"]
+  ): Promise<void> {
     const event: BookingConfirmedEvent = {
       eventId: this.generateEventId(),
       eventType: EventRoutingKeys.BOOKING_CONFIRMED,
       timestamp: new Date(),
-      source: 'booking-service',
+      source: "booking-service",
       data,
     };
 
     await this.publishEvent(event, Exchanges.BOOKING);
   }
 
-  async publishBookingCancelled(data: BookingCancelledEvent['data']): Promise<void> {
+  async publishBookingCancelled(
+    data: BookingCancelledEvent["data"]
+  ): Promise<void> {
     const event: BookingCancelledEvent = {
       eventId: this.generateEventId(),
       eventType: EventRoutingKeys.BOOKING_CANCELLED,
       timestamp: new Date(),
-      source: 'booking-service',
+      source: "booking-service",
       data,
     };
 
@@ -99,31 +117,33 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Subscribe to payment failure events
-  async subscribeToPaymentFailures(callback: (event: PaymentFailedEvent) => Promise<void>): Promise<void> {
+  async subscribeToPaymentFailures(
+    callback: (event: PaymentFailedEvent) => Promise<void>
+  ): Promise<void> {
     if (!this.channel) {
-      this.logger.warn('RabbitMQ channel not available');
+      this.logger.warn("RabbitMQ channel not available");
       return;
     }
 
-    const queue = 'booking-service.payment-failed';
-    
+    const queue = "booking-service.payment-failed";
+
     await this.channel.consume(queue, async (msg) => {
       if (!msg) return;
 
       try {
         const event = JSON.parse(msg.content.toString()) as PaymentFailedEvent;
         this.logger.log(`📥 Received payment.failed event: ${event.eventId}`);
-        
+
         await callback(event);
-        
+
         this.channel.ack(msg);
         this.logger.log(`✅ Processed payment.failed event: ${event.eventId}`);
       } catch (error) {
-        this.logger.error('Failed to process payment.failed event', error);
+        this.logger.error("Failed to process payment.failed event", error);
         this.channel.nack(msg, false, true); // Requeue on failure
       }
     });
 
-    this.logger.log('👂 Subscribed to payment failure events');
+    this.logger.log("👂 Subscribed to payment failure events");
   }
 }

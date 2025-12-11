@@ -1,7 +1,13 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
-import { CreateRouteDto } from './dto/create-route.dto';
-import { Prisma } from '@prisma/client';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from "@nestjs/common";
+import { PrismaService } from "../common/prisma.service";
+import { CreateRouteDto } from "./dto/create-route.dto";
+import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 @Injectable()
 export class RoutesService {
@@ -16,12 +22,14 @@ export class RoutesService {
     });
 
     if (existingRoute) {
-      throw new ConflictException(`Route with name ${routeName} already exists`);
+      throw new ConflictException(
+        `Route with name ${routeName} already exists`
+      );
     }
 
     // Validate all stations exist
     const stationIds = new Set<string>();
-    stops.forEach(stop => {
+    stops.forEach((stop) => {
       stationIds.add(stop.fromStationId);
       stationIds.add(stop.toStationId);
     });
@@ -31,14 +39,16 @@ export class RoutesService {
     });
 
     if (stations.length !== stationIds.size) {
-      throw new NotFoundException('One or more stations not found');
+      throw new NotFoundException("One or more stations not found");
     }
 
     // Validate stop orders are sequential
-    const orders = stops.map(s => s.stopOrder).sort((a, b) => a - b);
+    const orders = stops.map((s) => s.stopOrder).sort((a, b) => a - b);
     for (let i = 0; i < orders.length; i++) {
       if (orders[i] !== i + 1) {
-        throw new BadRequestException('Stop orders must be sequential starting from 1');
+        throw new BadRequestException(
+          "Stop orders must be sequential starting from 1"
+        );
       }
     }
 
@@ -49,7 +59,7 @@ export class RoutesService {
           totalDistance,
           isActive: isActive ?? true,
           stops: {
-            create: stops.map(stop => ({
+            create: stops.map((stop) => ({
               fromStationId: stop.fromStationId,
               toStationId: stop.toStationId,
               stopOrder: stop.stopOrder,
@@ -65,15 +75,17 @@ export class RoutesService {
               toStation: true,
             },
             orderBy: {
-              stopOrder: 'asc',
+              stopOrder: "asc",
             },
           },
         },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException('Route with these details already exists');
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
+          throw new ConflictException(
+            "Route with these details already exists"
+          );
         }
       }
       throw error;
@@ -90,11 +102,11 @@ export class RoutesService {
             toStation: true,
           },
           orderBy: {
-            stopOrder: 'asc',
+            stopOrder: "asc",
           },
         },
       },
-      orderBy: { routeName: 'asc' },
+      orderBy: { routeName: "asc" },
     });
   }
 
@@ -108,7 +120,7 @@ export class RoutesService {
             toStation: true,
           },
           orderBy: {
-            stopOrder: 'asc',
+            stopOrder: "asc",
           },
         },
       },
@@ -126,7 +138,7 @@ export class RoutesService {
       where: {
         routeName: {
           contains: routeName,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
         isActive: true,
       },
@@ -137,7 +149,7 @@ export class RoutesService {
             toStation: true,
           },
           orderBy: {
-            stopOrder: 'asc',
+            stopOrder: "asc",
           },
         },
       },

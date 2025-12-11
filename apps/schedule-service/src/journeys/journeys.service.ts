@@ -1,15 +1,30 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
-import { SearchJourneysDto } from './dto/search-journeys.dto';
-import { CreateJourneyDto } from './dto/create-journey.dto';
-import { Prisma } from '@prisma/client';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ConflictException,
+} from "@nestjs/common";
+import { PrismaService } from "../common/prisma.service";
+import { SearchJourneysDto } from "./dto/search-journeys.dto";
+import { CreateJourneyDto } from "./dto/create-journey.dto";
+import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 @Injectable()
 export class JourneysService {
   constructor(private prisma: PrismaService) {}
 
   async create(createJourneyDto: CreateJourneyDto) {
-    const { trainId, routeId, departureTime, arrivalTime, journeyDate, status, totalSeats, availableSeats } = createJourneyDto;
+    const {
+      trainId,
+      routeId,
+      departureTime,
+      arrivalTime,
+      journeyDate,
+      status,
+      totalSeats,
+      availableSeats,
+    } = createJourneyDto;
 
     // Validate train exists
     const train = await this.prisma.train.findUnique({
@@ -29,14 +44,18 @@ export class JourneysService {
 
     // Validate availableSeats <= totalSeats
     if (availableSeats > totalSeats) {
-      throw new BadRequestException('Available seats cannot exceed total seats');
+      throw new BadRequestException(
+        "Available seats cannot exceed total seats"
+      );
     }
 
     // Validate departure time is before arrival time
     const departure = new Date(departureTime);
     const arrival = new Date(arrivalTime);
     if (departure >= arrival) {
-      throw new BadRequestException('Departure time must be before arrival time');
+      throw new BadRequestException(
+        "Departure time must be before arrival time"
+      );
     }
 
     // Check for duplicate journey (same train, route, and date)
@@ -62,7 +81,7 @@ export class JourneysService {
           departureTime: new Date(departureTime),
           arrivalTime: new Date(arrivalTime),
           journeyDate: new Date(journeyDate),
-          status: status || 'SCHEDULED',
+          status: status || "SCHEDULED",
           totalSeats,
           availableSeats,
         },
@@ -76,7 +95,7 @@ export class JourneysService {
                   toStation: true,
                 },
                 orderBy: {
-                  stopOrder: 'asc',
+                  stopOrder: "asc",
                 },
               },
             },
@@ -84,9 +103,11 @@ export class JourneysService {
         },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException('Journey with these details already exists');
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
+          throw new ConflictException(
+            "Journey with these details already exists"
+          );
         }
       }
       throw error;
@@ -127,7 +148,7 @@ export class JourneysService {
             toStation: true,
           },
           orderBy: {
-            stopOrder: 'asc',
+            stopOrder: "asc",
           },
         },
       },
@@ -138,14 +159,18 @@ export class JourneysService {
       const fromStopIndex = route.stops.findIndex(
         (stop) =>
           stop.fromStationId === fromStation.id ||
-          stop.toStationId === fromStation.id,
+          stop.toStationId === fromStation.id
       );
       const toStopIndex = route.stops.findIndex(
         (stop) =>
           stop.fromStationId === toStation.id ||
-          stop.toStationId === toStation.id,
+          stop.toStationId === toStation.id
       );
-      return fromStopIndex !== -1 && toStopIndex !== -1 && fromStopIndex < toStopIndex;
+      return (
+        fromStopIndex !== -1 &&
+        toStopIndex !== -1 &&
+        fromStopIndex < toStopIndex
+      );
     });
 
     const routeIds = validRoutes.map((r) => r.id);
@@ -155,7 +180,7 @@ export class JourneysService {
       where: {
         routeId: { in: routeIds },
         journeyDate,
-        status: { in: ['SCHEDULED', 'DELAYED'] },
+        status: { in: ["SCHEDULED", "DELAYED"] },
         ...(trainType && {
           train: {
             type: trainType as any,
@@ -180,14 +205,14 @@ export class JourneysService {
                 toStation: true,
               },
               orderBy: {
-                stopOrder: 'asc',
+                stopOrder: "asc",
               },
             },
           },
         },
       },
       orderBy: {
-        departureTime: 'asc',
+        departureTime: "asc",
       },
     });
 
@@ -215,7 +240,7 @@ export class JourneysService {
                 toStation: true,
               },
               orderBy: {
-                stopOrder: 'asc',
+                stopOrder: "asc",
               },
             },
           },
@@ -244,14 +269,14 @@ export class JourneysService {
                 toStation: true,
               },
               orderBy: {
-                stopOrder: 'asc',
+                stopOrder: "asc",
               },
             },
           },
         },
       },
       orderBy: {
-        departureTime: 'asc',
+        departureTime: "asc",
       },
     });
   }

@@ -161,7 +161,7 @@ export class PaymentsService {
         paymentId: updatedPayment.id,
         userId: payment.userId,
         reservationId: payment.reservationId,
-        bookingId: payment.bookingId,
+        bookingId: payment.reservationId,
         amount: payment.amount,
         transactionId: dto.transactionId,
         paymentMethod: payment.paymentMethod,
@@ -171,10 +171,10 @@ export class PaymentsService {
         paymentId: updatedPayment.id,
         userId: payment.userId,
         reservationId: payment.reservationId,
-        bookingId: payment.bookingId,
+        bookingId: payment.reservationId,
         amount: payment.amount,
         reason: dto.gatewayResponse?.bankReference || "Payment failed",
-        errorCode: dto.gatewayResponse?.code,
+        errorCode: dto.gatewayResponse?.authCode,
       });
     }
 
@@ -257,13 +257,6 @@ export class PaymentsService {
       throw new BadRequestException("Only completed payments can be refunded");
     }
 
-    if (
-      payment.status === "REFUNDED" ||
-      payment.status === "PARTIALLY_REFUNDED"
-    ) {
-      throw new BadRequestException("Payment already refunded");
-    }
-
     const refundAmount = dto.amount || payment.amount;
 
     // Validate refund amount
@@ -312,7 +305,7 @@ export class PaymentsService {
     await this.rabbitMQ.publishRefundCompleted({
       refundId: `refund-${Date.now()}`,
       paymentId: updatedPayment.id,
-      bookingId: payment.bookingId || "",
+      bookingId: payment.reservationId,
       userId: payment.userId,
       amount: refundAmount,
       transactionId: gatewayResponse.transactionId || "",
