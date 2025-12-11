@@ -37,28 +37,13 @@ COPY apps/auth-service/src ./apps/auth-service/src
 COPY apps/auth-service/tsconfig.json ./apps/auth-service/
 COPY apps/auth-service/nest-cli.json ./apps/auth-service/
 
+# Generate Prisma Client
 RUN npx prisma generate --schema=./libs/database/prisma/schema.prisma
-
-RUN pnpm add -w webpack webpack-cli webpack-node-externals ts-loader tsconfig-paths-webpack-plugin terser-webpack-plugin
 
 WORKDIR /app/apps/auth-service
 
-RUN echo "const path = require('path');" > webpack.config.js && \
-    echo "const nodeExternals = require('webpack-node-externals');" >> webpack.config.js && \
-    echo "const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');" >> webpack.config.js && \
-    echo "const TerserPlugin = require('terser-webpack-plugin');" >> webpack.config.js && \
-    echo "module.exports = {" >> webpack.config.js && \
-    echo "  entry: './src/main.ts'," >> webpack.config.js && \
-    echo "  target: 'node'," >> webpack.config.js && \
-    echo "  mode: 'production'," >> webpack.config.js && \
-    echo "  externals: [nodeExternals()]," >> webpack.config.js && \
-    echo "  module: { rules: [{ test: /\.ts$/, use: 'ts-loader', exclude: /node_modules/ }] }," >> webpack.config.js && \
-    echo "  resolve: { extensions: ['.ts', '.js'], plugins: [new TsconfigPathsPlugin({ configFile: './tsconfig.json' })] }," >> webpack.config.js && \
-    echo "  output: { path: path.resolve(__dirname, 'dist'), filename: 'bundle.js' }," >> webpack.config.js && \
-    echo "  optimization: { minimize: true, minimizer: [new TerserPlugin({ terserOptions: { keep_classnames: true, keep_fnames: true } })] }" >> webpack.config.js && \
-    echo "};" >> webpack.config.js
-
-RUN npx webpack --config webpack.config.js
+# Build with NestJS CLI instead of webpack
+RUN pnpm build
 
 # ============================================
 # Stage 3: Production Runtime
@@ -67,12 +52,15 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
+# Copy production dependencies
 COPY --from=dependencies /tmp/auth-service-deploy/node_modules ./node_modules
 
+# Copy Prisma client
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.pnpm/@prisma+client@6.19.0_prisma@6.19.0_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
-COPY --from=builder /app/apps/auth-service/dist/bundle.js ./dist/main.js
+# Copy built application
+COPY --from=builder /app/apps/auth-service/dist ./dist
 
 RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001
 USER nestjs

@@ -73,32 +73,40 @@ spec:
                   key: rabbitmq-password
             - name: RABBITMQ_DEFAULT_VHOST
               value: "/jatra"
+            - name: RABBITMQ_VM_MEMORY_HIGH_WATERMARK
+              value: "0.6"
+            - name: RABBITMQ_DISK_FREE_LIMIT
+              value: "2GB"
           volumeMounts:
             - name: rabbitmq-storage
               mountPath: /var/lib/rabbitmq
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "250m"
-            limits:
               memory: "1Gi"
               cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
           livenessProbe:
             exec:
               command:
                 - rabbitmq-diagnostics
                 - -q
                 - ping
-            initialDelaySeconds: 60
-            periodSeconds: 30
+            initialDelaySeconds: 120
+            periodSeconds: 60
+            timeoutSeconds: 30
+            failureThreshold: 5
           readinessProbe:
             exec:
               command:
                 - rabbitmq-diagnostics
                 - -q
                 - check_running
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
   volumeClaimTemplates:
     - metadata:
         name: rabbitmq-storage
