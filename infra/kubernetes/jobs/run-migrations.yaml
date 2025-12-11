@@ -9,45 +9,45 @@ spec:
     spec:
       restartPolicy: Never
       containers:
-      - name: migrations
-        image: node:20-alpine
-        command: ["/bin/sh", "-c"]
-        args:
-          - |
-            echo "=== Installing Prisma CLI ==="
-            npm install -g prisma@6.19.0 @prisma/client@6.19.0
-            
-            echo "=== Cloning schema and migrations ==="
-            cat > /tmp/schema.prisma << 'SCHEMA_EOF'
-            generator client {
-              provider = "prisma-client-js"
-            }
-            
-            datasource db {
-              provider = "postgresql"
-              url      = env("DATABASE_URL")
-            }
-            SCHEMA_EOF
-            
-            echo "=== Running Prisma Migrations on All Databases ==="
-            
-            # Array of all databases
-            DATABASES="auth_db user_db schedule_db search_db seat_reservation_db booking_db payment_db ticket_db notification_db admin_db reporting_db"
-            
-            for DB in $DATABASES; do
+        - name: migrations
+          image: node:20-alpine
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "=== Installing Prisma CLI ==="
+              npm install -g prisma@6.19.0 @prisma/client@6.19.0
+
+              echo "=== Cloning schema and migrations ==="
+              cat > /tmp/schema.prisma << 'SCHEMA_EOF'
+              generator client {
+                provider = "prisma-client-js"
+              }
+
+              datasource db {
+                provider = "postgresql"
+                url      = env("DATABASE_URL")
+              }
+              SCHEMA_EOF
+
+              echo "=== Running Prisma Migrations on All Databases ==="
+
+              # Array of all databases
+              DATABASES="auth_db user_db schedule_db search_db seat_reservation_db booking_db payment_db ticket_db notification_db admin_db reporting_db"
+
+              for DB in $DATABASES; do
+                echo ""
+                echo ">>> Migrating database: $DB"
+                export DATABASE_URL="postgresql://jatra_user:jatra_password@postgres-service:5432/$DB?schema=public"
+                
+                # Use db push instead of migrate for initial setup
+                echo "Running prisma db push..."
+                prisma db push --schema=/tmp/schema.prisma --accept-data-loss --skip-generate || echo "⚠️  Failed $DB"
+                
+                echo "✅ Completed $DB"
+              done
+
               echo ""
-              echo ">>> Migrating database: $DB"
-              export DATABASE_URL="postgresql://jatra_user:jatra_password@postgres-service:5432/$DB?schema=public"
-              
-              # Use db push instead of migrate for initial setup
-              echo "Running prisma db push..."
-              prisma db push --schema=/tmp/schema.prisma --accept-data-loss --skip-generate || echo "⚠️  Failed $DB"
-              
-              echo "✅ Completed $DB"
-            done
-            
-            echo ""
-            echo "=== All migrations completed ==="
-        env:
-        - name: NODE_ENV
-          value: "production"
+              echo "=== All migrations completed ==="
+          env:
+            - name: NODE_ENV
+              value: "production"

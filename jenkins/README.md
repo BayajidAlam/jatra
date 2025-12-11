@@ -5,6 +5,7 @@ This directory contains Jenkins pipeline configuration and scripts for automated
 ## 🚀 Quick Start
 
 ### 1. Setup Jenkins
+
 ```bash
 cd /path/to/jatra-railway
 chmod +x jenkins/setup-jenkins.sh
@@ -12,12 +13,14 @@ chmod +x jenkins/setup-jenkins.sh
 ```
 
 This will:
+
 - Start Jenkins in Docker container
 - Install required tools (Docker, kubectl)
 - Configure volumes for Kubernetes access
 - Display initial admin password
 
 ### 2. Configure Jenkins Web UI
+
 1. Open http://localhost:8080
 2. Enter the initial admin password (shown after setup)
 3. Install suggested plugins
@@ -25,6 +28,7 @@ This will:
 5. Complete setup wizard
 
 ### 3. Create Pipeline Job
+
 1. Click "New Item"
 2. Enter name: `jatra-railway-pipeline`
 3. Select "Pipeline"
@@ -37,9 +41,10 @@ This will:
 5. Save
 
 ### 4. Run Pipeline
+
 1. Click "Build with Parameters"
 2. Choose options:
-   - **BUILD_MODE**: 
+   - **BUILD_MODE**:
      - `CHANGED_ONLY` - Build only services with code changes (faster)
      - `ALL_SERVICES` - Build all 11 services
    - **SKIP_TESTS**: Skip running tests
@@ -73,7 +78,9 @@ jenkins/
 ## ⚙️ Configuration
 
 ### Services List
+
 The pipeline handles these services:
+
 - auth-service
 - user-service
 - schedule-service
@@ -88,6 +95,7 @@ The pipeline handles these services:
 - api-gateway
 
 ### Environment Variables
+
 - `DOCKER_REGISTRY`: Docker registry prefix (default: `jatra`)
 - `IMAGE_TAG`: Git commit short hash (auto-generated)
 - `NAMESPACE`: Kubernetes namespace (default: `jatra`)
@@ -95,12 +103,14 @@ The pipeline handles these services:
 ## 🎯 Build Modes
 
 ### Changed Only (Recommended)
+
 - Detects changes using `git diff`
 - Builds only modified services
 - Typical build time: 30-60 seconds
 - Best for rapid iteration
 
 ### All Services
+
 - Builds all 11 services
 - Parallel execution
 - Typical build time: 3-5 minutes
@@ -109,18 +119,22 @@ The pipeline handles these services:
 ## 📊 Monitoring
 
 ### View Build Logs
+
 - Click on build number
 - Select "Console Output"
 - See real-time progress
 
 ### Check Kubernetes Status
+
 ```bash
 kubectl get pods -n jatra
 kubectl logs -f <pod-name> -n jatra
 ```
 
 ### View Build Summary
+
 Each build generates `build-summary.txt` with:
+
 - Build mode
 - Services built
 - Build time
@@ -130,12 +144,15 @@ Each build generates `build-summary.txt` with:
 ## 🔄 Triggering Builds
 
 ### Manual Trigger
+
 1. Go to Jenkins dashboard
 2. Click "Build with Parameters"
 3. Select options and build
 
 ### Automatic Trigger (Optional)
+
 Add webhook in GitHub:
+
 1. Go to repo Settings → Webhooks
 2. Add webhook: `http://your-jenkins:8080/github-webhook/`
 3. Enable in Jenkinsfile under `triggers`
@@ -143,11 +160,13 @@ Add webhook in GitHub:
 ## 🛠️ Troubleshooting
 
 ### Jenkins Can't Access Docker
+
 ```bash
 docker exec -u root jenkins chmod 666 /var/run/docker.sock
 ```
 
 ### Minikube Connection Issues
+
 ```bash
 # Ensure Minikube is running
 minikube status
@@ -157,11 +176,13 @@ docker cp ~/.kube jenkins:/var/jenkins_home/.kube
 ```
 
 ### Build Failures
+
 - Check `/tmp/build-<service>.log` in Jenkins container
 - Verify Dockerfile syntax
 - Ensure dependencies are available
 
 ### Deployment Issues
+
 - Check pod status: `kubectl get pods -n jatra`
 - View logs: `kubectl logs <pod> -n jatra`
 - Check events: `kubectl get events -n jatra --sort-by='.lastTimestamp'`
@@ -169,6 +190,7 @@ docker cp ~/.kube jenkins:/var/jenkins_home/.kube
 ## 📝 Development
 
 ### Adding New Service
+
 1. Add service to `SERVICES` array in:
    - `detect-changes.sh`
    - `build-services.sh`
@@ -177,6 +199,7 @@ docker cp ~/.kube jenkins:/var/jenkins_home/.kube
 3. Create deployment YAML in `infra/kubernetes/deployments/`
 
 ### Modifying Pipeline
+
 - Edit `Jenkinsfile` for stage changes
 - Edit scripts in `jenkins/scripts/` for logic changes
 - Make scripts executable: `chmod +x jenkins/scripts/*.sh`

@@ -3,6 +3,7 @@ package proxy
 import (
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,10 @@ import (
 func ProxyRequest(targetURL string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := c.Request.URL.Path
+		// Strip /api prefix when forwarding to backend services
+		if strings.HasPrefix(path, "/api/") {
+			path = strings.TrimPrefix(path, "/api")
+		}
 		query := c.Request.URL.RawQuery
 		fullURL := targetURL + path
 		if query != "" {
