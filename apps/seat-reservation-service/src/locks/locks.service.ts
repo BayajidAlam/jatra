@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import { RedisService } from '../common/redis.service';
+import { LuaScriptService } from './lua-script.service';
 import { AcquireLockDto } from './dto/acquire-lock.dto';
 import { CheckAvailabilityDto } from './dto/check-availability.dto';
 import { ExtendLockDto } from './dto/extend-lock.dto';
@@ -20,6 +21,7 @@ export class LocksService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
+    private readonly luaScript: LuaScriptService,
   ) {}
 
   async acquireLock(dto: AcquireLockDto) {
@@ -51,20 +53,19 @@ export class LocksService {
       throw new BadRequestException('One or more seats do not exist or do not belong to this train');
     }
 
-    // 3. Check if seats are already locked in Redis
-    const lockedSeats: string[] = [];
-    for (const seatId of dto.seatIds) {
-      const lockKey = this.getLockKey(dto.journeyId, seatId);
-      const existingLock = await this.redis.checkLock(lockKey);
-      if (existingLock) {
-        lockedSeats.push(seatId);
-      }
-    }
+    // 3. Use atomic Lua script to check and lock all seats
+    // This prevents race conditions by checking ALL seats first, then locking ALL or NONE
+    const lockKeys = dto.seatIds.map(seatId => this.getLockKey(dto.journeyId, seatId));
+    const atomicResult = await this.luaScript.atomicLockSeats(
+      lockKeys,
+      dto.userId,
+      this.lockTTL
+    );
 
-    if (lockedSeats.length > 0) {
+    if (!atomicResult.success) {
       throw new ConflictException({
         message: 'One or more seats are already locked',
-        lockedSeats,
+        failedSeat: atomicResult.failedSeat,
       });
     }
 
@@ -96,23 +97,9 @@ export class LocksService {
     const lockId = this.generateLockId(dto.userId);
     const lockExpiry = new Date(Date.now() + this.lockTTL * 1000);
 
-    // 7. Acquire locks in Redis
-    const lockValue = JSON.stringify({
-      userId: dto.userId,
-      lockId,
-      timestamp: Date.now(),
-    });
-
-    for (const seatId of dto.seatIds) {
-      const lockKey = this.getLockKey(dto.journeyId, seatId);
-      const acquired = await this.redis.acquireLock(lockKey, lockValue, this.lockTTL);
-
-      if (!acquired) {
-        // Rollback: release already acquired locks
-        await this.rollbackLocks(dto.journeyId, dto.seatIds);
-        throw new ConflictException(`Failed to acquire lock for seat ${seatId}`);
-      }
-    }
+    // 7. Locks already acquired atomically by Lua script above
+    // No need for individual lock acquisition or rollback logic
+    this.logger.log(`Atomic lock acquired for ${dto.seatIds.length} seats: ${atomicResult.lockedSeats?.join(', ')}`);
 
     // 8. Create reservation record in database
     const reservation = await this.prisma.reservation.create({
@@ -242,15 +229,16 @@ export class LocksService {
       throw new BadRequestException('Lock has already expired');
     }
 
-    // Extend locks in Redis
-    let extended = true;
-    for (const seatId of reservation.seatIds) {
-      const lockKey = this.getLockKey(reservation.journeyId, seatId);
-      const result = await this.redis.extendLock(lockKey, dto.extensionSeconds);
-      if (!result) {
-        extended = false;
-      }
-    }
+    // Extend locks in Redis using atomic Lua script
+    const lockKeys = reservation.seatIds.map(seatId => 
+      this.getLockKey(reservation.journeyId, seatId)
+    );
+    const extendedCount = await this.luaScript.extendLockTTL(
+      lockKeys,
+      reservation.userId,
+      dto.extensionSeconds
+    );
+    const extended = extendedCount === reservation.seatIds.length;
 
     // Update database
     const newExpiry = new Date(reservation.lockExpiry.getTime() + dto.extensionSeconds * 1000);
@@ -283,15 +271,17 @@ export class LocksService {
       throw new BadRequestException('Lock is not in LOCKED status');
     }
 
-    // Release locks in Redis
-    const releasedSeats: string[] = [];
-    for (const seatId of reservation.seatIds) {
-      const lockKey = this.getLockKey(reservation.journeyId, seatId);
-      const released = await this.redis.releaseLock(lockKey);
-      if (released) {
-        releasedSeats.push(seatId);
-      }
-    }
+    // Release locks in Redis using atomic Lua script
+    const lockKeys = reservation.seatIds.map(seatId => 
+      this.getLockKey(reservation.journeyId, seatId)
+    );
+    const releasedCount = await this.luaScript.atomicReleaseSeats(
+      lockKeys,
+      reservation.userId
+    );
+    const releasedSeats = releasedCount === reservation.seatIds.length 
+      ? reservation.seatIds 
+      : [];
 
     // Update reservation status
     await this.prisma.reservation.update({

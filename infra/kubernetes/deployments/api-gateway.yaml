@@ -35,8 +35,8 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: jatra/api-gateway:1.1
-          imagePullPolicy: Never
+          image: jatra/api-gateway:1.2
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
               name: http

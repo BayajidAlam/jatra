@@ -1,10 +1,11 @@
-import { Controller, Post, Get, Body, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Post, Get, Body, Param, Query, HttpCode, HttpStatus, UseInterceptors } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { ConfirmBookingDto } from './dto/confirm-booking.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
 import { QueryBookingsDto } from './dto/query-bookings.dto';
+import { IdempotencyInterceptor } from '@jatra/common/middleware';
 
 @ApiTags('Bookings')
 @ApiBearerAuth()
@@ -14,9 +15,15 @@ export class BookingsController {
 
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(IdempotencyInterceptor)
   @ApiOperation({ 
     summary: 'Create new booking',
-    description: 'Orchestrates seat locking and payment initiation. Returns booking with payment details for checkout.'
+    description: 'Orchestrates seat locking and payment initiation. Returns booking with payment details for checkout. Supports idempotency via Idempotency-Key header.'
+  })
+  @ApiHeader({
+    name: 'Idempotency-Key',
+    description: 'Optional unique key to prevent duplicate bookings on retry',
+    required: false,
   })
   @ApiResponse({ 
     status: 201, 

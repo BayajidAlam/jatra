@@ -8,13 +8,15 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiHeader } from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
 import { InitiatePaymentDto } from './dto/initiate-payment.dto';
 import { ConfirmPaymentDto } from './dto/confirm-payment.dto';
 import { RefundPaymentDto } from './dto/refund-payment.dto';
 import { QueryPaymentDto } from './dto/query-payment.dto';
+import { IdempotencyInterceptor } from '@jatra/common/middleware';
 
 @ApiTags('payments')
 @Controller('payments')
@@ -23,9 +25,15 @@ export class PaymentsController {
 
   @Post('initiate')
   @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(IdempotencyInterceptor)
   @ApiOperation({
     summary: 'Initiate payment',
-    description: 'Initialize a payment for a reservation through mock gateway',
+    description: 'Initialize a payment for a reservation through mock gateway. Supports idempotency via Idempotency-Key header to prevent duplicate charges.',
+  })
+  @ApiHeader({
+    name: 'Idempotency-Key',
+    description: 'Optional unique key to prevent duplicate payments on retry',
+    required: false,
   })
   @ApiResponse({
     status: 201,
