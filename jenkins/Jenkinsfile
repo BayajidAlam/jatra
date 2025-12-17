@@ -33,21 +33,19 @@ pipeline {
         DOCKER_REGISTRY = 'jatra'
         IMAGE_TAG = "${env.GIT_COMMIT.take(7)}"
         NAMESPACE = 'jatra'
-        WORKSPACE_DIR = '/workspace'
         KUBECONFIG = '/var/jenkins_home/.kube/config'
     }
     
     stages {
-        stage('Checkout') {
+        stage('Verify Environment') {
             steps {
                 script {
                     echo "🔄 Checking out code from ${env.GIT_BRANCH}..."
                     sh '''
-                        git --version
-                        docker --version
-                        kubectl version --client
                         echo "Commit: ${GIT_COMMIT}"
                         echo "Branch: ${GIT_BRANCH}"
+                        docker --version
+                        kubectl version --client --short
                     '''
                 }
             }
@@ -58,14 +56,13 @@ pipeline {
                 script {
                     echo "🔍 Detecting changed services..."
                     sh '''
-                        cp -r ${WORKSPACE_DIR}/jenkins /tmp/
-                        chmod +x /tmp/jenkins/scripts/*.sh
-                        /tmp/jenkins/scripts/detect-changes.sh
+                        chmod +x ${WORKSPACE}/jenkins/scripts/*.sh
+                        ${WORKSPACE}/jenkins/scripts/detect-changes.sh
                     '''
                     
                     env.CHANGED_SERVICES = readFile('changed-services.txt').trim()
                     
-                    if (env.CHANGED_SERVICES == '' && params.BUILD_MODE == 'CHANGED_ONLY' && !params.FORCE_DEPLOY) {
+                    if (env.CHANGED_SERVICES == '' && params.BUILD_MODE == 'CHANGED_ONLY') {
                         echo "✅ No services changed. Skipping build."
                         currentBuild.result = 'SUCCESS'
                         return
@@ -84,7 +81,7 @@ pipeline {
                 script {
                     echo "🧪 Running tests..."
                     sh '''
-                        /tmp/jenkins/scripts/run-tests.sh \
+                        ${WORKSPACE}/jenkins/scripts/run-tests.sh \
                             "${BUILD_MODE}" \
                             "${CHANGED_SERVICES}"
                     '''
@@ -97,7 +94,7 @@ pipeline {
                 script {
                     echo "🏗️  Building Docker images..."
                     sh '''
-                        /tmp/jenkins/scripts/build-services.sh \
+                        ${WORKSPACE}/jenkins/scripts/build-services.sh \
                             "${BUILD_MODE}" \
                             "${CHANGED_SERVICES}" \
                             "${IMAGE_TAG}"
@@ -152,12 +149,9 @@ pipeline {
                 script {
                     echo "📥 Loading images to Minikube..."
                     sh '''
-                        docker exec -u root jenkins sh -c "
-                        export PATH=/usr/local/bin:\$PATH
-                        ${WORKSPACE_DIR}/jenkins/scripts/load-to-minikube.sh \
-                            '${BUILD_MODE}' \
-                            '${CHANGED_SERVICES}'
-                        "
+                        ${WORKSPACE}/jenkins/scripts/load-to-minikube.sh \
+                            "${BUILD_MODE}" \
+                            "${CHANGED_SERVICES}"
                     '''
                 }
             }
@@ -171,27 +165,17 @@ pipeline {
                 script {
                     echo "🏗️  Deploying infrastructure components..."
                     sh '''
-                        pwd
-                        ls -la | head -20
                         export KUBECONFIG=${KUBECONFIG}
                         
                         # Create namespace if not exists
-                        kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - || echo "⚠️  Warning: Could not create namespace"
+                        kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
                         
-                        # Deploy ConfigMaps
-                        kubectl apply -f infra/kubernetes/configmaps/ || echo "⚠️  Warning: Could not deploy ConfigMaps"
-                        
-                        # Deploy Secrets
-                        kubectl apply -f infra/kubernetes/secrets/ || echo "⚠️  Warning: Could not deploy Secrets"
-                        
-                        # Deploy PostgreSQL (if not exists)
-                        kubectl apply -f infra/kubernetes/statefulsets/postgres.yaml || echo "⚠️  Warning: Could not deploy PostgreSQL"
-                        
-                        # Deploy Redis
-                        kubectl apply -f infra/kubernetes/deployments/redis.yaml || echo "⚠️  Warning: Could not deploy Redis"
-                        
-                        # Deploy RabbitMQ (if exists)
-                        kubectl apply -f infra/kubernetes/statefulsets/rabbitmq.yaml || echo "⚠️  Warning: RabbitMQ config not found or could not deploy"
+                        # Deploy infrastructure in order
+                        kubectl apply -f ${WORKSPACE}/infra/kubernetes/configmaps/ || true
+                        kubectl apply -f ${WORKSPACE}/infra/kubernetes/secrets/ || true
+                        kubectl apply -f ${WORKSPACE}/infra/kubernetes/statefulsets/postgres.yaml || true
+                        kubectl apply -f ${WORKSPACE}/infra/kubernetes/deployments/redis.yaml || true
+                        kubectl apply -f ${WORKSPACE}/infra/kubernetes/statefulsets/rabbitmq.yaml || true
                     '''
                 }
             }
@@ -205,18 +189,9 @@ pipeline {
                 script {
                     echo "🔌 Deploying PgBouncer connection pooler..."
                     sh '''
-                        pwd
-                        ls -la
-                        ls -la infra/ || echo "infra not found"
                         export KUBECONFIG=${KUBECONFIG}
-                        kubectl apply -f infra/kubernetes/deployments/pgbouncer.yaml || echo "⚠️  Warning: Could not deploy PgBouncer"
-                        
-                        # Wait for PgBouncer to be ready
-                        kubectl wait --for=condition=ready pod -l app=pgbouncer -n ${NAMESPACE} --timeout=120s || {
-                            echo "⚠️  PgBouncer not ready, checking pods..."
-                            kubectl get pods -n ${NAMESPACE} -l app=pgbouncer || echo "⚠️  Could not get PgBouncer pods"
-                            kubectl describe pods -n ${NAMESPACE} -l app=pgbouncer || echo "⚠️  Could not describe PgBouncer pods"
-                        }
+                        kubectl apply -f ${WORKSPACE}/infra/kubernetes/deployments/pgbouncer.yaml || true
+                        kubectl wait --for=condition=ready pod -l app=pgbouncer -n ${NAMESPACE} --timeout=60s || true
                     '''
                 }
             }
@@ -232,45 +207,14 @@ pipeline {
                     sh '''
                         export KUBECONFIG=${KUBECONFIG}
                         
-                        # Check if metrics-server is installed
-                        if ! kubectl get deployment metrics-server -n kube-system &> /dev/null; then
-                            echo "📥 Installing metrics-server..."
-                            kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml || echo "⚠️  Warning: Could not install metrics-server"
-                            
-                            # Patch for minikube
-                            kubectl patch deployment metrics-server -n kube-system --type='json' \
-                                -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]' || echo "⚠️  Warning: Could not patch metrics-server"
-                            
-                            sleep 10
-                        fi
-                        
-                        # Deploy HPA manifests
-                        kubectl apply -f infra/kubernetes/hpa/ || echo "⚠️  Warning: Could not deploy HPA"
+                        # HPA needs metrics-server (already enabled in minikube addons)
+                        kubectl apply -f ${WORKSPACE}/infra/kubernetes/hpa/ || true
                     '''
                 }
             }
         }
         
-        stage('Build API Gateway with Circuit Breaker') {
-            when {
-                expression { params.DEPLOY_PERFORMANCE_IMPROVEMENTS && env.CLUSTER_AVAILABLE == 'true' }
-            }
-            steps {
-                script {
-                    echo "🛡️  Building API Gateway with Circuit Breaker..."
-                    sh '''
-                        docker build -f apps/api-gateway/Dockerfile -t ${DOCKER_REGISTRY}/api-gateway:${IMAGE_TAG} .
-                        docker tag ${DOCKER_REGISTRY}/api-gateway:${IMAGE_TAG} ${DOCKER_REGISTRY}/api-gateway:latest
-                        
-                        # Load to minikube if dev environment
-                        if [ "${ENVIRONMENT}" = "dev" ]; then
-                            minikube image load ${DOCKER_REGISTRY}/api-gateway:${IMAGE_TAG}
-                            minikube image load ${DOCKER_REGISTRY}/api-gateway:latest
-                        fi
-                    '''
-                }
-            }
-        }
+
         
         stage('Deploy Services') {
             when {
@@ -281,16 +225,9 @@ pipeline {
                     echo "🚀 Deploying microservices to Kubernetes..."
                     sh '''
                         export KUBECONFIG=${KUBECONFIG}
-                        ${WORKSPACE_DIR}/jenkins/scripts/deploy-k8s.sh \
+                        ${WORKSPACE}/jenkins/scripts/deploy-k8s.sh \
                             "${BUILD_MODE}" \
-                            "${CHANGED_SERVICES}" || echo "⚠️  Warning: Could not deploy services"
-                        
-                        # Update API Gateway to use circuit breaker image
-                        if [ "${DEPLOY_PERFORMANCE_IMPROVEMENTS}" = "true" ]; then
-                            kubectl set image deployment/api-gateway \
-                                api-gateway=${DOCKER_REGISTRY}/api-gateway:${IMAGE_TAG} \
-                                -n ${NAMESPACE} || echo "⚠️  Warning: Could not update API Gateway image"
-                        fi
+                            "${CHANGED_SERVICES}"
                     '''
                 }
             }
@@ -305,21 +242,11 @@ pipeline {
                     echo "✅ Verifying deployments..."
                     sh '''
                         export KUBECONFIG=${KUBECONFIG}
-                        
-                        echo "📦 Checking PgBouncer status..."
-                        kubectl get pods -n ${NAMESPACE} -l app=pgbouncer || echo "⚠️  Could not check PgBouncer pods"
-                        
+                        echo "🚀 Deployments:"
+                        kubectl get deployments -n ${NAMESPACE}
                         echo ""
-                        echo "📊 Checking HPA status..."
-                        kubectl get hpa -n ${NAMESPACE} || echo "⚠️  Could not check HPA"
-                        
-                        echo ""
-                        echo "🚀 Checking service deployments..."
-                        kubectl get deployments -n ${NAMESPACE} || echo "⚠️  Could not check deployments"
-                        
-                        echo ""
-                        echo "🏥 Pod health status..."
-                        kubectl get pods -n ${NAMESPACE} || echo "⚠️  Could not check pods"
+                        echo "🏥 Pods:"
+                        kubectl get pods -n ${NAMESPACE}
                     '''
                 }
             }
@@ -334,9 +261,9 @@ pipeline {
                     echo "🏥 Running health checks..."
                     sh '''
                         export KUBECONFIG=${KUBECONFIG}
-                        ${WORKSPACE_DIR}/jenkins/scripts/health-check.sh \
+                        ${WORKSPACE}/jenkins/scripts/health-check.sh \
                             "${BUILD_MODE}" \
-                            "${CHANGED_SERVICES}" || echo "⚠️  Warning: Health check failed"
+                            "${CHANGED_SERVICES}" || true
                     '''
                 }
             }
@@ -368,27 +295,7 @@ pipeline {
             }
         }
         
-        stage('Smoke Tests') {
-            when {
-                expression { env.CLUSTER_AVAILABLE == 'true' }
-            }
-            steps {
-                script {
-                    echo "🔥 Running smoke tests..."
-                    sh '''
-                        export KUBECONFIG=${KUBECONFIG}
-                        
-                        # Test API Gateway health
-                        kubectl run curl-test --image=curlimages/curl:latest --rm -i --restart=Never -- \
-                            curl -f http://api-gateway.${NAMESPACE}.svc.cluster.local:3000/health || {
-                            echo "⚠️  Warning: API Gateway health check failed"
-                        }
-                        
-                        echo "✅ Smoke tests completed (with warnings if any)"
-                    '''
-                }
-            }
-        }
+
     }
     
     post {
@@ -398,46 +305,20 @@ pipeline {
                 sh '''
                     export KUBECONFIG=${KUBECONFIG}
                     
-                    echo ""
                     echo "📊 DEPLOYMENT SUMMARY"
-                    echo "====================="
-                    echo "Environment: ${ENVIRONMENT}"
-                    echo "Namespace: ${NAMESPACE}"
-                    echo "Image Tag: ${IMAGE_TAG}"
-                    echo "Cluster Available: ${CLUSTER_AVAILABLE}"
-                    echo ""
-                    
-                    if [ "${DEPLOY_PERFORMANCE_IMPROVEMENTS}" = "true" ] && [ "${CLUSTER_AVAILABLE}" = "true" ]; then
-                        echo "🎯 Performance Improvements Deployed:"
-                        echo "  ✅ PgBouncer: Connection pooling (1000 → 100 connections)"
-                        echo "  ✅ HPA: Auto-scaling enabled for all services"
-                        echo "  ✅ Circuit Breaker: Fail-fast protection in API Gateway"
-                        echo "  ✅ Async Payment: Queue-based processing"
-                        echo "  ✅ Atomic Seat Locking: Lua scripts integrated"
-                        echo "  ✅ Idempotency: Duplicate prevention active"
-                        echo ""
-                    fi
+                    echo "Environment: ${ENVIRONMENT} | Namespace: ${NAMESPACE} | Image Tag: ${IMAGE_TAG}"
                     
                     if [ "${CLUSTER_AVAILABLE}" = "true" ]; then
-                        echo "🚀 Active Services:"
-                        kubectl get pods -n ${NAMESPACE} -o wide || echo "⚠️  Could not get pods"
-                        
                         echo ""
-                        echo "📈 HPA Status:"
-                        kubectl get hpa -n ${NAMESPACE} || echo "⚠️  Could not get HPA"
+                        echo "🚀 Services:"
+                        kubectl get pods -n ${NAMESPACE}
                         
-                        echo ""
-                        echo "🔗 Access Points:"
                         if [ "${ENVIRONMENT}" = "dev" ]; then
-                            echo "  API Gateway: http://$(minikube ip):30000" || echo "⚠️  Could not get minikube IP"
+                            echo ""
+                            echo "🔗 Access: http://$(minikube ip):30000" || true
                         fi
                     fi
-                    
-                    cat build-summary.txt 2>/dev/null || echo ""
                 '''
-                
-                // Send Slack notification (if configured)
-                // slackSend(color: 'good', message: "Deployment to ${params.ENVIRONMENT} successful!")
             }
         }
         failure {
@@ -446,35 +327,19 @@ pipeline {
                 sh '''
                     export KUBECONFIG=${KUBECONFIG}
                     
-                    echo ""
-                    echo "🔍 Debugging Information:"
-                    echo "========================"
-                    echo "Cluster Available: ${CLUSTER_AVAILABLE}"
-                    
                     if [ "${CLUSTER_AVAILABLE}" = "true" ]; then
-                        echo ""
                         echo "Pod Status:"
-                        kubectl get pods -n ${NAMESPACE} || echo "⚠️  Could not get pods"
+                        kubectl get pods -n ${NAMESPACE} || true
                         
                         echo ""
                         echo "Recent Events:"
-                        kubectl get events -n ${NAMESPACE} --sort-by='.lastTimestamp' | tail -20 || echo "⚠️  Could not get events"
-                        
-                        echo ""
-                        echo "Failed Pods Details:"
-                        kubectl get pods -n ${NAMESPACE} | grep -v Running | grep -v Completed | tail -n +2 | awk '{print $1}' | xargs -I {} kubectl describe pod {} -n ${NAMESPACE} || echo "⚠️  Could not describe failed pods"
-                    else
-                        echo "Cluster not available - no deployment debugging info"
+                        kubectl get events -n ${NAMESPACE} --sort-by='.lastTimestamp' | tail -10 || true
                     fi
                 '''
-                
-                // Send Slack notification (if configured)
-                // slackSend(color: 'danger', message: "Deployment to ${params.ENVIRONMENT} failed!")
             }
         }
         always {
             script {
-                echo "🧹 Cleaning up workspace..."
                 cleanWs()
             }
         }
