@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Twilio } from "twilio";
+import * as Twilio from "twilio";
 import {
   ISmsProvider,
   SmsProviderConfig,
