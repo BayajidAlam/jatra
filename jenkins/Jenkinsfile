@@ -45,7 +45,7 @@ pipeline {
                         echo "Commit: ${GIT_COMMIT}"
                         echo "Branch: ${GIT_BRANCH}"
                         docker --version
-                        kubectl version --client --short
+                        kubectl version --client
                     '''
                 }
             }
