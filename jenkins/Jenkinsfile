@@ -218,7 +218,36 @@ pipeline {
             }
         }
         
-
+        stage('Initialize Database') {
+            when {
+                expression { env.CLUSTER_AVAILABLE == 'true' }
+            }
+            steps {
+                script {
+                    echo "🗄️  Initializing database schema and seed data..."
+                    sh '''
+                        export KUBECONFIG=${KUBECONFIG}
+                        
+                        # Delete previous job if exists
+                        kubectl delete job init-database -n ${NAMESPACE} --ignore-not-found=true
+                        
+                        # Apply database initialization job
+                        kubectl apply -f ${WORKSPACE}/infra/kubernetes/jobs/init-database.yaml
+                        
+                        # Wait for job to complete (max 5 minutes)
+                        echo "⏳ Waiting for database initialization to complete..."
+                        kubectl wait --for=condition=complete --timeout=300s job/init-database -n ${NAMESPACE} || {
+                            echo "❌ Database initialization failed. Checking logs..."
+                            kubectl logs job/init-database -n ${NAMESPACE} || true
+                            exit 1
+                        }
+                        
+                        echo "✅ Database initialization completed successfully"
+                        kubectl logs job/init-database -n ${NAMESPACE} | tail -20
+                    '''
+                }
+            }
+        }
         
         stage('Deploy Services') {
             when {
