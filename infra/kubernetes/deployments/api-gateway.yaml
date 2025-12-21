@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: jatra/api-gateway:1.2
+          image: jatra/api-gateway:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -43,6 +43,8 @@ spec:
           env:
             - name: PORT
               value: "3000"
+            - name: GIN_MODE
+              value: "release"
             - name: JWT_ACCESS_SECRET
               valueFrom:
                 secretKeyRef:

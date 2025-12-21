@@ -7,7 +7,7 @@ export class IdempotencyService {
   private readonly logger = new Logger(IdempotencyService.name);
   private readonly DEFAULT_TTL = 86400; // 24 hours
 
-  constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
+  constructor(@Inject("REDIS_CLIENT") private readonly redis: Redis) {}
 
   /**
    * Generate idempotency key from request data

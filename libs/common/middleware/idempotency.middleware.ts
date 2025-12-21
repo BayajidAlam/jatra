@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware, ConflictException } from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
-import { IdempotencyService } from "../../services/idempotency.service";
+import { IdempotencyService } from "../services/idempotency.service";
 
 @Injectable()
 export class IdempotencyMiddleware implements NestMiddleware {

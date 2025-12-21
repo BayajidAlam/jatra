@@ -1,32 +1,17 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { RedisService } from "../common/redis.service";
-import * as fs from "fs";
-import * as path from "path";
 
 @Injectable()
 export class LuaScriptService implements OnModuleInit {
   private readonly logger = new Logger(LuaScriptService.name);
-  private atomicLockScript: string;
-  private atomicReleaseScript: string;
-  private extendLockScript: string;
 
   constructor(private readonly redis: RedisService) {}
 
   async onModuleInit() {
-    // Load Lua scripts
-    this.atomicLockScript = fs.readFileSync(
-      path.join(__dirname, "scripts", "atomic-lock.lua"),
-      "utf8"
+    // No Lua scripts needed - using simple Redis operations instead
+    this.logger.log(
+      "LuaScriptService initialized (using simple Redis operations)"
     );
-    this.atomicReleaseScript = fs.readFileSync(
-      path.join(__dirname, "scripts", "atomic-release.lua"),
-      "utf8"
-    );
-    this.extendLockScript = fs.readFileSync(
-      path.join(__dirname, "scripts", "extend-lock.lua"),
-      "utf8"
-    );
-    this.logger.log("Lua scripts loaded successfully");
   }
 
   /**
@@ -34,9 +19,8 @@ export class LuaScriptService implements OnModuleInit {
    * Returns: { success: boolean, lockedSeats?: string[], failedSeat?: string }
    */
   async atomicLockSeats(
-    journeyId: string,
+    lockKeys: string[],
     userId: string,
-    seatIds: string[],
     ttl: number
   ): Promise<{
     success: boolean;
@@ -44,32 +28,33 @@ export class LuaScriptService implements OnModuleInit {
     failedSeat?: string;
   }> {
     try {
-      const result = await this.redis.getClient().eval(
-        this.atomicLockScript,
-        0, // No keys, only arguments
-        journeyId,
-        userId,
-        ttl.toString(),
-        seatIds.length.toString(),
-        ...seatIds
-      );
+      // Simple non-Lua implementation for compatibility
+      // Lock each key atomically using Redis SET NX EX
+      const lockedSeats: string[] = [];
 
-      // Result format: [success, data]
-      // If success=1: [1, "seat1,seat2,seat3"]
-      // If success=0: [0, "failedSeatId"]
-      const [success, data] = result as [number, string];
+      for (const key of lockKeys) {
+        const result = await this.redis.getClient().set(key, userId, {
+          NX: true,
+          EX: ttl,
+        });
 
-      if (success === 1) {
-        return {
-          success: true,
-          lockedSeats: data.split(","),
-        };
-      } else {
-        return {
-          success: false,
-          failedSeat: data,
-        };
+        if (result !== "OK") {
+          // Failed to lock this seat, release previously locked seats
+          for (const lockedKey of lockedSeats) {
+            await this.redis.getClient().del(lockedKey);
+          }
+          return {
+            success: false,
+            failedSeat: key,
+          };
+        }
+        lockedSeats.push(key);
       }
+
+      return {
+        success: true,
+        lockedSeats,
+      };
     } catch (error) {
       this.logger.error(`Failed to execute atomic lock: ${error.message}`);
       throw error;
@@ -81,23 +66,22 @@ export class LuaScriptService implements OnModuleInit {
    * Returns: number of seats released
    */
   async atomicReleaseSeats(
-    journeyId: string,
-    userId: string,
-    seatIds: string[]
+    lockKeys: string[],
+    userId: string
   ): Promise<number> {
     try {
-      const releasedCount = await this.redis
-        .getClient()
-        .eval(
-          this.atomicReleaseScript,
-          0,
-          journeyId,
-          userId,
-          seatIds.length.toString(),
-          ...seatIds
-        );
+      let releasedCount = 0;
 
-      return releasedCount as number;
+      for (const key of lockKeys) {
+        // Only release if the lock belongs to this user
+        const currentValue = await this.redis.getClient().get(key);
+        if (currentValue === userId) {
+          const deleted = await this.redis.getClient().del(key);
+          releasedCount += deleted;
+        }
+      }
+
+      return releasedCount;
     } catch (error) {
       this.logger.error(`Failed to execute atomic release: ${error.message}`);
       throw error;
@@ -109,25 +93,23 @@ export class LuaScriptService implements OnModuleInit {
    * Returns: number of locks extended
    */
   async extendLockTTL(
-    journeyId: string,
+    lockKeys: string[],
     userId: string,
-    seatIds: string[],
     newTtl: number
   ): Promise<number> {
     try {
-      const extendedCount = await this.redis
-        .getClient()
-        .eval(
-          this.extendLockScript,
-          0,
-          journeyId,
-          userId,
-          newTtl.toString(),
-          seatIds.length.toString(),
-          ...seatIds
-        );
+      let extendedCount = 0;
 
-      return extendedCount as number;
+      for (const key of lockKeys) {
+        // Only extend if the lock belongs to this user
+        const currentValue = await this.redis.getClient().get(key);
+        if (currentValue === userId) {
+          await this.redis.getClient().expire(key, newTtl);
+          extendedCount++;
+        }
+      }
+
+      return extendedCount;
     } catch (error) {
       this.logger.error(`Failed to execute extend lock: ${error.message}`);
       throw error;

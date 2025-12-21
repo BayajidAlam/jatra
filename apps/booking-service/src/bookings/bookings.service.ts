@@ -99,7 +99,7 @@ export class BookingsService implements OnModuleInit {
       this.logger.log(`✅ Booking created: ${booking.id}`);
 
       // Step 3: Queue payment for async processing (non-blocking)
-      await this.rabbitMQ.publish('booking.exchange', 'payment.process', {
+      await this.rabbitMQ.publish("booking.exchange", "payment.process", {
         bookingId: booking.id,
         userId: dto.userId,
         reservationId,
@@ -118,7 +118,8 @@ export class BookingsService implements OnModuleInit {
         totalAmount: booking.totalAmount,
         seats: booking.seats,
         journey: booking.journey,
-        message: "Booking created. Payment is being processed. Check status in a moment.",
+        message:
+          "Booking created. Payment is being processed. Check status in a moment.",
       };
     } catch (error) {
       this.logger.error("❌ Booking creation failed", error.message);

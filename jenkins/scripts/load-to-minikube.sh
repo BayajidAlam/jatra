@@ -7,6 +7,7 @@ BUILD_MODE=$1
 CHANGED_SERVICES=$2
 
 SERVICES=(
+    "api-gateway"
     "auth-service"
     "user-service"
     "schedule-service"
@@ -37,10 +38,6 @@ fi
 
 # Load images in parallel
 for service in "${SERVICES_TO_LOAD[@]}"; do
-    if [ "$service" = "api-gateway" ]; then
-        continue
-    fi
-    
     (
         echo "   Loading $service..."
         # Save image from Jenkins' docker and load to Minikube

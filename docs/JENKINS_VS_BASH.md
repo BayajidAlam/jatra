@@ -56,17 +56,17 @@ git push
 
 ## 📊 What Jenkins Does (vs Manual Script)
 
-| Feature | Bash Script | Jenkins Pipeline |
-|---------|-------------|------------------|
-| **Automation** | Manual execution | Triggered by git push |
-| **Audit Trail** | None | Full history with logs |
-| **Rollback** | Manual | Previous build replay |
-| **Notifications** | None | Slack/email alerts |
-| **Approval Gates** | None | Manual approval for prod |
-| **Environment Mgmt** | Single env | dev/staging/prod |
-| **Secret Management** | Hardcoded | Jenkins credentials |
-| **Parallel Builds** | Sequential | Can parallelize |
-| **Test Integration** | Manual | Automated |
+| Feature               | Bash Script      | Jenkins Pipeline         |
+| --------------------- | ---------------- | ------------------------ |
+| **Automation**        | Manual execution | Triggered by git push    |
+| **Audit Trail**       | None             | Full history with logs   |
+| **Rollback**          | Manual           | Previous build replay    |
+| **Notifications**     | None             | Slack/email alerts       |
+| **Approval Gates**    | None             | Manual approval for prod |
+| **Environment Mgmt**  | Single env       | dev/staging/prod         |
+| **Secret Management** | Hardcoded        | Jenkins credentials      |
+| **Parallel Builds**   | Sequential       | Can parallelize          |
+| **Test Integration**  | Manual           | Automated                |
 
 ## 🔐 Secret Management (Best Practice)
 
@@ -82,6 +82,7 @@ Instead of hardcoded secrets in YAML:
 ```
 
 Then reference in Jenkinsfile:
+
 ```groovy
 environment {
     POSTGRES_PASSWORD = credentials('postgres-password')
@@ -105,7 +106,7 @@ Add to `post` section:
 ```groovy
 success {
     slackSend(
-        color: 'good', 
+        color: 'good',
         message: "✅ Deployed to ${ENVIRONMENT} - Build #${BUILD_NUMBER}"
     )
 }
@@ -153,12 +154,14 @@ Developer → Git Push → Jenkins Triggered
 ## 🆚 When to Use What?
 
 ### Use Bash Script (`deploy-improvements.sh`) for:
+
 - Local development testing
 - One-time emergency fixes
 - Learning/experimentation
 - Quick manual rollbacks
 
 ### Use Jenkins Pipeline for:
+
 - ✅ All production deployments
 - ✅ Staging deployments
 - ✅ Automated testing
@@ -169,11 +172,13 @@ Developer → Git Push → Jenkins Triggered
 ## 🔧 Next Steps
 
 1. **Copy Enhanced Pipeline:**
+
    ```bash
    cp jenkins/Jenkinsfile.performance jenkins/Jenkinsfile
    ```
 
 2. **Configure Jenkins Credentials** (if not already done):
+
    ```bash
    # These will be used instead of hardcoded secrets
    - postgres-password
@@ -182,6 +187,7 @@ Developer → Git Push → Jenkins Triggered
    ```
 
 3. **Set Up Slack Notifications** (optional):
+
    - Install Slack plugin in Jenkins
    - Get webhook URL from Slack
    - Add to Jenkinsfile post sections
@@ -194,6 +200,7 @@ Developer → Git Push → Jenkins Triggered
 ## 📝 Summary
 
 **The bash script is fine for learning**, but **Jenkins is production-ready** with:
+
 - Automatic triggers
 - Approval gates
 - Full audit trail

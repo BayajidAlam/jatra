@@ -11,6 +11,7 @@ IMAGE_TAG=${3:-"latest"}
 rm -f /tmp/failed-builds.txt
 
 SERVICES=(
+    "api-gateway"
     "auth-service"
     "user-service"
     "schedule-service"
