@@ -45,3 +45,11 @@ data:
 
   # Frontend URL (update when frontend is deployed)
   FRONTEND_URL: "https://jatra.local"
+
+  # API Gateway Configuration
+  CORS_ALLOWED_ORIGINS: "*"
+  CORS_ALLOWED_METHODS: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+  CORS_ALLOWED_HEADERS: "Content-Type,Authorization"
+  RATE_LIMIT_REQUESTS: "100"
+  RATE_LIMIT_WINDOW_SECONDS: "60"
+  LOG_LEVEL: "info"

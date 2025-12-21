@@ -53,7 +53,7 @@ RUN echo "const path = require('path');" > webpack.config.js && \
     echo "  mode: 'production'," >> webpack.config.js && \
     echo "  externals: [nodeExternals()]," >> webpack.config.js && \
     echo "  module: { rules: [{ test: /\.ts$/, use: 'ts-loader', exclude: /node_modules/ }] }," >> webpack.config.js && \
-    echo "  resolve: { extensions: ['.ts', '.js'], plugins: [new TsconfigPathsPlugin({ configFile: './tsconfig.json' })] }," >> webpack.config.js && \
+    echo "  resolve: { extensions: ['.ts', '.js'], plugins: [new TsconfigPathsPlugin({ configFile: '../../tsconfig.base.json', baseUrl: '../../' })] }," >> webpack.config.js && \
     echo "  output: { path: path.resolve(__dirname, 'dist'), filename: 'bundle.js' }," >> webpack.config.js && \
     echo "  optimization: { minimize: true, minimizer: [new TerserPlugin({ terserOptions: { keep_classnames: true, keep_fnames: true } })] }" >> webpack.config.js && \
     echo "};" >> webpack.config.js

@@ -23,7 +23,7 @@ metadata:
   labels:
     app: booking-service
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: booking-service

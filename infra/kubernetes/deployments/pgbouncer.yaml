@@ -1,0 +1,143 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgbouncer-config
+  namespace: jatra
+data:
+  pgbouncer.ini: |
+    [databases]
+    auth_db = host=postgres-service port=5432 dbname=auth_db
+    user_db = host=postgres-service port=5432 dbname=user_db
+    schedule_db = host=postgres-service port=5432 dbname=schedule_db
+    search_db = host=postgres-service port=5432 dbname=search_db
+    seat_reservation_db = host=postgres-service port=5432 dbname=seat_reservation_db
+    booking_db = host=postgres-service port=5432 dbname=booking_db
+    payment_db = host=postgres-service port=5432 dbname=payment_db
+    ticket_db = host=postgres-service port=5432 dbname=ticket_db
+    notification_db = host=postgres-service port=5432 dbname=notification_db
+    admin_db = host=postgres-service port=5432 dbname=admin_db
+    reporting_db = host=postgres-service port=5432 dbname=reporting_db
+
+    [pgbouncer]
+    listen_addr = 0.0.0.0
+    listen_port = 5432
+    auth_type = md5
+    auth_file = /etc/pgbouncer/userlist.txt
+
+    # Connection pooling settings
+    pool_mode = transaction
+    max_client_conn = 1000
+    default_pool_size = 25
+    min_pool_size = 10
+    reserve_pool_size = 5
+    reserve_pool_timeout = 3
+    max_db_connections = 100
+    max_user_connections = 100
+
+    # Timeouts
+    server_lifetime = 3600
+    server_idle_timeout = 600
+    server_connect_timeout = 15
+    query_timeout = 0
+    query_wait_timeout = 120
+    client_idle_timeout = 0
+    idle_transaction_timeout = 0
+
+    # Logging
+    log_connections = 1
+    log_disconnections = 1
+    log_pooler_errors = 1
+    stats_period = 60
+
+    # Performance
+    pkt_buf = 4096
+    listen_backlog = 128
+
+  userlist.txt: |
+    "jatra_user" "jatra_password_change_in_prod"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgbouncer-service
+  namespace: jatra
+  labels:
+    app: pgbouncer
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgres
+  selector:
+    app: pgbouncer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgbouncer
+  namespace: jatra
+  labels:
+    app: pgbouncer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgbouncer
+  template:
+    metadata:
+      labels:
+        app: pgbouncer
+    spec:
+      containers:
+        - name: pgbouncer
+          image: edoburu/pgbouncer:latest
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRESQL_HOST
+              value: "postgres-service"
+            - name: POSTGRESQL_PORT
+              value: "5432"
+            - name: POSTGRESQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: username
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+          volumeMounts:
+            - name: pgbouncer-config
+              mountPath: /etc/pgbouncer/pgbouncer.ini
+              subPath: pgbouncer.ini
+            - name: pgbouncer-config
+              mountPath: /etc/pgbouncer/userlist.txt
+              subPath: userlist.txt
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: pgbouncer-config
+          configMap:
+            name: pgbouncer-config

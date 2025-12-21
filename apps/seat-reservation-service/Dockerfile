@@ -3,6 +3,9 @@
 # ============================================
 FROM node:20-alpine AS dependencies
 
+# Install build tools required for native modules like bcrypt
+RUN apk add --no-cache python3 make g++
+
 RUN npm install -g pnpm@9
 
 WORKDIR /app

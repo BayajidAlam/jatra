@@ -146,4 +146,76 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
     this.logger.log("👂 Subscribed to payment failure events");
   }
+
+  /**
+   * Generic publish method for simple message publishing
+   */
+  async publish(
+    exchange: string,
+    routingKey: string,
+    data: any
+  ): Promise<void> {
+    if (!this.channel) {
+      this.logger.warn("RabbitMQ channel not available, skipping publish");
+      return;
+    }
+
+    try {
+      const message = JSON.stringify({
+        eventId: this.generateEventId(),
+        eventType: routingKey,
+        timestamp: new Date(),
+        source: "booking-service",
+        data,
+      });
+
+      this.channel.publish(exchange, routingKey, Buffer.from(message), {
+        persistent: true,
+        contentType: "application/json",
+      });
+
+      this.logger.log(`📤 Published message to ${exchange}:${routingKey}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to publish to ${exchange}:${routingKey}`,
+        error
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Generic consume method for subscribing to a queue
+   */
+  async consume<T>(
+    queue: string,
+    callback: (message: T) => Promise<void>
+  ): Promise<void> {
+    if (!this.channel) {
+      this.logger.warn("RabbitMQ channel not available");
+      return;
+    }
+
+    // Ensure queue exists
+    await this.channel.assertQueue(queue, { durable: true });
+
+    await this.channel.consume(queue, async (msg) => {
+      if (!msg) return;
+
+      try {
+        const message = JSON.parse(msg.content.toString()) as T;
+        this.logger.log(`📥 Received message from ${queue}`);
+
+        await callback(message);
+
+        this.channel.ack(msg);
+        this.logger.log(`✅ Processed message from ${queue}`);
+      } catch (error) {
+        this.logger.error(`Failed to process message from ${queue}`, error);
+        this.channel.nack(msg, false, true); // Requeue on failure
+      }
+    });
+
+    this.logger.log(`👂 Subscribed to queue: ${queue}`);
+  }
 }

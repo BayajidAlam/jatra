@@ -7,10 +7,10 @@ metadata:
     app: seat-reservation-service
 spec:
   ports:
-  - port: 3003
-    targetPort: 3003
-    protocol: TCP
-    name: http
+    - port: 3003
+      targetPort: 3003
+      protocol: TCP
+      name: http
   selector:
     app: seat-reservation-service
   type: ClusterIP
@@ -23,7 +23,7 @@ metadata:
   labels:
     app: seat-reservation-service
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
       app: seat-reservation-service
@@ -33,72 +33,72 @@ spec:
         app: seat-reservation-service
     spec:
       containers:
-      - name: seat-reservation-service
-        image: docker.io/jatra/seat-reservation-service:1.0
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 3003
-          name: http
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: seat-reservation-db-url
-        - name: PORT
-          value: "3003"
-        - name: NODE_ENV
-          valueFrom:
-            configMapKeyRef:
-              name: service-config
-              key: NODE_ENV
-        - name: REDIS_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: service-config
-              key: REDIS_HOST
-        - name: REDIS_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: service-config
-              key: REDIS_PORT
-        - name: REDIS_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              name: service-config
-              key: REDIS_PASSWORD
-        - name: RABBITMQ_URL
-          valueFrom:
-            configMapKeyRef:
-              name: service-config
-              key: RABBITMQ_URL
-        - name: JWT_ACCESS_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: jwt-secret
-              key: access-secret
-        - name: JWT_REFRESH_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: jwt-secret
-              key: refresh-secret
-        - name: JWT_ACCESS_EXPIRY
-          valueFrom:
-            configMapKeyRef:
-              name: service-config
-              key: JWT_ACCESS_EXPIRY
-        - name: JWT_REFRESH_EXPIRY
-          valueFrom:
-            configMapKeyRef:
-              name: service-config
-              key: JWT_REFRESH_EXPIRY
-        envFrom:
-        - configMapRef:
-            name: service-config
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1024Mi"
-            cpu: "1000m"
+        - name: seat-reservation-service
+          image: docker.io/jatra/seat-reservation-service:1.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3003
+              name: http
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: seat-reservation-db-url
+            - name: PORT
+              value: "3003"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: service-config
+                  key: NODE_ENV
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: service-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: service-config
+                  key: REDIS_PORT
+            - name: REDIS_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: service-config
+                  key: REDIS_PASSWORD
+            - name: RABBITMQ_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: service-config
+                  key: RABBITMQ_URL
+            - name: JWT_ACCESS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: access-secret
+            - name: JWT_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: refresh-secret
+            - name: JWT_ACCESS_EXPIRY
+              valueFrom:
+                configMapKeyRef:
+                  name: service-config
+                  key: JWT_ACCESS_EXPIRY
+            - name: JWT_REFRESH_EXPIRY
+              valueFrom:
+                configMapKeyRef:
+                  name: service-config
+                  key: JWT_REFRESH_EXPIRY
+          envFrom:
+            - configMapRef:
+                name: service-config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"

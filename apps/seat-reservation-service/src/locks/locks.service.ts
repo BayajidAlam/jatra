@@ -4,22 +4,24 @@ import {
   NotFoundException,
   ConflictException,
   Logger,
-} from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
-import { RedisService } from '../common/redis.service';
-import { AcquireLockDto } from './dto/acquire-lock.dto';
-import { CheckAvailabilityDto } from './dto/check-availability.dto';
-import { ExtendLockDto } from './dto/extend-lock.dto';
-import { Cron, CronExpression } from '@nestjs/schedule';
+} from "@nestjs/common";
+import { PrismaService } from "../common/prisma.service";
+import { RedisService } from "../common/redis.service";
+import { LuaScriptService } from "./lua-script.service";
+import { AcquireLockDto } from "./dto/acquire-lock.dto";
+import { CheckAvailabilityDto } from "./dto/check-availability.dto";
+import { ExtendLockDto } from "./dto/extend-lock.dto";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
 @Injectable()
 export class LocksService {
   private readonly logger = new Logger(LocksService.name);
-  private readonly lockTTL = parseInt(process.env.LOCK_TTL_SECONDS || '600');
+  private readonly lockTTL = parseInt(process.env.LOCK_TTL_SECONDS || "600");
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
+    private readonly luaScript: LuaScriptService
   ) {}
 
   async acquireLock(dto: AcquireLockDto) {
@@ -40,31 +42,36 @@ export class LocksService {
     });
 
     if (!journey) {
-      throw new NotFoundException('Journey not found');
+      throw new NotFoundException("Journey not found");
     }
 
     // 2. Validate seats exist and belong to this train
     const allSeats = journey.train.coaches.flatMap((coach) => coach.seats);
-    const requestedSeats = allSeats.filter((seat) => dto.seatIds.includes(seat.id));
+    const requestedSeats = allSeats.filter((seat) =>
+      dto.seatIds.includes(seat.id)
+    );
 
     if (requestedSeats.length !== dto.seatIds.length) {
-      throw new BadRequestException('One or more seats do not exist or do not belong to this train');
+      throw new BadRequestException(
+        "One or more seats do not exist or do not belong to this train"
+      );
     }
 
-    // 3. Check if seats are already locked in Redis
-    const lockedSeats: string[] = [];
-    for (const seatId of dto.seatIds) {
-      const lockKey = this.getLockKey(dto.journeyId, seatId);
-      const existingLock = await this.redis.checkLock(lockKey);
-      if (existingLock) {
-        lockedSeats.push(seatId);
-      }
-    }
+    // 3. Use atomic Lua script to check and lock all seats
+    // This prevents race conditions by checking ALL seats first, then locking ALL or NONE
+    const lockKeys = dto.seatIds.map((seatId) =>
+      this.getLockKey(dto.journeyId, seatId)
+    );
+    const atomicResult = await this.luaScript.atomicLockSeats(
+      lockKeys,
+      dto.userId,
+      this.lockTTL
+    );
 
-    if (lockedSeats.length > 0) {
+    if (!atomicResult.success) {
       throw new ConflictException({
-        message: 'One or more seats are already locked',
-        lockedSeats,
+        message: "One or more seats are already locked",
+        failedSeat: atomicResult.failedSeat,
       });
     }
 
@@ -72,7 +79,7 @@ export class LocksService {
     const confirmedReservations = await this.prisma.reservation.findMany({
       where: {
         journeyId: dto.journeyId,
-        status: 'CONFIRMED',
+        status: "CONFIRMED",
         seatIds: {
           hasSome: dto.seatIds,
         },
@@ -81,38 +88,31 @@ export class LocksService {
 
     if (confirmedReservations.length > 0) {
       const bookedSeats = confirmedReservations.flatMap((r) =>
-        r.seatIds.filter((sId) => dto.seatIds.includes(sId)),
+        r.seatIds.filter((sId) => dto.seatIds.includes(sId))
       );
       throw new ConflictException({
-        message: 'One or more seats are already booked',
+        message: "One or more seats are already booked",
         bookedSeats,
       });
     }
 
     // 5. Calculate total fare
-    const totalFare = requestedSeats.reduce((sum, seat) => sum + seat.baseFare, 0);
+    const totalFare = requestedSeats.reduce(
+      (sum, seat) => sum + seat.baseFare,
+      0
+    );
 
     // 6. Generate lock ID
     const lockId = this.generateLockId(dto.userId);
     const lockExpiry = new Date(Date.now() + this.lockTTL * 1000);
 
-    // 7. Acquire locks in Redis
-    const lockValue = JSON.stringify({
-      userId: dto.userId,
-      lockId,
-      timestamp: Date.now(),
-    });
-
-    for (const seatId of dto.seatIds) {
-      const lockKey = this.getLockKey(dto.journeyId, seatId);
-      const acquired = await this.redis.acquireLock(lockKey, lockValue, this.lockTTL);
-
-      if (!acquired) {
-        // Rollback: release already acquired locks
-        await this.rollbackLocks(dto.journeyId, dto.seatIds);
-        throw new ConflictException(`Failed to acquire lock for seat ${seatId}`);
-      }
-    }
+    // 7. Locks already acquired atomically by Lua script above
+    // No need for individual lock acquisition or rollback logic
+    this.logger.log(
+      `Atomic lock acquired for ${
+        dto.seatIds.length
+      } seats: ${atomicResult.lockedSeats?.join(", ")}`
+    );
 
     // 8. Create reservation record in database
     const reservation = await this.prisma.reservation.create({
@@ -122,7 +122,7 @@ export class LocksService {
         seatIds: dto.seatIds,
         fromStationId: dto.fromStationId,
         toStationId: dto.toStationId,
-        status: 'LOCKED',
+        status: "LOCKED",
         lockExpiry,
         totalFare,
         lockId,
@@ -169,7 +169,7 @@ export class LocksService {
     });
 
     if (!journey) {
-      throw new NotFoundException('Journey not found');
+      throw new NotFoundException("Journey not found");
     }
 
     const allSeats = journey.train.coaches.flatMap((coach) =>
@@ -178,7 +178,7 @@ export class LocksService {
         seatNumber: seat.seatNumber,
         coachId: seat.coachId,
         baseFare: seat.baseFare,
-      })),
+      }))
     );
 
     // Filter by specific seats if provided
@@ -200,7 +200,7 @@ export class LocksService {
     const confirmedReservations = await this.prisma.reservation.findMany({
       where: {
         journeyId,
-        status: 'CONFIRMED',
+        status: "CONFIRMED",
       },
     });
 
@@ -208,7 +208,7 @@ export class LocksService {
 
     // Calculate available seats
     const availableSeats = seatsToCheck.filter(
-      (seat) => !lockedSeats.includes(seat.id) && !bookedSeats.includes(seat.id),
+      (seat) => !lockedSeats.includes(seat.id) && !bookedSeats.includes(seat.id)
     );
 
     return {
@@ -219,7 +219,9 @@ export class LocksService {
       bookedSeats,
       availableCount: availableSeats.length,
       lockedCount: lockedSeats.length,
-      bookedCount: bookedSeats.filter((id) => seatsToCheck.some((s) => s.id === id)).length,
+      bookedCount: bookedSeats.filter((id) =>
+        seatsToCheck.some((s) => s.id === id)
+      ).length,
     };
   }
 
@@ -230,30 +232,33 @@ export class LocksService {
     });
 
     if (!reservation) {
-      throw new NotFoundException('Lock not found');
+      throw new NotFoundException("Lock not found");
     }
 
-    if (reservation.status !== 'LOCKED') {
-      throw new BadRequestException('Lock is not in LOCKED status');
+    if (reservation.status !== "LOCKED") {
+      throw new BadRequestException("Lock is not in LOCKED status");
     }
 
     // Check if lock is expired
     if (reservation.lockExpiry < new Date()) {
-      throw new BadRequestException('Lock has already expired');
+      throw new BadRequestException("Lock has already expired");
     }
 
-    // Extend locks in Redis
-    let extended = true;
-    for (const seatId of reservation.seatIds) {
-      const lockKey = this.getLockKey(reservation.journeyId, seatId);
-      const result = await this.redis.extendLock(lockKey, dto.extensionSeconds);
-      if (!result) {
-        extended = false;
-      }
-    }
+    // Extend locks in Redis using atomic Lua script
+    const lockKeys = reservation.seatIds.map((seatId) =>
+      this.getLockKey(reservation.journeyId, seatId)
+    );
+    const extendedCount = await this.luaScript.extendLockTTL(
+      lockKeys,
+      reservation.userId,
+      dto.extensionSeconds
+    );
+    const extended = extendedCount === reservation.seatIds.length;
 
     // Update database
-    const newExpiry = new Date(reservation.lockExpiry.getTime() + dto.extensionSeconds * 1000);
+    const newExpiry = new Date(
+      reservation.lockExpiry.getTime() + dto.extensionSeconds * 1000
+    );
     await this.prisma.reservation.update({
       where: { id: reservation.id },
       data: { lockExpiry: newExpiry },
@@ -276,27 +281,28 @@ export class LocksService {
     });
 
     if (!reservation) {
-      throw new NotFoundException('Lock not found');
+      throw new NotFoundException("Lock not found");
     }
 
-    if (reservation.status !== 'LOCKED') {
-      throw new BadRequestException('Lock is not in LOCKED status');
+    if (reservation.status !== "LOCKED") {
+      throw new BadRequestException("Lock is not in LOCKED status");
     }
 
-    // Release locks in Redis
-    const releasedSeats: string[] = [];
-    for (const seatId of reservation.seatIds) {
-      const lockKey = this.getLockKey(reservation.journeyId, seatId);
-      const released = await this.redis.releaseLock(lockKey);
-      if (released) {
-        releasedSeats.push(seatId);
-      }
-    }
+    // Release locks in Redis using atomic Lua script
+    const lockKeys = reservation.seatIds.map((seatId) =>
+      this.getLockKey(reservation.journeyId, seatId)
+    );
+    const releasedCount = await this.luaScript.atomicReleaseSeats(
+      lockKeys,
+      reservation.userId
+    );
+    const releasedSeats =
+      releasedCount === reservation.seatIds.length ? reservation.seatIds : [];
 
     // Update reservation status
     await this.prisma.reservation.update({
       where: { id: reservation.id },
-      data: { status: 'RELEASED' },
+      data: { status: "RELEASED" },
     });
 
     this.logger.log(`Lock released: ${lockId}, ${releasedSeats.length} seats`);
@@ -313,7 +319,7 @@ export class LocksService {
     const locks = await this.prisma.reservation.findMany({
       where: {
         userId,
-        status: 'LOCKED',
+        status: "LOCKED",
         lockExpiry: {
           gt: new Date(),
         },
@@ -328,7 +334,7 @@ export class LocksService {
         toStation: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
 
@@ -344,7 +350,7 @@ export class LocksService {
   async cleanupExpiredLocks() {
     const expiredReservations = await this.prisma.reservation.findMany({
       where: {
-        status: 'LOCKED',
+        status: "LOCKED",
         lockExpiry: {
           lt: new Date(),
         },
@@ -367,7 +373,7 @@ export class LocksService {
       // Update status
       await this.prisma.reservation.update({
         where: { id: reservation.id },
-        data: { status: 'EXPIRED' },
+        data: { status: "EXPIRED" },
       });
     }
 
@@ -385,7 +391,10 @@ export class LocksService {
     return `lock_${timestamp}_${userPrefix}`;
   }
 
-  private async rollbackLocks(journeyId: string, seatIds: string[]): Promise<void> {
+  private async rollbackLocks(
+    journeyId: string,
+    seatIds: string[]
+  ): Promise<void> {
     for (const seatId of seatIds) {
       const lockKey = this.getLockKey(journeyId, seatId);
       await this.redis.releaseLock(lockKey);

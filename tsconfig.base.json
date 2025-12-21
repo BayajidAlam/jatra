@@ -21,6 +21,8 @@
       "@jatra/common/constants": ["libs/common/constants/src/index.ts"],
       "@jatra/common/utils": ["libs/common/utils/src/index.ts"],
       "@jatra/common/errors": ["libs/common/errors/src/index.ts"],
+      "@jatra/common/middleware": ["libs/common/middleware/src/index.ts"],
+      "@jatra/common/services": ["libs/common/services/index.ts"],
       "@jatra/database/postgres": ["libs/database/postgres/src/index.ts"],
       "@jatra/database/redis": ["libs/database/redis/src/index.ts"],
       "@jatra/messaging/rabbitmq": ["libs/messaging/rabbitmq/src/index.ts"],

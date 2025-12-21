@@ -63,30 +63,12 @@ export class BookingsService implements OnModuleInit {
       reservationId = lockResponse.lockId || lockResponse.id;
       this.logger.log(`✅ Seats locked: ${reservationId}`);
 
-      // Step 2: Initiate payment with retry
-      const paymentResponse = await this.httpRetry.post<any>(
-        `${this.paymentUrl}/payments/initiate`,
-        {
-          userId: dto.userId,
-          reservationId,
-          amount: dto.totalAmount,
-          paymentMethod: dto.paymentMethod,
-          ...dto.paymentDetails,
-        },
-        "Payment Service",
-        { maxRetries: 3, initialDelayMs: 1000, timeoutMs: 20000 }
-      );
-
-      paymentId = paymentResponse.id;
-      this.logger.log(`✅ Payment initiated: ${paymentId}`);
-
-      // Step 3: Create booking record
+      // Step 2: Create booking record with PAYMENT_PENDING status
       const booking = await this.prisma.booking.create({
         data: {
           userId: dto.userId,
           journeyId: dto.journeyId,
           reservationId,
-          paymentId,
           totalAmount: dto.totalAmount,
           status: "PAYMENT_PENDING",
           seats: {
@@ -111,28 +93,39 @@ export class BookingsService implements OnModuleInit {
             },
           },
           reservation: true,
-          payment: true,
         },
       });
 
       this.logger.log(`✅ Booking created: ${booking.id}`);
 
+      // Step 3: Queue payment for async processing (non-blocking)
+      await this.rabbitMQ.publish("booking.exchange", "payment.process", {
+        bookingId: booking.id,
+        userId: dto.userId,
+        reservationId,
+        amount: dto.totalAmount,
+        paymentMethod: dto.paymentMethod,
+        paymentDetails: dto.paymentDetails,
+      });
+
+      this.logger.log(`✅ Payment queued for processing: ${booking.id}`);
+
+      // Return immediately with PAYMENT_PENDING status
       return {
         id: booking.id,
         status: booking.status,
         reservationId,
-        paymentId,
         totalAmount: booking.totalAmount,
         seats: booking.seats,
         journey: booking.journey,
-        payment: booking.payment,
-        message: "Booking created successfully. Please complete payment.",
+        message:
+          "Booking created. Payment is being processed. Check status in a moment.",
       };
     } catch (error) {
       this.logger.error("❌ Booking creation failed", error.message);
 
-      // Rollback: Release seats if payment initiation failed
-      if (reservationId && !paymentId) {
+      // Rollback: Release seats if they were locked but booking creation failed
+      if (reservationId) {
         try {
           await this.httpRetry.post(
             `${this.seatReservationUrl}/locks/release`,
@@ -143,7 +136,7 @@ export class BookingsService implements OnModuleInit {
             "Seat Reservation Service",
             { maxRetries: 2, initialDelayMs: 500, timeoutMs: 10000 }
           );
-          this.logger.log("🔄 Seats released after payment failure");
+          this.logger.log("🔄 Seats released after booking creation failure");
         } catch (releaseError) {
           this.logger.error("Failed to release seats", releaseError.message);
         }

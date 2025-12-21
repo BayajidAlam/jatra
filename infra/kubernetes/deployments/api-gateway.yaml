@@ -24,7 +24,7 @@ metadata:
   labels:
     app: api-gateway
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: api-gateway
@@ -35,14 +35,16 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: jatra/api-gateway:1.1
-          imagePullPolicy: Never
+          image: jatra/api-gateway:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
               name: http
           env:
             - name: PORT
               value: "3000"
+            - name: GIN_MODE
+              value: "release"
             - name: JWT_ACCESS_SECRET
               valueFrom:
                 secretKeyRef:
