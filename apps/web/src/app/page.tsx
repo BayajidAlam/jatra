@@ -32,7 +32,7 @@ export default function HomePage() {
 
       {/* Hero Section with Booking Form */}
       <section className="relative pt-20 pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-muted/30 to-background" />
 
         <div className="container mx-auto px-4 lg:px-8 relative">
           <div className="max-w-4xl mx-auto text-center mb-16">
@@ -113,10 +113,12 @@ export default function HomePage() {
                 </div>
 
                 <div className="lg:col-span-1 flex items-end">
-                  <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
-                    Search Trains
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  <Link href="/search-trains" className="w-full">
+                    <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
+                      Search Trains
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </CardContent>
@@ -362,7 +364,7 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="py-24">
         <div className="container mx-auto px-4 lg:px-8">
-          <Card className="max-w-4xl mx-auto border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-background">
+          <Card className="max-w-4xl mx-auto border-2 border-primary/20 bg-linear-to-br from-primary/5 to-background">
             <CardContent className="p-12 md:p-16 text-center">
               <h2 className="text-3xl md:text-5xl font-bold mb-6 text-balance">
                 Ready to start your journey?
