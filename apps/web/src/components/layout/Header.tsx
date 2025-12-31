@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link";
 import { Train } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,25 +16,25 @@ export default function Header() {
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <a
-              href="#"
+            <nav className="hidden md:flex items-center gap-8">
+            <Link
+              href="/search-trains"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Search Trains
-            </a>
+            </Link>
             <a
               href="#"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Schedule
             </a>
-            <a
-              href="#"
+            <Link
+              href="/my-bookings"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               My Bookings
-            </a>
+            </Link>
             <a
               href="#"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
