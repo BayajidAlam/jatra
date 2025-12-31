@@ -116,6 +116,7 @@ export default function SignupPage() {
                   <label className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                     <Mail className="h-4 w-4 text-primary" />
                     Email Address
+                    <span className="text-destructive">*</span>
                   </label>
                   <Input
                     type="email"
@@ -130,13 +131,16 @@ export default function SignupPage() {
                 <div>
                   <label className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                     <CreditCard className="h-4 w-4 text-primary" />
-                    NID
+                    NID (10 or 13 digits)
+                    <span className="text-destructive">*</span>
                   </label>
                   <Input
                     type="text"
-                    placeholder="National ID Number"
+                    placeholder="Enter your National ID"
                     value={formData.nid}
                     onChange={(e) => handleChange("nid", e.target.value)}
+                    required
+                    pattern="[0-9]{10}|[0-9]{13}"
                     className="h-11"
                   />
                 </div>
