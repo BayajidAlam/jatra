@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { Train } from "lucide-react";
@@ -16,7 +16,7 @@ export default function Header() {
             </span>
           </Link>
 
-            <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-8">
             <Link
               href="/search-trains"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"

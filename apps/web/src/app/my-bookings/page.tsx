@@ -1,13 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Train, Calendar, MapPin, Search, Clock, CreditCard, ArrowRight } from "lucide-react"
-import Header from "@/components/layout/Header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Train,
+  Calendar,
+  MapPin,
+  Search,
+  Clock,
+  CreditCard,
+  ArrowRight,
+} from "lucide-react";
+import Header from "@/components/layout/Header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 // Mock data
 const mockBookings = [
@@ -56,18 +64,20 @@ const mockBookings = [
     bookingDate: "2024-12-25",
     canCancel: false,
   },
-]
+];
 
 export default function MyBookingsPage() {
-  const [activeTab, setActiveTab] = useState<"UPCOMING" | "PAST" | "CANCELLED">("UPCOMING")
-  const [searchQuery, setSearchQuery] = useState("")
+  const [activeTab, setActiveTab] = useState<"UPCOMING" | "PAST" | "CANCELLED">(
+    "UPCOMING"
+  );
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredBookings = mockBookings.filter((booking) => {
-    if (activeTab === "UPCOMING") return booking.status === "CONFIRMED"
-    if (activeTab === "PAST") return booking.status === "COMPLETED"
-    if (activeTab === "CANCELLED") return booking.status === "CANCELLED"
-    return true
-  })
+    if (activeTab === "UPCOMING") return booking.status === "CONFIRMED";
+    if (activeTab === "PAST") return booking.status === "COMPLETED";
+    if (activeTab === "CANCELLED") return booking.status === "CANCELLED";
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -77,7 +87,9 @@ export default function MyBookingsPage() {
         {/* Page Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">My Bookings</h1>
-          <p className="text-muted-foreground">View and manage your train bookings</p>
+          <p className="text-muted-foreground">
+            View and manage your train bookings
+          </p>
         </div>
 
         {/* Tabs */}
@@ -89,12 +101,14 @@ export default function MyBookingsPage() {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as "UPCOMING" | "PAST" | "CANCELLED")}
+              onClick={() =>
+                setActiveTab(tab.id as "UPCOMING" | "PAST" | "CANCELLED")
+              }
               className={cn(
                 "px-4 py-3 font-medium text-sm transition-all whitespace-nowrap border-b-2",
                 activeTab === tab.id
                   ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground",
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
               {tab.label}
@@ -123,7 +137,9 @@ export default function MyBookingsPage() {
                 <Train className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold mb-2">No bookings found</h3>
-              <p className="text-muted-foreground mb-6">You don&apos;t have any {activeTab.toLowerCase()} bookings yet.</p>
+              <p className="text-muted-foreground mb-6">
+                You don&apos;t have any {activeTab.toLowerCase()} bookings yet.
+              </p>
               <Link href="/search-trains">
                 <Button className="bg-primary hover:bg-primary/90">
                   Search Trains
@@ -135,7 +151,10 @@ export default function MyBookingsPage() {
         ) : (
           <div className="space-y-4">
             {filteredBookings.map((booking) => (
-              <Card key={booking.id} className="border-2 hover:border-primary/50 transition-all">
+              <Card
+                key={booking.id}
+                className="border-2 hover:border-primary/50 transition-all"
+              >
                 <CardContent className="p-5">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div className="flex-1">
@@ -145,17 +164,24 @@ export default function MyBookingsPage() {
                             <Train className="h-5 w-5 text-primary" />
                           </div>
                           <div>
-                            <h4 className="font-semibold text-lg">{booking.trainName}</h4>
-                            <p className="text-sm text-muted-foreground">{booking.trainNumber}</p>
+                            <h4 className="font-semibold text-lg">
+                              {booking.trainName}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {booking.trainNumber}
+                            </p>
                           </div>
                         </div>
 
                         <div
                           className={cn(
                             "px-3 py-1 rounded-full text-xs font-medium",
-                            booking.status === "CONFIRMED" && "bg-green-500/10 text-green-700 dark:text-green-400",
-                            booking.status === "COMPLETED" && "bg-blue-500/10 text-blue-700 dark:text-blue-400",
-                            booking.status === "CANCELLED" && "bg-red-500/10 text-red-700 dark:text-red-400",
+                            booking.status === "CONFIRMED" &&
+                              "bg-green-500/10 text-green-700 dark:text-green-400",
+                            booking.status === "COMPLETED" &&
+                              "bg-blue-500/10 text-blue-700 dark:text-blue-400",
+                            booking.status === "CANCELLED" &&
+                              "bg-red-500/10 text-red-700 dark:text-red-400"
                           )}
                         >
                           {booking.status}
@@ -181,13 +207,19 @@ export default function MyBookingsPage() {
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <CreditCard className="h-4 w-4" />
-                          <span className="font-medium text-foreground">BDT {booking.totalAmount}</span>
+                          <span className="font-medium text-foreground">
+                            BDT {booking.totalAmount}
+                          </span>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-2">
-                      <Button variant="outline" size="sm" className="border-2 bg-transparent">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-2 bg-transparent"
+                      >
                         View Details
                       </Button>
                       {booking.canCancel && (
@@ -208,5 +240,5 @@ export default function MyBookingsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
