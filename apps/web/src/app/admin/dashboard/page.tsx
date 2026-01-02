@@ -45,11 +45,11 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           Overview
         </h1>
         <div className="flex items-center gap-2">
-          <button className="px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border rounded-md hover:bg-slate-50">
+          <button className="px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md hover:bg-slate-50 dark:hover:bg-slate-700">
             Download Report
           </button>
         </div>
@@ -65,7 +65,7 @@ export default function AdminDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-800">৳ 4,23,500</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">৳ 4,23,500</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
               <TrendingUp className="h-3 w-3 mr-1 text-emerald-500" />
               <span className="text-emerald-500 font-medium">+20.1%</span> from last month
@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-800">+2,350</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">+2,350</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
               <TrendingUp className="h-3 w-3 mr-1 text-emerald-500" />
               <span className="text-emerald-500 font-medium">+18.2%</span> from last month
@@ -95,7 +95,7 @@ export default function AdminDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-800">42</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">42</div>
             <p className="text-xs text-muted-foreground mt-1">
               Currently running on schedule
             </p>
@@ -109,7 +109,7 @@ export default function AdminDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-800">12,234</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">12,234</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
               <ArrowUpRight className="h-3 w-3 mr-1 text-emerald-500" />
               <span className="text-emerald-500 font-medium">+543</span> this hour
@@ -122,7 +122,7 @@ export default function AdminDashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4 shadow-sm dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-slate-800">Revenue Overview</CardTitle>
+            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">Revenue Overview</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <div className="h-[350px]">
@@ -159,7 +159,7 @@ export default function AdminDashboardPage() {
         </Card>
         <Card className="col-span-3 shadow-sm dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-slate-800">Recent Traffic</CardTitle>
+            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">Recent Traffic</CardTitle>
             <p className="text-sm text-muted-foreground">
               Peak booking hours today
             </p>
