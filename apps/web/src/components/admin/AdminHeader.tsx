@@ -122,15 +122,15 @@ export function AdminHeader() {
         </Breadcrumb>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Popover>
+      <div className="flex items-center gap-2 min-w-[140px] justify-end">
+        <Popover modal={false}>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative h-9 w-9 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
               <Bell className="h-5 w-5" />
               <span className="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-red-500 border border-white dark:border-slate-900" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 p-0" align="end">
+          <PopoverContent className="w-80 p-0 shadow-xl border-slate-200 dark:border-slate-800" align="end" sideOffset={8}>
             <div className="flex items-center justify-between p-4 border-b dark:border-slate-800">
               <h4 className="font-semibold text-sm">Admin Notifications</h4>
               <Button 
@@ -196,16 +196,16 @@ export function AdminHeader() {
 
         <ModeToggle />
         
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 overflow-hidden hover:opacity-80 transition-opacity">
               <Avatar className="h-9 w-9 border dark:border-slate-700">
                 <AvatarImage src="https://github.com/shadcn.png" alt="Admin" />
                 <AvatarFallback>AD</AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuContent className="w-56" align="end" sideOffset={8}>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">Admin User</p>

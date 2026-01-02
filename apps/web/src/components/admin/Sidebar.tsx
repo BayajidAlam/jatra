@@ -74,9 +74,11 @@ export function AdminSidebar() {
     >
       <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800">
         {!collapsed && (
-          <span className="text-lg font-bold tracking-tight">
-            Jatra Admin
-          </span>
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <span className="text-lg font-bold tracking-tight">
+              Jatra Admin
+            </span>
+          </Link>
         )}
         <Button
           variant="ghost"

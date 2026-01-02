@@ -29,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const routeSchema = z.object({
   routeName: z.string().min(3, "Route name is required (e.g. Dhaka - Chattogram)"),
-  stations: z.coerce.number().min(2, "At least 2 stations required"),
+  stations: z.number().min(2, "At least 2 stations required"),
   distance: z.string().min(1, "Distance is required"),
   duration: z.string().min(1, "Duration is required"),
   status: z.string(),
@@ -127,7 +127,7 @@ export function RouteDialog({ initialData, trigger, open: controlledOpen, onOpen
             <Input
               id="stations"
               type="number"
-              {...form.register("stations")}
+              {...form.register("stations", { valueAsNumber: true })}
               className="col-span-3"
             />
           </div>

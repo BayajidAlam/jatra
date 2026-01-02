@@ -31,7 +31,7 @@ const trainSchema = z.object({
   name: z.string().min(2, "Train name must be at least 2 characters"),
   trainNumber: z.string().min(3, "Train number is required"),
   type: z.string(),
-  seats: z.coerce.number().min(1, "Capacity must be at least 1"),
+  seats: z.number().min(1, "Capacity must be at least 1"),
 });
 
 export type TrainFormValues = z.infer<typeof trainSchema>;
@@ -154,7 +154,7 @@ export function TrainDialog({ initialData, trigger, open: controlledOpen, onOpen
             <Input
               id="seats"
               type="number"
-              {...form.register("seats")}
+              {...form.register("seats", { valueAsNumber: true })}
               className="col-span-3"
             />
           </div>

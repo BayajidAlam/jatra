@@ -15,10 +15,12 @@ const Popover = ({
   children,
   open,
   onOpenChange,
+  modal = true,
 }: {
   children: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  modal?: boolean;
 }) => {
   const [isOpen, setIsOpen] = React.useState(open || false);
 

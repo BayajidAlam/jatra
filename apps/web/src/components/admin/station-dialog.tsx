@@ -25,7 +25,7 @@ const stationSchema = z.object({
   name: z.string().min(3, "Station name is required"),
   city: z.string().min(2, "City is required"),
   district: z.string().min(2, "District is required"),
-  platformCount: z.coerce.number().min(1, "At least 1 platform required"),
+  platformCount: z.number().min(1, "At least 1 platform required"),
 });
 
 export type StationFormValues = z.infer<typeof stationSchema>;
@@ -153,7 +153,7 @@ export function StationDialog({ initialData, trigger, open: controlledOpen, onOp
             <Input
               id="platformCount"
               type="number"
-              {...form.register("platformCount")}
+              {...form.register("platformCount", { valueAsNumber: true })}
               className="col-span-3"
             />
           </div>
