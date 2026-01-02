@@ -3,7 +3,9 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ModeToggle } from "@/components/mode-toggle";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -78,6 +80,8 @@ const ADMIN_NOTIFICATIONS = [
 
 export function AdminHeader() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout, user } = useAuth();
   const paths = pathname.split("/").filter(Boolean);
   const [selectedNotification, setSelectedNotification] = React.useState<typeof ADMIN_NOTIFICATIONS[0] | null>(null);
   const [notifications, setNotifications] = React.useState(ADMIN_NOTIFICATIONS);
@@ -228,7 +232,13 @@ export function AdminHeader() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600 focus:text-red-600">
+            <DropdownMenuItem 
+              onClick={async () => {
+                await logout();
+                router.push("/login");
+              }}
+              className="text-red-600 focus:text-red-600 cursor-pointer"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </DropdownMenuItem>

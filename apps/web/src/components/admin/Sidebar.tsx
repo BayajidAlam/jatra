@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
 
 const sidebarItems = [
   {
@@ -56,11 +58,23 @@ const sidebarItems = [
     href: "/admin/users",
     icon: Users,
   },
+  {
+    title: "Payments",
+    href: "/admin/payments",
+    icon: ShoppingCart,
+  },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
+  };
 
   return (
     <div
@@ -124,8 +138,9 @@ export function AdminSidebar() {
       <div className="border-t border-slate-200 dark:border-slate-800 p-2">
         <nav className="grid gap-1 px-2">
            <button
+            onClick={handleLogout}
             className={cn(
-              "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-950/20",
+              "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/10",
               collapsed && "justify-center px-2"
             )}
           >
