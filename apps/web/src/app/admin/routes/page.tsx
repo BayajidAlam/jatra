@@ -32,7 +32,7 @@ export default function RoutesPage() {
         </Button>
       </div>
 
-      <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+      <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500">
         <CardHeader className="dark:border-slate-800">
           <CardTitle className="dark:text-slate-100">All Routes</CardTitle>
         </CardHeader>

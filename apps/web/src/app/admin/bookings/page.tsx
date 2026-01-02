@@ -35,7 +35,7 @@ export default function BookingsPage() {
         </div>
       </div>
 
-      <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+      <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 dark:border-slate-800">
           <CardTitle className="dark:text-slate-100">Recent Bookings</CardTitle>
           <div className="relative w-64">
