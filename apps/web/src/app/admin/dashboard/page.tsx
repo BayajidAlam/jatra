@@ -58,7 +58,7 @@ export default function AdminDashboardPage() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-l-4 border-l-violet-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+        <Card className="border-l-4 border-l-violet-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Revenue</CardTitle>
             <div className="h-8 w-8 rounded-full bg-violet-100 flex items-center justify-center">
@@ -73,7 +73,7 @@ export default function AdminDashboardPage() {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500 delay-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Bookings</CardTitle>
             <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500 delay-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Active Trains</CardTitle>
             <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center">
@@ -102,7 +102,7 @@ export default function AdminDashboardPage() {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500 delay-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Active Users</CardTitle>
             <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
@@ -121,7 +121,7 @@ export default function AdminDashboardPage() {
 
       {/* Charts Section */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 shadow-sm dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+        <Card className="col-span-4 shadow-sm dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-700 delay-400">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">Revenue Overview</CardTitle>
           </CardHeader>
@@ -158,7 +158,7 @@ export default function AdminDashboardPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="col-span-3 shadow-sm dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+        <Card className="col-span-3 shadow-sm dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-700 delay-500">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">Recent Traffic</CardTitle>
             <p className="text-sm text-muted-foreground">
@@ -202,7 +202,7 @@ export default function AdminDashboardPage() {
       </div>
       
       {/* Recent Bookings Placeholder */}
-      <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+      <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-700 delay-600">
         <CardHeader>
           <CardTitle>Recent Bookings</CardTitle>
         </CardHeader>

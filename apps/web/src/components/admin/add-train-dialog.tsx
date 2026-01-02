@@ -62,7 +62,7 @@ export function AddTrainDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-teal-600 hover:bg-teal-700 text-white gap-2">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
           <Plus className="h-4 w-4" />
           Add New Train
         </Button>
