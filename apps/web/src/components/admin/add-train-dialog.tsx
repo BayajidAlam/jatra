@@ -29,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const trainSchema = z.object({
   name: z.string().min(2, "Train name must be at least 2 characters"),
-  number: z.string().min(3, "Train number is required"),
+  trainNumber: z.string().min(3, "Train number is required"),
   type: z.string(),
   seats: z.coerce.number().min(1, "Capacity must be at least 1"),
 });
@@ -43,7 +43,7 @@ export function AddTrainDialog() {
     resolver: zodResolver(trainSchema),
     defaultValues: {
       name: "",
-      number: "",
+      trainNumber: "",
       type: "Intercity",
       seats: 500,
     },
@@ -53,7 +53,7 @@ export function AddTrainDialog() {
     console.log("Submitting train:", data);
     toast({
       title: "Train Created",
-      description: `${data.name} (${data.number}) has been added successfully.`,
+      description: `${data.name} (${data.trainNumber}) has been added successfully.`,
     });
     setOpen(false);
     form.reset();
@@ -87,12 +87,12 @@ export function AddTrainDialog() {
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="number" className="text-right">
+            <Label htmlFor="trainNumber" className="text-right">
               Number
             </Label>
             <Input
-              id="number"
-              {...form.register("number")}
+              id="trainNumber"
+              {...form.register("trainNumber")}
               className="col-span-3"
               placeholder="e.g. 701"
             />
@@ -102,8 +102,8 @@ export function AddTrainDialog() {
               Type
             </Label>
             <Select
-                onValueChange={(val) => form.setValue("type", val)}
-                defaultValue={form.getValues("type")}
+              onValueChange={(val) => form.setValue("type", val)}
+              defaultValue={form.getValues("type")}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select type" />
@@ -117,7 +117,7 @@ export function AddTrainDialog() {
             </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-             <Label htmlFor="seats" className="text-right">
+            <Label htmlFor="seats" className="text-right">
               Capacity
             </Label>
             <Input
