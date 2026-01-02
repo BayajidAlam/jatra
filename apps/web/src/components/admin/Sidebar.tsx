@@ -65,20 +65,23 @@ export function AdminSidebar() {
   return (
     <div
       className={cn(
-        "relative flex flex-col border-r bg-gradient-to-b from-slate-900 to-slate-950 text-slate-100 transition-all duration-300 shadow-xl z-20",
+        "relative flex flex-col border-r transition-all duration-300 shadow-xl z-20",
+        "bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950",
+        "text-slate-900 dark:text-slate-100",
+        "border-slate-200 dark:border-slate-800",
         collapsed ? "w-16" : "w-64"
       )}
     >
-      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-800">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800">
         {!collapsed && (
-          <span className="text-lg font-bold tracking-tight text-white">
+          <span className="text-lg font-bold tracking-tight">
             Jatra Admin
           </span>
         )}
         <Button
           variant="ghost"
           size="icon"
-          className="ml-auto text-slate-400 hover:text-white hover:bg-slate-800"
+          className="ml-auto hover:bg-slate-100 dark:hover:bg-slate-800"
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? (
@@ -100,10 +103,11 @@ export function AdminSidebar() {
                 key={index}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white",
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "hover:bg-slate-100 dark:hover:bg-slate-800",
                   isActive
-                    ? "bg-slate-800 text-white"
-                    : "text-slate-400",
+                    ? "bg-slate-200 text-slate-900 dark:bg-slate-800 dark:text-white"
+                    : "text-slate-600 dark:text-slate-400",
                   collapsed && "justify-center px-2"
                 )}
               >
@@ -115,12 +119,12 @@ export function AdminSidebar() {
         </nav>
       </div>
 
-      <div className="border-t border-slate-800 p-2">
+      <div className="border-t border-slate-200 dark:border-slate-800 p-2">
         <nav className="grid gap-1 px-2">
           <Link
             href="/admin/settings"
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800 hover:text-white",
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800",
               collapsed && "justify-center px-2"
             )}
           >
