@@ -37,18 +37,13 @@ const sidebarItems = [
     icon: MapPin,
   },
   {
-    name: "Routes",
+    title: "Routes",
     href: "/admin/routes",
-    icon: MapPin,
+    icon: Route,
   },
   {
-    name: "Bookings", // Added Bookings item
-    href: "/admin/bookings",
-    icon: ShoppingCart,
-  },
-  {
-    title: "Journeys",
-    href: "/admin/journeys",
+    title: "Schedules",
+    href: "/admin/schedules",
     icon: Calendar,
   },
   {
