@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Plus } from "lucide-react";
+import { Plus, Edit2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 const stationSchema = z.object({
   code: z.string().min(2, "Station code must be at least 2 characters"),
@@ -27,10 +28,23 @@ const stationSchema = z.object({
   platformCount: z.coerce.number().min(1, "At least 1 platform required"),
 });
 
-type StationFormValues = z.infer<typeof stationSchema>;
+export type StationFormValues = z.infer<typeof stationSchema>;
 
-export function AddStationDialog() {
-  const [open, setOpen] = useState(false);
+interface StationDialogProps {
+  initialData?: StationFormValues;
+  trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function StationDialog({ initialData, trigger, open: controlledOpen, onOpenChange: setControlledOpen }: StationDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = setControlledOpen !== undefined ? setControlledOpen : setInternalOpen;
+  
+  const { toast } = useToast();
+  const isEditing = !!initialData;
+
   const form = useForm<StationFormValues>({
     resolver: zodResolver(stationSchema),
     defaultValues: {
@@ -42,25 +56,49 @@ export function AddStationDialog() {
     },
   });
 
+  useEffect(() => {
+    if (initialData && open) {
+      form.reset(initialData);
+    } else if (!isEditing && open) {
+      form.reset({
+        code: "",
+        name: "",
+        city: "",
+        district: "",
+        platformCount: 4,
+      });
+    }
+  }, [initialData, open, form, isEditing]);
+
   const onSubmit = (data: StationFormValues) => {
-    console.log("Submitting station:", data);
+    console.log(isEditing ? "Updating station:" : "Creating station:", data);
+    toast({
+      title: isEditing ? "Station Updated" : "Station Created",
+      description: `${data.name} has been ${isEditing ? "updated" : "created"} successfully.`,
+    });
     setOpen(false);
-    form.reset();
+    if (!isEditing) form.reset();
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
-          <Plus className="h-4 w-4" />
-          Add Station
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      {trigger ? (
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      ) : !isEditing ? (
+        <DialogTrigger asChild>
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+            <Plus className="h-4 w-4" />
+            Add Station
+          </Button>
+        </DialogTrigger>
+      ) : null}
+      <DialogContent className="sm:max-w-[425px] dark:bg-slate-900 dark:border-slate-800">
         <DialogHeader>
-          <DialogTitle>Add New Station</DialogTitle>
-          <DialogDescription>
-            Add a new railway station to the network.
+          <DialogTitle className="dark:text-slate-100">{isEditing ? "Edit Station" : "Add New Station"}</DialogTitle>
+          <DialogDescription className="dark:text-slate-400">
+            {isEditing 
+                ? "Update the station details below." 
+                : "Add a new railway station to the network."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
@@ -120,7 +158,7 @@ export function AddStationDialog() {
             />
           </div>
           <DialogFooter>
-            <Button type="submit">Save Station</Button>
+            <Button type="submit">{isEditing ? "Save Changes" : "Save Station"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

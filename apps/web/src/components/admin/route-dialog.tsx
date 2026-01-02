@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -35,11 +35,23 @@ const routeSchema = z.object({
   status: z.string(),
 });
 
-type RouteFormValues = z.infer<typeof routeSchema>;
+export type RouteFormValues = z.infer<typeof routeSchema>;
 
-export function AddRouteDialog() {
-  const [open, setOpen] = useState(false);
+interface RouteDialogProps {
+  initialData?: RouteFormValues;
+  trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function RouteDialog({ initialData, trigger, open: controlledOpen, onOpenChange: setControlledOpen }: RouteDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = setControlledOpen !== undefined ? setControlledOpen : setInternalOpen;
+  
   const { toast } = useToast();
+  const isEditing = !!initialData;
+
   const form = useForm<RouteFormValues>({
     resolver: zodResolver(routeSchema),
     defaultValues: {
@@ -51,29 +63,49 @@ export function AddRouteDialog() {
     },
   });
 
+  useEffect(() => {
+    if (initialData && open) {
+      form.reset(initialData);
+    } else if (!isEditing && open) {
+      form.reset({
+        routeName: "",
+        stations: 10,
+        distance: "",
+        duration: "",
+        status: "Active",
+      });
+    }
+  }, [initialData, open, form, isEditing]);
+
   const onSubmit = (data: RouteFormValues) => {
-    console.log("Submitting route:", data);
+    console.log(isEditing ? "Updating route:" : "Creating route:", data);
     toast({
-      title: "Route Created",
-      description: `Route ${data.routeName} has been created successfully.`,
+      title: isEditing ? "Route Updated" : "Route Created",
+      description: `Route ${data.routeName} has been ${isEditing ? "updated" : "created"} successfully.`,
     });
     setOpen(false);
-    form.reset();
+    if (!isEditing) form.reset();
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
-          <Plus className="h-4 w-4" />
-          Create New Route
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      {trigger ? (
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      ) : !isEditing ? (
+        <DialogTrigger asChild>
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+            <Plus className="h-4 w-4" />
+            Create New Route
+          </Button>
+        </DialogTrigger>
+      ) : null}
+      <DialogContent className="sm:max-w-[425px] dark:bg-slate-900 dark:border-slate-800">
         <DialogHeader>
-          <DialogTitle>Create New Route</DialogTitle>
-          <DialogDescription>
-            Define a new railway route between stations.
+          <DialogTitle className="dark:text-slate-100">{isEditing ? "Edit Route" : "Create New Route"}</DialogTitle>
+          <DialogDescription className="dark:text-slate-400">
+            {isEditing 
+                ? "Update the railway route details." 
+                : "Define a new railway route between stations."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
@@ -127,7 +159,7 @@ export function AddRouteDialog() {
             </Label>
             <Select
               onValueChange={(val) => form.setValue("status", val)}
-              defaultValue={form.getValues("status")}
+              value={form.watch("status")}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select status" />
@@ -140,7 +172,7 @@ export function AddRouteDialog() {
             </Select>
           </div>
           <DialogFooter>
-            <Button type="submit">Create Route</Button>
+            <Button type="submit">{isEditing ? "Save Changes" : "Create Route"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
