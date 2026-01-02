@@ -168,13 +168,6 @@ export function AdminHeader() {
                 </div>
               )}
             </div>
-            <div className="p-2 border-t dark:border-slate-800 bg-muted/20">
-              <Link href="/admin/settings">
-                <Button variant="outline" size="sm" className="w-full text-xs h-8">
-                  Notification Settings
-                </Button>
-              </Link>
-            </div>
           </PopoverContent>
         </Popover>
 

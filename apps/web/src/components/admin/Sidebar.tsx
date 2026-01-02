@@ -121,16 +121,6 @@ export function AdminSidebar() {
 
       <div className="border-t border-slate-200 dark:border-slate-800 p-2">
         <nav className="grid gap-1 px-2">
-          <Link
-            href="/admin/settings"
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800",
-              collapsed && "justify-center px-2"
-            )}
-          >
-            <Settings className="h-5 w-5" />
-            {!collapsed && <span>Settings</span>}
-          </Link>
            <button
             className={cn(
               "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-950/20",
