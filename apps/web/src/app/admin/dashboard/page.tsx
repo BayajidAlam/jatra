@@ -57,56 +57,62 @@ export default function AdminDashboardPage() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="border-l-4 border-l-violet-500 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Revenue</CardTitle>
+            <div className="h-8 w-8 rounded-full bg-violet-100 flex items-center justify-center">
+              <CreditCard className="h-4 w-4 text-violet-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">৳ 4,23,500</div>
+            <div className="text-2xl font-bold text-slate-800">৳ 4,23,500</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-              <span className="text-green-500 font-medium">+20.1%</span> from
-              last month
+              <TrendingUp className="h-3 w-3 mr-1 text-emerald-500" />
+              <span className="text-emerald-500 font-medium">+20.1%</span> from last month
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Bookings</CardTitle>
-            <Ticket className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Bookings</CardTitle>
+            <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+               <Ticket className="h-4 w-4 text-blue-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+2,350</div>
+            <div className="text-2xl font-bold text-slate-800">+2,350</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-              <span className="text-green-500 font-medium">+18.2%</span> from
-              last month
+              <TrendingUp className="h-3 w-3 mr-1 text-emerald-500" />
+              <span className="text-emerald-500 font-medium">+18.2%</span> from last month
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Trains</CardTitle>
-            <Train className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active Trains</CardTitle>
+            <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center">
+               <Train className="h-4 w-4 text-amber-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">42</div>
+            <div className="text-2xl font-bold text-slate-800">42</div>
             <p className="text-xs text-muted-foreground mt-1">
               Currently running on schedule
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active Users</CardTitle>
+            <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
+               <Users className="h-4 w-4 text-emerald-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12,234</div>
+            <div className="text-2xl font-bold text-slate-800">12,234</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
-              <ArrowUpRight className="h-3 w-3 mr-1 text-blue-500" />
-              <span className="text-blue-500 font-medium">+543</span> this hour
+              <ArrowUpRight className="h-3 w-3 mr-1 text-emerald-500" />
+              <span className="text-emerald-500 font-medium">+543</span> this hour
             </p>
           </CardContent>
         </Card>
@@ -114,47 +120,46 @@ export default function AdminDashboardPage() {
 
       {/* Charts Section */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+        <Card className="col-span-4 shadow-sm">
           <CardHeader>
-            <CardTitle>Revenue Overview</CardTitle>
+            <CardTitle className="text-lg font-semibold text-slate-800">Revenue Overview</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <div className="h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                   <XAxis
                     dataKey="name"
-                    stroke="#888888"
+                    stroke="#64748b"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
                   />
                   <YAxis
-                    stroke="#888888"
+                    stroke="#64748b"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
                     tickFormatter={(value: number) => `৳${value}`}
                   />
                   <Tooltip
-                    cursor={{ fill: "transparent" }}
-                    contentStyle={{ borderRadius: "8px" }}
+                    cursor={{ fill: "#f1f5f9" }}
+                    contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
                   />
                   <Bar
                     dataKey="total"
-                    fill="currentColor"
+                    fill="#8b5cf6"
                     radius={[4, 4, 0, 0]}
-                    className="fill-primary"
                   />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
-        <Card className="col-span-3">
+        <Card className="col-span-3 shadow-sm">
           <CardHeader>
-            <CardTitle>Recent Traffic</CardTitle>
+            <CardTitle className="text-lg font-semibold text-slate-800">Recent Traffic</CardTitle>
             <p className="text-sm text-muted-foreground">
               Peak booking hours today
             </p>
@@ -163,16 +168,30 @@ export default function AdminDashboardPage() {
             <div className="h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={trafficData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                   <XAxis
+                    dataKey="time"
+                    stroke="#64748b"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                   <YAxis
+                    stroke="#64748b"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
                   <Tooltip
-                    contentStyle={{ borderRadius: "8px" }}
+                    contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
                   />
                   <Line
                     type="monotone"
                     dataKey="visitors"
-                    stroke="#8884d8"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 8 }}
+                    stroke="#3b82f6"
+                    strokeWidth={3}
+                    dot={{ r: 4, fill: "#3b82f6", strokeWidth: 2, stroke: "#fff" }}
+                    activeDot={{ r: 6, fill: "#3b82f6" }}
                   />
                 </LineChart>
               </ResponsiveContainer>

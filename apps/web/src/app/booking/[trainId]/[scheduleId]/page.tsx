@@ -37,18 +37,21 @@ const coachOptions = [
 
 const generateSeats = () => {
   const seats = [];
-  const rows = ["A", "B", "C", "D", "E", "F"];
-  const bookedSeats = ["A2", "A5", "B3", "C1", "C6", "D4", "E2", "F5"];
+  const rows = 10; // 10 rows per coach
+  // Standard AC Chair layout: A,B (Left) - AISLE - C,D (Right)
+  const columns = ["A", "B", "C", "D"]; 
+  const bookedSeats = ["A2", "A5", "B3", "C1", "C6", "D4", "B8", "D9"];
 
-  for (const row of rows) {
-    for (let i = 1; i <= 10; i++) {
-      const seatNumber = `${row}${i}`;
+  for (let i = 1; i <= rows; i++) {
+    for (const col of columns) {
+      const seatNumber = `${col}${i}`;
       seats.push({
         seatId: seatNumber,
         seatNumber,
+        row: i,
+        column: col,
         status: bookedSeats.includes(seatNumber) ? "BOOKED" : "AVAILABLE",
         fare: 650,
-        seatType: i === 1 || i === 10 ? "WINDOW" : i === 5 ? "AISLE" : "MIDDLE",
       });
     }
   }
@@ -144,50 +147,84 @@ export default function SeatSelectionPage() {
                   </div>
                 </div>
 
-                {/* Seat Grid */}
-                <div className="space-y-3">
-                  {["A", "B", "C", "D", "E", "F"].map((row) => (
-                    <div key={row} className="flex items-center gap-2">
-                      <span className="w-6 text-sm font-medium text-muted-foreground">
-                        {row}
-                      </span>
-                      <div className="flex gap-2 flex-1">
-                        {Array.from({ length: 10 }).map((_, i) => {
-                          const seatNumber = `${row}${i + 1}`;
-                          const seat = seats.find(
-                            (s) => s.seatNumber === seatNumber
-                          );
-                          const isSelected = selectedSeats.includes(seatNumber);
-                          const isBooked = seat?.status === "BOOKED";
-
-                          return (
-                            <button
-                              key={seatNumber}
-                              onClick={() =>
-                                handleSeatClick(
-                                  seatNumber,
-                                  seat?.status || "AVAILABLE"
-                                )
-                              }
-                              disabled={isBooked}
-                              className={cn(
-                                "w-9 h-9 rounded text-xs font-medium border-2 transition-all",
-                                isBooked &&
-                                  "bg-red-500/20 border-red-500 text-red-700 dark:text-red-400 cursor-not-allowed",
-                                isSelected &&
-                                  "bg-primary/20 border-primary text-primary",
-                                !isBooked &&
-                                  !isSelected &&
-                                  "bg-green-500/20 border-green-500 text-green-700 dark:text-green-400 hover:border-primary"
-                              )}
-                            >
-                              {i + 1}
-                            </button>
-                          );
-                        })}
-                      </div>
+                {/* Seat Grid - Improved 2-2 Layout */}
+                <div className="space-y-3 flex flex-col items-center">
+                  <div className="w-full max-w-sm border-x-4 border-slate-200 dark:border-slate-800 px-4 py-8 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl relative">
+                    
+                    {/* Driver/Engine Indicator */}
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-200 dark:bg-slate-800 px-4 py-1 rounded-t-lg text-xs font-mono text-muted-foreground">
+                      ENGINE
                     </div>
-                  ))}
+
+                    {[...Array(10)].map((_, rowIndex) => {
+                      const rowNum = rowIndex + 1;
+                      return (
+                        <div key={rowNum} className="flex items-center justify-between mb-3">
+                          
+                          {/* Left Side (A, B) */}
+                          <div className="flex gap-2">
+                            {["A", "B"].map((col) => {
+                              const seatNumber = `${col}${rowNum}`;
+                              const seat = seats.find(s => s.seatNumber === seatNumber);
+                              const isSelected = selectedSeats.includes(seatNumber);
+                              const isBooked = seat?.status === "BOOKED";
+
+                              return (
+                                <button
+                                  key={seatNumber}
+                                  onClick={() => handleSeatClick(seatNumber, seat?.status || "AVAILABLE")}
+                                  disabled={isBooked}
+                                  className={cn(
+                                    "w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold shadow-sm transition-all",
+                                    isBooked 
+                                      ? "bg-slate-200 text-slate-400 cursor-not-allowed"
+                                      : isSelected
+                                      ? "bg-primary text-primary-foreground shadow-md scale-105 ring-2 ring-primary ring-offset-2"
+                                      : "bg-white dark:bg-slate-800 border border-border hover:border-primary hover:text-primary"
+                                  )}
+                                >
+                                  {col}{rowNum}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {/* Aisle */}
+                          <div className="w-8 text-center text-xs text-muted-foreground/30 font-mono">
+                            {rowNum}
+                          </div>
+
+                          {/* Right Side (C, D) */}
+                          <div className="flex gap-2">
+                             {["C", "D"].map((col) => {
+                              const seatNumber = `${col}${rowNum}`;
+                              const seat = seats.find(s => s.seatNumber === seatNumber);
+                              const isSelected = selectedSeats.includes(seatNumber);
+                              const isBooked = seat?.status === "BOOKED";
+
+                              return (
+                                <button
+                                  key={seatNumber}
+                                  onClick={() => handleSeatClick(seatNumber, seat?.status || "AVAILABLE")}
+                                  disabled={isBooked}
+                                  className={cn(
+                                    "w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold shadow-sm transition-all",
+                                    isBooked 
+                                      ? "bg-slate-200 text-slate-400 cursor-not-allowed"
+                                      : isSelected
+                                      ? "bg-primary text-primary-foreground shadow-md scale-105 ring-2 ring-primary ring-offset-2"
+                                      : "bg-white dark:bg-slate-800 border border-border hover:border-primary hover:text-primary"
+                                  )}
+                                >
+                                  {col}{rowNum}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -244,7 +281,17 @@ export default function SeatSelectionPage() {
 
                     <Button className="w-full bg-primary hover:bg-primary/90 h-11">
                       <Link
-                        href="/booking/passengers"
+                        href={{
+                          pathname: "/booking/passengers",
+                          query: {
+                            seats: selectedSeats.join(","),
+                            amount: totalAmount,
+                            trainName: "Suborno Express", // Ideally dynamic
+                            trainNumber: "701",
+                            time: "10:00 AM",
+                            date: "Jan 15, 2025"
+                          }
+                        }}
                         className="flex items-center justify-center w-full"
                       >
                         Continue to Passengers

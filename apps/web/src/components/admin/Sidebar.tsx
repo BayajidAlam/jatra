@@ -11,6 +11,7 @@ import {
   Calendar,
   Ticket,
   Users,
+  ShoppingCart,
   Settings,
   LogOut,
   ChevronLeft,
@@ -36,9 +37,14 @@ const sidebarItems = [
     icon: MapPin,
   },
   {
-    title: "Routes",
+    name: "Routes",
     href: "/admin/routes",
-    icon: Route,
+    icon: MapPin,
+  },
+  {
+    name: "Bookings", // Added Bookings item
+    href: "/admin/bookings",
+    icon: ShoppingCart,
   },
   {
     title: "Journeys",
@@ -64,7 +70,7 @@ export function AdminSidebar() {
   return (
     <div
       className={cn(
-        "relative flex flex-col border-r bg-slate-900 text-slate-100 transition-all duration-300",
+        "relative flex flex-col border-r bg-gradient-to-b from-slate-900 to-slate-950 text-slate-100 transition-all duration-300 shadow-xl z-20",
         collapsed ? "w-16" : "w-64"
       )}
     >
