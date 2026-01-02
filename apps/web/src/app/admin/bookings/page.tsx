@@ -35,9 +35,9 @@ export default function BookingsPage() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle>Recent Bookings</CardTitle>
+      <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 dark:border-slate-800">
+          <CardTitle className="dark:text-slate-100">Recent Bookings</CardTitle>
           <div className="relative w-64">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-slate-500" />
             <Input placeholder="Search bookings..." className="pl-8" />

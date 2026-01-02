@@ -72,7 +72,7 @@ export default function SchedulesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-slate-100">
           Schedules Management
         </h1>
         <Button className="bg-primary text-primary-foreground gap-2">
@@ -81,9 +81,9 @@ export default function SchedulesPage() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle>All Train Schedules</CardTitle>
+      <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 dark:border-slate-800">
+          <CardTitle className="dark:text-slate-100">All Train Schedules</CardTitle>
           <div className="relative w-64">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input

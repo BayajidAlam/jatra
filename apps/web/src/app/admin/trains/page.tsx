@@ -29,9 +29,9 @@ export default function TrainsPage() {
         <AddTrainDialog />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>All Trains</CardTitle>
+      <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800">
+        <CardHeader className="dark:border-slate-800">
+          <CardTitle className="dark:text-slate-100">All Trains</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
