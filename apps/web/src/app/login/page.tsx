@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import Header from "@/components/layout/Header";
 
 const testAccounts = [
   {
@@ -49,29 +50,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Train className="h-6 w-6 text-primary" />
-              <span className="text-xl font-semibold text-foreground">
-                Jatra Railway
-              </span>
-            </Link>
-
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground hidden sm:inline">
-                Don&apos;t have an account?
-              </span>
-              <Link href="/signup">
-                <Button variant="outline" className="text-sm bg-transparent">
-                  Sign Up
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center p-4 py-12">

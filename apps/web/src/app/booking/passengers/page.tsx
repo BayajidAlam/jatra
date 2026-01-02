@@ -2,16 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Train, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-// Mock selected seats (would come from state/context)
-const selectedSeats = ["A3", "A4", "B1"];
-const seatFare = 650;
+import Header from "@/components/layout/Header";
+import { Suspense } from "react";
 
 interface PassengerData {
   name: string;
@@ -20,8 +18,16 @@ interface PassengerData {
   seatId: string;
 }
 
-export default function PassengerDetailsPage() {
+function PassengerForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const seatsParam = searchParams.get("seats");
+  const selectedSeats = seatsParam ? seatsParam.split(",") : [];
+  const totalAmount = Number(searchParams.get("amount") || 0);
+  const trainName = searchParams.get("trainName") || "Suborno Express";
+  const seatFare = 650; // In real app, derived from total / seats
+
   const [passengers, setPassengers] = useState<PassengerData[]>(
     selectedSeats.map((seatId) => ({
       name: "",
@@ -99,32 +105,12 @@ export default function PassengerDetailsPage() {
     }
   };
 
-  const totalAmount = selectedSeats.length * seatFare;
+
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link href="/booking/train-001/schedule-001">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back
-                </Button>
-              </Link>
-              <div className="flex items-center gap-2">
-                <Train className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Suborno Express</span>
-                <span className="text-sm text-muted-foreground">
-                  • Dhaka → Chittagong
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Progress Indicator */}
       <div className="border-b border-border bg-card/30">
@@ -339,5 +325,13 @@ export default function PassengerDetailsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PassengerDetailsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PassengerForm />
+    </Suspense>
   );
 }

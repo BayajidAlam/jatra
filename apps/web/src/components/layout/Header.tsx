@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function Header() {
   return (
@@ -49,9 +50,8 @@ export default function Header() {
             </Link>
           </nav>
 
-
-
           <div className="flex items-center gap-3">
+            <ModeToggle />
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">

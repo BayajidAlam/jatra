@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Train,
   ArrowLeft,
@@ -17,21 +17,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-
-// Mock booking data (would come from state/context)
-const bookingData = {
-  train: "Suborno Express",
-  route: "Dhaka → Chittagong",
-  date: "Jan 15, 2025",
-  departure: "10:00 AM",
-  seats: ["A3", "A4", "B1"],
-  seatFare: 650,
-};
+import Header from "@/components/layout/Header";
 
 type PaymentMethod = "BKASH" | "NAGAD" | "CARD" | "ROCKET" | null;
 
-export default function PaymentPage() {
+function PaymentForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Dynamic booking data from URL
+  const seatsParam = searchParams.get("seats");
+  const seats = seatsParam ? seatsParam.split(",") : [];
+  const totalAmount = Number(searchParams.get("amount") || 0);
+  const trainName = searchParams.get("trainName") || "Suborno Express";
+  const route = "Dhaka → Chittagong"; // Ideally dynamic too
+  const date = searchParams.get("date") || "Jan 15, 2025";
+  const departure = searchParams.get("time") || "10:00 AM";
+  const seatFare = seats.length > 0 ? totalAmount / seats.length : 650;
+
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [currentStep] = useState(3);
@@ -45,8 +48,6 @@ export default function PaymentPage() {
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCVV, setCardCVV] = useState("");
   const [cardName, setCardName] = useState("");
-
-  const totalAmount = bookingData.seats.length * bookingData.seatFare;
 
   const paymentMethods = [
     {
@@ -145,7 +146,7 @@ export default function PaymentPage() {
   const handlePayment = () => {
     if (validatePayment()) {
       console.log("[v0] Payment processing:", { selectedMethod, totalAmount });
-      // Navigate to booking confirmation
+      // Navigate to booking confirmation with query params roughly passed along or just the booking ID
       router.push("/booking/confirmation/BK20251231001");
     }
   };
@@ -153,27 +154,7 @@ export default function PaymentPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link href="/booking/passengers">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back
-                </Button>
-              </Link>
-              <div className="flex items-center gap-2">
-                <Train className="h-5 w-5 text-primary" />
-                <span className="font-semibold">{bookingData.train}</span>
-                <span className="text-sm text-muted-foreground">
-                  • {bookingData.route}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Progress Indicator */}
       <div className="border-b border-border bg-card/30">
@@ -528,32 +509,32 @@ export default function PaymentPage() {
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Train</span>
-                    <span className="font-medium">{bookingData.train}</span>
+                    <span className="font-medium">{trainName}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Route</span>
-                    <span className="font-medium">{bookingData.route}</span>
+                    <span className="font-medium">{route}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Date</span>
-                    <span className="font-medium">{bookingData.date}</span>
+                    <span className="font-medium">{date}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Departure</span>
-                    <span className="font-medium">{bookingData.departure}</span>
+                    <span className="font-medium">{departure}</span>
                   </div>
                 </div>
 
                 <div className="border-t border-border pt-4 mb-4">
                   <h4 className="font-semibold text-sm mb-3">Selected Seats</h4>
                   <div className="space-y-2">
-                    {bookingData.seats.map((seatId) => (
+                    {seats.map((seatId) => (
                       <div
                         key={seatId}
                         className="flex items-center justify-between p-2 rounded bg-muted text-sm"
                       >
                         <span className="font-medium">Seat {seatId}</span>
-                        <span>BDT {bookingData.seatFare}</span>
+                        <span>BDT {seatFare}</span>
                       </div>
                     ))}
                   </div>
@@ -562,7 +543,7 @@ export default function PaymentPage() {
                 <div className="border-t border-border pt-4 mb-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-muted-foreground">
-                      Seats ({bookingData.seats.length})
+                      Seats ({seats.length})
                     </span>
                     <span className="text-sm">BDT {totalAmount}</span>
                   </div>
@@ -590,5 +571,13 @@ export default function PaymentPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentForm />
+    </Suspense>
   );
 }

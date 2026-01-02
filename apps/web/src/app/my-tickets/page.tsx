@@ -310,7 +310,8 @@ export default function MyTicketsPage() {
           </div>
         </div>
 
-        {/* Tickets List */}
+        {/* Tickets List - Fixed Min Height to prevent layout shift */}
+        <div className="min-h-[500px]">
         {filteredTickets.length === 0 ? (
           <Card className="border-2">
             <CardContent className="p-12 text-center">
@@ -523,6 +524,7 @@ export default function MyTicketsPage() {
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
