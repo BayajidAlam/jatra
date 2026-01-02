@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus } from "lucide-react";
+import { AddRouteDialog } from "@/components/admin/add-route-dialog";
 import {
   Table,
   TableBody,
@@ -26,10 +26,7 @@ export default function RoutesPage() {
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           Route Management
         </h1>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
-          <Plus className="h-4 w-4" />
-          Create New Route
-        </Button>
+        <AddRouteDialog />
       </div>
 
       <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500">

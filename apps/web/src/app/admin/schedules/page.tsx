@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { AddScheduleDialog } from "@/components/admin/add-schedule-dialog";
 
 // Mock Data
 const initialSchedules = [
@@ -75,10 +76,7 @@ export default function SchedulesPage() {
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           Schedules Management
         </h1>
-        <Button className="bg-primary text-primary-foreground gap-2">
-          <Plus className="h-4 w-4" />
-          Create Schedule
-        </Button>
+        <AddScheduleDialog />
       </div>
 
       <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500">

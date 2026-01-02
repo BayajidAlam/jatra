@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Search, MoreHorizontal, UserCog, Ban, CheckCircle } from "lucide-react";
+import { AddUserDialog } from "@/components/admin/add-user-dialog";
 import {
   Table,
   TableBody,
@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input"; // Added missing import for Input
 
 // Mock Data
 const initialUsers = [
@@ -47,10 +48,7 @@ export default function UsersPage() {
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           Users Management
         </h1>
-        <Button className="bg-primary text-primary-foreground gap-2">
-          <UserCog className="h-4 w-4" />
-          Add Admin
-        </Button>
+        <AddUserDialog />
       </div>
 
       <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500">

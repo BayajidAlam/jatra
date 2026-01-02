@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Plus, Edit2, Trash2 } from "lucide-react";
+import { Search, MapPin, Edit2, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -13,16 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+import { AddStationDialog } from "@/components/admin/add-station-dialog";
 
 // Mock Data
 const initialStations = [
@@ -36,7 +27,6 @@ const initialStations = [
 export default function StationsPage() {
   const [stations, setStations] = useState(initialStations);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const filteredStations = stations.filter((station) =>
     station.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -50,43 +40,7 @@ export default function StationsPage() {
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           Stations Management
         </h1>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-primary text-primary-foreground gap-2">
-              <Plus className="h-4 w-4" />
-              Add Station
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Station</DialogTitle>
-              <DialogDescription>
-                Add a new railway station to the network.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="code" className="text-right">Code</Label>
-                <Input id="code" placeholder="e.g. DA" className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">Name</Label>
-                <Input id="name" placeholder="Station Name" className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="city" className="text-right">City</Label>
-                <Input id="city" className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="division" className="text-right">Division</Label>
-                <Input id="division" className="col-span-3" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={() => setIsAddDialogOpen(false)}>Save Station</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <AddStationDialog />
       </div>
 
       <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500">
