@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 // Mock data
 const mockBookings = [
   {
-    id: "BK001",
+    bookingId: "BK001",
     trainNumber: "SUBORNO-EXPRESS-701",
     trainName: "Suborno Express",
     journeyDate: "2025-01-15",
@@ -35,7 +35,7 @@ const mockBookings = [
     canCancel: true,
   },
   {
-    id: "BK002",
+    bookingId: "BK002",
     trainNumber: "TURNA-NISHITHA-727",
     trainName: "Turna Nishitha",
     journeyDate: "2025-01-08",
@@ -50,7 +50,7 @@ const mockBookings = [
     canCancel: false,
   },
   {
-    id: "BK003",
+    bookingId: "BK003",
     trainNumber: "MOHANAGAR-711",
     trainName: "Mohanagar Godhuli",
     journeyDate: "2024-12-28",
@@ -152,7 +152,7 @@ export default function MyBookingsPage() {
           <div className="space-y-4">
             {filteredBookings.map((booking) => (
               <Card
-                key={booking.id}
+                key={booking.bookingId}
                 className="border-2 hover:border-primary/50 transition-all"
               >
                 <CardContent className="p-5">
@@ -215,13 +215,18 @@ export default function MyBookingsPage() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-2 bg-transparent"
+                      <Link
+                        href={`/my-bookings/${booking.bookingId}`}
+                        className="block"
                       >
-                        View Details
-                      </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-2 bg-transparent"
+                        >
+                          View Details
+                        </Button>
+                      </Link>
                       {booking.canCancel && (
                         <Button
                           variant="outline"
