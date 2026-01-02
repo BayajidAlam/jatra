@@ -13,6 +13,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -30,9 +37,56 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
+const ADMIN_NOTIFICATIONS = [
+  {
+    id: 1,
+    title: "New User Registration",
+    desc: "A new user 'Tanvir' has registered with email tanvir@example.com and phone 01712345678.",
+    time: "10m ago",
+    unread: true,
+    icon: <User className="h-4 w-4 text-blue-500" />,
+    fullContent: "User details:\nName: Tanvir Ahmed\nRegistration Date: Jan 3, 2026\nIP Address: 103.23.45.12"
+  },
+  {
+    id: 2,
+    title: "System Update",
+    desc: "System maintenance scheduled for 2 AM tonight.",
+    time: "1h ago",
+    unread: true,
+    icon: <Info className="h-4 w-4 text-amber-500" />,
+    fullContent: "The server will be undergoing routine maintenance starting at 02:00 UTC. Expected downtime is 15 minutes. Please backup all active sessions."
+  },
+  {
+    id: 3,
+    title: "High Value Booking",
+    desc: "New booking of ৳4500 by 'Rahim'.",
+    time: "3h ago",
+    unread: false,
+    icon: <BadgeAlert className="h-4 w-4 text-emerald-500" />,
+    fullContent: "Booking ID: BK-7782\nPassenger: Rahim Uddin\nRoute: Dhaka - Chattogram\nSeats: 2 (AC_S)"
+  },
+  {
+    id: 4,
+    title: "Security Alert",
+    desc: "Multiple failed login attempts from IP 192.168.1.1",
+    time: "5h ago",
+    unread: false,
+    icon: <ShieldAlert className="h-4 w-4 text-red-500" />,
+    fullContent: "Unauthorized access attempt detected.\nTarget: Admin Dashboard\nStatus: Blocked\nAction: IP Address 192.168.1.1 has been temporarily rate-limited."
+  }
+];
+
 export function AdminHeader() {
   const pathname = usePathname();
   const paths = pathname.split("/").filter(Boolean);
+  const [selectedNotification, setSelectedNotification] = React.useState<typeof ADMIN_NOTIFICATIONS[0] | null>(null);
+  const [notifications, setNotifications] = React.useState(ADMIN_NOTIFICATIONS);
+
+  const handleNotificationClick = (notif: typeof ADMIN_NOTIFICATIONS[0]) => {
+    setSelectedNotification(notif);
+    // Mark as read (simulated)
+    setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, unread: false } : n));
+  };
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-white px-6 shadow-sm dark:bg-slate-900 dark:border-slate-800">
@@ -79,43 +133,20 @@ export function AdminHeader() {
           <PopoverContent className="w-80 p-0" align="end">
             <div className="flex items-center justify-between p-4 border-b dark:border-slate-800">
               <h4 className="font-semibold text-sm">Admin Notifications</h4>
-              <Link href="/admin/settings" className="text-xs text-primary hover:underline">
-                Settings
-              </Link>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs h-auto p-0 text-primary hover:bg-transparent"
+                onClick={() => setNotifications(prev => prev.map(n => ({ ...n, unread: false })))}
+              >
+                Mark all as read
+              </Button>
             </div>
             <div className="max-h-[300px] overflow-y-auto">
-              {[
-                {
-                  title: "New User Registration",
-                  desc: "A new user 'Tanvir' has registered.",
-                  time: "10m ago",
-                  unread: true,
-                  icon: <User className="h-4 w-4 text-blue-500" />
-                },
-                {
-                  title: "System Update",
-                  desc: "System maintenance scheduled for 2 AM.",
-                  time: "1h ago",
-                  unread: true,
-                  icon: <Info className="h-4 w-4 text-amber-500" />
-                },
-                {
-                  title: "High Value Booking",
-                  desc: "New booking of ৳4500 by 'Rahim'.",
-                  time: "3h ago",
-                  unread: false,
-                  icon: <BadgeAlert className="h-4 w-4 text-emerald-500" />
-                },
-                {
-                  title: "Security Alert",
-                  desc: "Multiple failed login attempts from IP 192.168.1.1",
-                  time: "5h ago",
-                  unread: false,
-                  icon: <ShieldAlert className="h-4 w-4 text-red-500" />
-                }
-              ].map((item, i) => (
+              {notifications.map((item) => (
                 <div 
-                  key={i} 
+                  key={item.id} 
+                  onClick={() => handleNotificationClick(item)}
                   className={cn(
                     "flex gap-3 p-4 border-b dark:border-slate-800 last:border-0 hover:bg-muted/50 transition-colors cursor-pointer", 
                     item.unread && "bg-blue-50/50 dark:bg-blue-900/10"
@@ -131,14 +162,45 @@ export function AdminHeader() {
                   </div>
                 </div>
               ))}
+              {notifications.length === 0 && (
+                <div className="p-8 text-center text-sm text-muted-foreground">
+                  No notifications.
+                </div>
+              )}
             </div>
             <div className="p-2 border-t dark:border-slate-800 bg-muted/20">
-              <Button variant="ghost" size="sm" className="w-full text-xs h-8">
-                Mark all as read
-              </Button>
+              <Link href="/admin/settings">
+                <Button variant="outline" size="sm" className="w-full text-xs h-8">
+                  Notification Settings
+                </Button>
+              </Link>
             </div>
           </PopoverContent>
         </Popover>
+
+        <Dialog open={!!selectedNotification} onOpenChange={(open) => !open && setSelectedNotification(null)}>
+          <DialogContent className="sm:max-w-[425px] dark:bg-slate-900 dark:border-slate-800">
+            <DialogHeader>
+              <div className="flex items-center gap-2 mb-2">
+                {selectedNotification?.icon}
+                <DialogTitle className="text-lg">{selectedNotification?.title}</DialogTitle>
+              </div>
+              <DialogDescription className="text-muted-foreground">
+                {selectedNotification?.time}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm font-medium mb-2">{selectedNotification?.desc}</p>
+              <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-lg border dark:border-slate-800 whitespace-pre-wrap font-mono text-xs">
+                {selectedNotification?.fullContent}
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button onClick={() => setSelectedNotification(null)}>Close</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <ModeToggle />
         
         <DropdownMenu>
