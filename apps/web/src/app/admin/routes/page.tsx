@@ -26,7 +26,7 @@ export default function RoutesPage() {
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           Route Management
         </h1>
-        <Button className="bg-teal-600 hover:bg-teal-700 text-white gap-2">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
           <Plus className="h-4 w-4" />
           Create New Route
         </Button>

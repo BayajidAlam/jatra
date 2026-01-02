@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   BarChart,
   Bar,
@@ -49,9 +50,9 @@ export default function AdminDashboardPage() {
           Overview
         </h1>
         <div className="flex items-center gap-2">
-          <button className="px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md hover:bg-slate-50 dark:hover:bg-slate-700">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
             Download Report
-          </button>
+          </Button>
         </div>
       </div>
 
