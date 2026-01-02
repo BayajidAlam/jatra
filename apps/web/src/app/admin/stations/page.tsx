@@ -47,7 +47,7 @@ export default function StationsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-slate-100">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           Stations Management
         </h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>

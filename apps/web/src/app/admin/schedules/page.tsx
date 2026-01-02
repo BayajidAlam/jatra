@@ -72,7 +72,7 @@ export default function SchedulesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-slate-100">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           Schedules Management
         </h1>
         <Button className="bg-primary text-primary-foreground gap-2">
