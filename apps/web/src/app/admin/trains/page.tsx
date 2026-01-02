@@ -107,9 +107,9 @@ export default function TrainsPage() {
                     <DropdownMenuLabel>Filter by Type</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => setSearchTerm("")}>All Types</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSearchTerm("Intercity")}>Intercity</SelectItem>
-                    <DropdownMenuItem onClick={() => setSearchTerm("Non-Stop")}>Non-Stop</SelectItem>
-                    <DropdownMenuItem onClick={() => setSearchTerm("Mail")}>Mail</SelectItem>
+                    <DropdownMenuItem onClick={() => setSearchTerm("Intercity")}>Intercity</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSearchTerm("Non-Stop")}>Non-Stop</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSearchTerm("Mail")}>Mail</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
           </div>
