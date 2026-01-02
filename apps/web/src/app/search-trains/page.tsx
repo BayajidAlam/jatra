@@ -81,7 +81,7 @@ export default function SearchTrainsPage() {
 
       <div className="container mx-auto px-4 lg:px-8 py-8">
         {/* Search Form */}
-        <Card className="mb-8 border-2">
+        <Card className="mb-8 border-border bg-card/60 backdrop-blur-md shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <Train className="h-5 w-5 text-primary" />
@@ -188,7 +188,7 @@ export default function SearchTrainsPage() {
             {searchResults.map((train) => (
               <Card
                 key={train.trainId}
-                className="border-2 hover:border-primary/50 transition-all"
+                className="border-border bg-card/40 backdrop-blur-sm hover:bg-card/60 hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-md"
               >
                 <CardContent className="p-5">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">

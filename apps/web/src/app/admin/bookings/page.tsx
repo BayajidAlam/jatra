@@ -30,6 +30,7 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
+import { BookingDetailsDialog } from "@/components/admin/booking-details-dialog";
 
 // Mock Data
 const initialBookings = [
@@ -45,6 +46,8 @@ const initialBookings = [
 export default function BookingsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const itemsPerPage = 5;
 
   const filteredBookings = initialBookings.filter((booking) =>
@@ -140,8 +143,16 @@ export default function BookingsPage() {
                       {booking.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                   <TableCell className="text-right">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8"
+                      onClick={() => {
+                        setSelectedBooking(booking);
+                        setIsDetailsOpen(true);
+                      }}
+                    >
                       <Eye className="h-4 w-4" />
                       <span className="sr-only">View Details</span>
                     </Button>
@@ -193,6 +204,12 @@ export default function BookingsPage() {
           </CardFooter>
         )}
       </Card>
+
+      <BookingDetailsDialog 
+        booking={selectedBooking}
+        open={isDetailsOpen}
+        onOpenChange={setIsDetailsOpen}
+      />
     </div>
   );
 }

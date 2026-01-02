@@ -313,9 +313,9 @@ export default function MyTicketsPage() {
         {/* Tickets List - Fixed Min Height to prevent layout shift */}
         <div className="min-h-[500px]">
         {filteredTickets.length === 0 ? (
-          <Card className="border-2">
+          <Card className="border-border bg-card/60 backdrop-blur-md shadow-lg p-0">
             <CardContent className="p-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
                 <QrCode className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold mb-2">No tickets found</h3>
@@ -334,7 +334,7 @@ export default function MyTicketsPage() {
             {filteredTickets.map((ticket) => (
               <Card
                 key={ticket.ticketId}
-                className="border-2 hover:border-primary/50 transition-all overflow-hidden"
+                className="border-border bg-card/40 backdrop-blur-sm hover:bg-card/60 hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-md overflow-hidden"
               >
                 <CardContent className="p-5">
                   {/* Ticket Header */}

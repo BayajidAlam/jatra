@@ -32,7 +32,7 @@ export default function HomePage() {
 
       {/* Hero Section with Booking Form */}
       <section className="relative pt-20 pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-b from-muted/30 to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-background to-background" />
 
         <div className="container mx-auto px-4 lg:px-8 relative">
           <div className="max-w-4xl mx-auto text-center mb-16">
@@ -56,7 +56,7 @@ export default function HomePage() {
           </div>
 
           {/* Booking Card */}
-          <Card className="max-w-5xl mx-auto shadow-xl border-2">
+          <Card className="max-w-5xl mx-auto shadow-2xl border-border bg-card/50 backdrop-blur-lg">
             <CardContent className="p-6 md:p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div className="lg:col-span-1">
