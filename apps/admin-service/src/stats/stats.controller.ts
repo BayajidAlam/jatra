@@ -7,15 +7,9 @@ import { StatsService } from './stats.service';
 export class StatsController {
   constructor(private readonly statsService: StatsService) {}
 
-  @Get('overview')
-  @ApiOperation({ summary: 'Get system overview statistics' })
-  async getOverview() {
-    return this.statsService.getOverview();
-  }
-
-  @Get('revenue')
-  @ApiOperation({ summary: 'Get revenue statistics by status' })
-  async getRevenue() {
-    return this.statsService.getRevenue();
+  @Get('dashboard')
+  @ApiOperation({ summary: 'Get dashboard statistics' })
+  async getDashboard() {
+    return this.statsService.getDashboardData();
   }
 }

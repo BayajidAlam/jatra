@@ -4,7 +4,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, ArrowUpRight, ArrowDownRight, CreditCard, Wallet, Landmark } from "lucide-react";
+import { Search, Filter, ArrowUpRight, ArrowDownRight, CreditCard, Wallet, Landmark, Loader2, Minus } from "lucide-react";
+// ... (imports)
+
+// ... (inside component)
+
 import {
   Table,
   TableBody,
@@ -31,44 +35,60 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-
-// Mock Data
-const payments = [
-  { id: "PAY-1001", bookingId: "BK-2024-001", amount: 650, method: "bKash", status: "COMPLETED", date: "2024-03-01 10:20 AM", transactionId: "BKASH-TRX-7781" },
-  { id: "PAY-1002", bookingId: "BK-2024-002", amount: 550, method: "Nagad", status: "COMPLETED", date: "2024-03-01 11:45 AM", transactionId: "NG-TRX-9902" },
-  { id: "PAY-1003", bookingId: "BK-2024-003", amount: 480, method: "Visa Card", status: "FAILED", date: "2024-03-02 09:15 AM", transactionId: "VISA-4422" },
-  { id: "PAY-1004", bookingId: "BK-2024-004", amount: 800, method: "Rocket", status: "COMPLETED", date: "2024-03-02 02:30 PM", transactionId: "RKT-1156" },
-  { id: "PAY-1005", bookingId: "BK-2024-005", amount: 320, method: "bKash", status: "PENDING", date: "2024-03-02 05:00 PM", transactionId: "-" },
-  { id: "PAY-1006", bookingId: "BK-2024-006", amount: 1200, method: "Mastercard", status: "COMPLETED", date: "2024-03-03 12:10 PM", transactionId: "MC-9983" },
-  { id: "PAY-1007", bookingId: "BK-2024-007", amount: 450, method: "Nagad", status: "REFUNDED", date: "2024-03-03 04:22 PM", transactionId: "NG-REF-112" },
-];
+import { useAdminPayments, useAdminPaymentStats } from "@/hooks/use-admin-payments";
 
 export default function PaymentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
-  const filteredPayments = payments.filter((payment) => {
-    const matchesSearch = 
-      payment.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.bookingId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.transactionId.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || payment.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
+  const { data, isLoading } = useAdminPayments(currentPage, itemsPerPage, searchTerm, statusFilter);
+  const { data: statsData, isLoading: isStatsLoading } = useAdminPaymentStats();
 
-  const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedPayments = filteredPayments.slice(startIndex, startIndex + itemsPerPage);
+  const payments = data?.payments || [];
+  const totalPages = data?.pagination?.totalPages || 1;
+
+  const isZero = (val: string) => val === "0" || val === "0.0";
+  const isPositive = (val: string) => !val.startsWith('-') && !isZero(val);
 
   const stats = [
-    { label: "Successful Payments", value: "৳ 4,12,000", change: "+12.5%", trending: "up", icon: ArrowUpRight, color: "text-emerald-500", bg: "bg-emerald-100 dark:bg-emerald-950/30" },
-    { label: "Pending Amount", value: "৳ 18,400", change: "-5.2%", trending: "down", icon: ArrowDownRight, color: "text-blue-500", bg: "bg-blue-100 dark:bg-blue-950/30" },
-    { label: "Refunded", value: "৳ 12,200", change: "+2.1%", trending: "up", icon: ArrowUpRight, color: "text-amber-500", bg: "bg-amber-100 dark:bg-amber-950/30" },
-    { label: "Failed Transactions", value: "12", change: "+1", trending: "up", icon: Filter, color: "text-red-500", bg: "bg-red-100 dark:bg-red-950/30" },
+    { 
+        label: "Successful Payments", 
+        value: statsData ? `৳ ${statsData.successfulAmount.toLocaleString()}` : "...", 
+        change: statsData ? `${isPositive(statsData.successfulGrowth) ? '+' : ''}${statsData.successfulGrowth}%` : "...",
+        trending: statsData && isPositive(statsData.successfulGrowth) ? "up" : (statsData && isZero(statsData.successfulGrowth) ? "neutral" : "down"), 
+        icon: ArrowUpRight, 
+        color: "text-emerald-500", 
+        bg: "bg-emerald-100 dark:bg-emerald-950/30" 
+    },
+    { 
+        label: "Pending Amount", 
+        value: statsData ? `৳ ${statsData.pendingAmount.toLocaleString()}` : "...", 
+        change: statsData ? `${isPositive(statsData.pendingGrowth) ? '+' : ''}${statsData.pendingGrowth}%` : "...",
+        trending: statsData && isPositive(statsData.pendingGrowth) ? "up" : (statsData && isZero(statsData.pendingGrowth) ? "neutral" : "down"),
+        icon: ArrowDownRight, 
+        color: "text-blue-500", 
+        bg: "bg-blue-100 dark:bg-blue-950/30" 
+    },
+    { 
+        label: "Refunded", 
+        value: statsData ? `৳ ${statsData.refundedAmount.toLocaleString()}` : "...", 
+        change: statsData ? `${isPositive(statsData.refundedGrowth) ? '+' : ''}${statsData.refundedGrowth}%` : "...",
+        trending: statsData && isPositive(statsData.refundedGrowth) ? "up" : (statsData && isZero(statsData.refundedGrowth) ? "neutral" : "down"), 
+        icon: ArrowUpRight, 
+        color: "text-amber-500", 
+        bg: "bg-amber-100 dark:bg-amber-950/30" 
+    },
+    { 
+        label: "Failed Transactions", 
+        value: statsData ? statsData.failedCount.toString() : "...", 
+        change: statsData ? `${isPositive(statsData.failedGrowth) ? '+' : ''}${statsData.failedGrowth}%` : "...",
+        trending: statsData && isPositive(statsData.failedGrowth) ? "up" : (statsData && isZero(statsData.failedGrowth) ? "neutral" : "down"), 
+        icon: Filter, 
+        color: "text-red-500", 
+        bg: "bg-red-100 dark:bg-red-950/30" 
+    },
   ];
 
   return (
@@ -93,12 +113,20 @@ export default function PaymentsPage() {
                 </div>
               </div>
               <div className="mt-2">
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  <span className={cn("font-medium", stat.trending === "up" ? "text-emerald-500" : "text-amber-500")}>
+                <div className="text-2xl font-bold">
+                    {isStatsLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : stat.value}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1 flex items-center">
+                  <span className={cn("font-medium flex items-center", 
+                      stat.trending === "up" ? "text-emerald-500" : 
+                      stat.trending === "down" ? "text-amber-500" : "text-muted-foreground"
+                  )}>
+                    {stat.trending === "up" && <ArrowUpRight className="h-3 w-3 mr-1" />}
+                    {stat.trending === "down" && <ArrowDownRight className="h-3 w-3 mr-1" />}
+                    {stat.trending === "neutral" && <Minus className="h-3 w-3 mr-1" />}
                     {stat.change}
                   </span>{" "}
-                  from last week
+                  <span className="ml-1">from last week</span>
                 </p>
               </div>
             </CardContent>
@@ -156,48 +184,64 @@ export default function PaymentsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedPayments.map((payment) => (
-                <TableRow key={payment.id} className="hover:bg-muted/30 dark:hover:bg-slate-800/30">
-                  <TableCell className="pl-6 font-medium">{payment.id}</TableCell>
-                  <TableCell className="text-blue-500 hover:underline cursor-pointer">{payment.bookingId}</TableCell>
-                  <TableCell className="font-semibold text-slate-900 dark:text-slate-100">৳{payment.amount}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {payment.method.includes("Card") ? <CreditCard className="h-3.5 w-3.5" /> : 
-                       payment.method.includes("bKash") || payment.method.includes("Nagad") ? <Wallet className="h-3.5 w-3.5" /> : 
-                       <Landmark className="h-3.5 w-3.5" />}
-                      {payment.method}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">{payment.transactionId}</TableCell>
-                  <TableCell className="text-muted-foreground">{payment.date}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        payment.status === "COMPLETED" ? "default" : 
-                        payment.status === "FAILED" ? "destructive" : 
-                        payment.status === "PENDING" ? "secondary" : "outline"
-                      }
-                      className={cn(
-                        payment.status === "COMPLETED" && "bg-emerald-600 hover:bg-emerald-700",
-                        payment.status === "PENDING" && "bg-amber-500 hover:bg-amber-600",
-                        payment.status === "REFUNDED" && "text-amber-500 border-amber-500"
-                      )}
-                    >
-                      {payment.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right pr-6">
-                    <Button variant="ghost" size="sm" className="h-8 hover:bg-slate-100 dark:hover:bg-slate-800">
-                        Details
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {paginatedPayments.length === 0 && (
+              {isLoading ? (
+                  <TableRow>
+                      <TableCell colSpan={8} className="h-32 text-center">
+                          <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                      </TableCell>
+                  </TableRow>
+              ) : payments.length > 0 ? (
+                payments.map((payment) => (
+                    <TableRow key={payment.id} className="hover:bg-muted/30 dark:hover:bg-slate-800/30">
+                    <TableCell className="pl-6 font-medium text-xs">{payment.id}</TableCell>
+                    <TableCell className="text-blue-500 hover:underline cursor-pointer text-xs">
+                        <div className="flex flex-col">
+                            <span>{payment.booking?.id || "N/A"}</span>
+                            <span className="text-[10px] text-muted-foreground">{payment.booking?.user?.phone || "Unknown"}</span>
+                        </div>
+                    </TableCell>
+                    <TableCell className="font-semibold text-slate-900 dark:text-slate-100">
+                        {payment.currency} {payment.amount}
+                    </TableCell>
+                    <TableCell>
+                        <div className="flex items-center gap-2">
+                        {payment.paymentMethod?.includes("CARD") ? <CreditCard className="h-3.5 w-3.5" /> : 
+                        (payment.paymentMethod?.includes("BKASH") || payment.paymentMethod?.includes("NAGAD")) ? <Wallet className="h-3.5 w-3.5" /> : 
+                        <Landmark className="h-3.5 w-3.5" />}
+                        <span className="capitalize text-xs">{payment.paymentMethod?.replace(/_/g, " ").toLowerCase()}</span>
+                        </div>
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">{payment.transactionId || "-"}</TableCell>
+                    <TableCell className="text-muted-foreground text-xs">
+                        {new Date(payment.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                        <Badge
+                        variant={
+                            payment.status === "COMPLETED" ? "default" : 
+                            payment.status === "FAILED" ? "destructive" : 
+                            payment.status === "PENDING" ? "secondary" : "outline"
+                        }
+                        className={cn(
+                            payment.status === "COMPLETED" && "bg-emerald-600 hover:bg-emerald-700",
+                            payment.status === "PENDING" && "bg-amber-500 hover:bg-amber-600",
+                            payment.status === "REFUNDED" && "text-amber-500 border-amber-500"
+                        )}
+                        >
+                        {payment.status}
+                        </Badge>
+                    </TableCell>
+                    <TableCell className="text-right pr-6">
+                        <Button variant="ghost" size="sm" className="h-8 hover:bg-slate-100 dark:hover:bg-slate-800">
+                            Details
+                        </Button>
+                    </TableCell>
+                    </TableRow>
+                ))
+              ) : (
                 <TableRow>
                   <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
-                    No transactions matched your search.
+                    No transactions found.
                   </TableCell>
                 </TableRow>
               )}
@@ -207,7 +251,7 @@ export default function PaymentsPage() {
         {totalPages > 1 && (
           <CardFooter className="flex items-center justify-between border-t dark:border-slate-800 py-4 px-6">
             <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredPayments.length)} of {filteredPayments.length} transactions
+              Page {currentPage} of {totalPages}
             </div>
             <Pagination className="mx-0 w-auto">
               <PaginationContent>
@@ -217,17 +261,23 @@ export default function PaymentsPage() {
                     className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                   />
                 </PaginationItem>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink 
-                      isActive={currentPage === page}
-                      onClick={() => setCurrentPage(page)}
-                      className="cursor-pointer"
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    // Simple pagination logic for display
+                    let p = i + 1;
+                     if (currentPage > 3) p = currentPage - 2 + i;
+                     if (p > totalPages) return null;
+                    return (
+                        <PaginationItem key={p}>
+                            <PaginationLink 
+                            isActive={currentPage === p}
+                            onClick={() => setCurrentPage(p)}
+                            className="cursor-pointer"
+                            >
+                            {p}
+                            </PaginationLink>
+                        </PaginationItem>
+                    );
+                }).filter(Boolean)}
                 <PaginationItem>
                   <PaginationNext 
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}

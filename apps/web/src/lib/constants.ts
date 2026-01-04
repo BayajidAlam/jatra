@@ -55,7 +55,8 @@ export const API_ENDPOINTS = {
     BOOKINGS: "/admin/bookings",
     COACHES: "/admin/coaches",
     SEATS: "/admin/seats",
+    PAYMENTS: "/admin/payments",
     SETTINGS: "/admin/settings",
-    STATS: "/reports/dashboard",
+    STATS: "/admin/stats/dashboard",
   },
 } as const;
