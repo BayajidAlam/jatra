@@ -10,20 +10,8 @@ export function useAuth() {
   const { user, isAuthenticated, isLoading, setUser, setLoading, logout } =
     useAuthStore();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data } = await apiClient.get<{ user: User }>(
-          API_ENDPOINTS.AUTH.ME
-        );
-        setUser(data.user);
-      } catch (error) {
-        setUser(null);
-      }
-    };
-
-    checkAuth();
-  }, [setUser]);
+  // Auth state is managed by AuthProvider which calls useAuthStore.initialize()
+  // We just expose the state here
 
   return {
     user,

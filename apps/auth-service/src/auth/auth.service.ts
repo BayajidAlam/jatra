@@ -7,6 +7,7 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcrypt";
+import * as crypto from "crypto";
 import { PrismaService } from "../common/prisma.service";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
@@ -67,7 +68,7 @@ export class AuthService {
     });
 
     // Generate tokens
-    const tokens = await this.generateTokens(user.id);
+    const tokens = await this.generateTokens(user.id, user.role, user.email);
 
     return {
       user,
@@ -96,7 +97,7 @@ export class AuthService {
     }
 
     // Generate tokens
-    const tokens = await this.generateTokens(user.id);
+    const tokens = await this.generateTokens(user.id, user.role, user.email);
 
     return {
       user: {
@@ -141,13 +142,26 @@ export class AuthService {
       throw new UnauthorizedException("Refresh token expired");
     }
 
+    // Get user details for new token payload
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException("User not found");
+    }
+
     // Generate new tokens
-    const tokens = await this.generateTokens(payload.sub);
+    const tokens = await this.generateTokens(user.id, user.role, user.email);
 
     // Delete old refresh token
-    await this.prisma.refreshToken.delete({
-      where: { id: storedToken.id },
-    });
+    try {
+      await this.prisma.refreshToken.delete({
+        where: { id: storedToken.id },
+      });
+    } catch (error) {
+      // Ignore if token already deleted to prevent race conditions
+    }
 
     return tokens;
   }
@@ -161,8 +175,14 @@ export class AuthService {
     return { message: "Logged out successfully" };
   }
 
-  private async generateTokens(userId: string) {
-    const payload = { sub: userId };
+  private async generateTokens(userId: string, role: string, email: string) {
+    // Add unique identifier to payload to ensure token uniqueness
+    const payload = { 
+      sub: userId, 
+      role, 
+      email,
+      jti: crypto.randomUUID() 
+    };
 
     // Generate access token
     const accessToken = this.jwtService.sign(payload, {

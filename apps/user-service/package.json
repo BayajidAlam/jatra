@@ -5,6 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register src/main.ts",
+    "dev": "npm run start:dev",
     "start:dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts",
     "start:debug": "ts-node-dev -r tsconfig-paths/register --inspect --respawn --transpile-only src/main.ts",
     "start:prod": "node dist/main",

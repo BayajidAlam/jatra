@@ -1,8 +1,9 @@
+
 import {
   Controller,
   Get,
   Post,
-  Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -12,7 +13,7 @@ import { SettingsService } from './settings.service';
 import { CreateSettingDto, UpdateSettingDto } from './dto/setting.dto';
 
 @ApiTags('settings')
-@Controller('api/admin/settings')
+@Controller('admin/settings')
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
@@ -38,7 +39,7 @@ export class SettingsController {
     return this.settingsService.upsert(dto);
   }
 
-  @Put(':key')
+  @Patch(':key')
   @ApiOperation({ summary: 'Update setting value' })
   @ApiResponse({ status: 200, description: 'Setting updated' })
   @ApiResponse({ status: 404, description: 'Setting not found' })

@@ -4,6 +4,7 @@
   "description": "Booking orchestration service for Jatra Railway",
   "main": "src/main.ts",
   "scripts": {
+    "dev": "npm run start:dev",
     "start:dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts",
     "start:prod": "node dist/main.js",
     "build": "tsc"

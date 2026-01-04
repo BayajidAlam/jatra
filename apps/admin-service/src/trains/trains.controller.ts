@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -13,7 +13,7 @@ import { TrainsService } from './trains.service';
 import { CreateTrainDto, UpdateTrainDto, QueryTrainsDto } from './dto/train.dto';
 
 @ApiTags('trains')
-@Controller('api/admin/trains')
+@Controller('admin/trains')
 export class TrainsController {
   constructor(private readonly trainsService: TrainsService) {}
 
@@ -40,7 +40,7 @@ export class TrainsController {
     return this.trainsService.create(dto);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: 'Update train' })
   @ApiResponse({ status: 200, description: 'Train updated successfully' })
   @ApiResponse({ status: 404, description: 'Train not found' })

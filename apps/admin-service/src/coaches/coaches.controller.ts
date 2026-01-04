@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -13,7 +13,7 @@ import { CoachesService } from './coaches.service';
 import { CreateCoachDto, UpdateCoachDto, QueryCoachesDto } from './dto/coach.dto';
 
 @ApiTags('coaches')
-@Controller('api/admin/coaches')
+@Controller('admin/coaches')
 export class CoachesController {
   constructor(private readonly coachesService: CoachesService) {}
 
@@ -21,7 +21,11 @@ export class CoachesController {
   @ApiOperation({ summary: 'Get all coaches with pagination' })
   @ApiResponse({ status: 200, description: 'List of coaches retrieved' })
   async findAll(@Query() query: QueryCoachesDto) {
-    return this.coachesService.findAll(query);
+    const page = query.page || 1;
+    const limit = query.limit || 10;
+    const search = query.search;
+    const skip = (page - 1) * limit;
+    return this.coachesService.findAll({ skip, take: limit, search });
   }
 
   @Get(':id')
@@ -41,7 +45,7 @@ export class CoachesController {
     return this.coachesService.create(dto);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: 'Update coach' })
   @ApiResponse({ status: 200, description: 'Coach updated successfully' })
   @ApiResponse({ status: 404, description: 'Coach not found' })

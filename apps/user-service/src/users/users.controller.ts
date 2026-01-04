@@ -18,7 +18,7 @@ import { UpdatePreferencesDto } from './dto/preferences.dto';
 import { TravelHistoryQueryDto } from './dto/travel-history.dto';
 
 @ApiTags('users')
-@Controller('api/users')
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -49,7 +49,7 @@ export class UsersController {
 }
 
 @ApiTags('passengers')
-@Controller('api/users/passengers')
+@Controller('user/passengers')
 export class PassengersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -91,7 +91,7 @@ export class PassengersController {
 }
 
 @ApiTags('preferences')
-@Controller('api/users/preferences')
+@Controller('user/preferences')
 export class PreferencesController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -113,7 +113,7 @@ export class PreferencesController {
 }
 
 @ApiTags('history')
-@Controller('api/users/travel-history')
+@Controller('user/travel-history')
 export class TravelHistoryController {
   constructor(private readonly usersService: UsersService) {}
 

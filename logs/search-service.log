@@ -1,0 +1,30 @@
+
+> @jatra/search-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/search-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 21:05:48 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +18ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+🔗 Connecting to Redis at localhost:6379 (DB 1)
+✅ Redis connected successfully
+✅ Redis ready for commands
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRedisModule dependencies initialized[39m[38;5;3m +43ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSearchModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSearchController {/api/search}:[39m[38;5;3m +14ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/search/journeys, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/search/popular-routes, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/search/autocomplete/stations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/search/stations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCacheController {/api/search/cache}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/search/cache/invalidate, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/search/cache/clear, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/search/cache/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAnalyticsController {/api/search/analytics}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/search/analytics/popular-searches, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 34229  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +61ms[39m
+🚀 Search Service is running on: http://localhost:3009
+📚 Swagger documentation: http://localhost:3009/api/docs
+🔍 Redis caching enabled for optimized searches

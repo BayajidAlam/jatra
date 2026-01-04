@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import apiClient from "@/lib/axios-client";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
@@ -31,24 +31,23 @@ interface CoachesResponse {
   };
 }
 
-export function useAdminCoaches(params: { page?: number; limit?: number; trainId?: string } = {}) {
-  const { page = 1, limit = 10, trainId } = params;
+export function useAdminCoaches(params?: { page?: number; limit?: number; search?: string }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const page = params?.page || 1;
+  const limit = params?.limit || 10;
+  const search = params?.search || "";
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<CoachesResponse>({
-    queryKey: ["admin", "coaches", page, limit, trainId],
-    queryFn: async () => {
-      const { data } = await apiClient.get<CoachesResponse>(API_ENDPOINTS.ADMIN.COACHES, {
-        params: { page, limit, trainId },
-      });
+  const coachesQuery = useQuery({
+    queryKey: ["admin", "coaches", page, limit, search],
+    queryFn: async (): Promise<{ data: Coach[]; meta: any }> => {
+      const { data } = await apiClient.get<{ data: Coach[]; meta: any }>(
+        API_ENDPOINTS.ADMIN.COACHES,
+        { params: { page, limit, search } }
+      );
       return data;
     },
+    placeholderData: keepPreviousData,
   });
 
   const { mutateAsync: createCoach, isPending: isCreating } = useMutation({
@@ -64,7 +63,7 @@ export function useAdminCoaches(params: { page?: number; limit?: number; trainId
 
   const { mutateAsync: updateCoach, isPending: isUpdating } = useMutation({
     mutationFn: async ({ id, ...updateData }: any & { id: string }) => {
-      const { data } = await apiClient.put(`${API_ENDPOINTS.ADMIN.COACHES}/${id}`, updateData);
+      const { data } = await apiClient.patch(`${API_ENDPOINTS.ADMIN.COACHES}/${id}`, updateData);
       return data;
     },
     onSuccess: () => {
@@ -85,11 +84,10 @@ export function useAdminCoaches(params: { page?: number; limit?: number; trainId
   });
 
   return {
-    coaches: data?.coaches ?? [],
-    pagination: data?.pagination,
-    isLoading,
-    error,
-    refetch,
+    coaches: coachesQuery.data?.data || [],
+    pagination: coachesQuery.data?.meta,
+    isLoading: coachesQuery.isLoading,
+    isError: coachesQuery.isError,
     createCoach,
     isCreating,
     updateCoach,

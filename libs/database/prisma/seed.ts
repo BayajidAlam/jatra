@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import * as bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -332,6 +333,40 @@ async function main() {
   }
 
   console.log("✅ Journeys created for the next 7 days");
+  console.log("✅ Journeys created for the next 7 days");
+
+  // Create Users
+  const saltRounds = 10;
+  const adminPassword = await bcrypt.hash("admin123", saltRounds);
+  const userPassword = await bcrypt.hash("user123", saltRounds);
+
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@jatra.com" },
+    update: {},
+    create: {
+      email: "admin@jatra.com",
+      passwordHash: adminPassword,
+      name: "Admin User",
+      phone: "01700000000",
+      role: "ADMIN",
+      nid: "1234567890123", // Added required NID as per schema
+    },
+  });
+
+  const user = await prisma.user.upsert({
+    where: { email: "user@jatra.com" },
+    update: {},
+    create: {
+      email: "user@jatra.com",
+      passwordHash: userPassword,
+      name: "Regular User",
+      phone: "01800000000",
+      role: "USER",
+      nid: "9876543210987", // Added required NID as per schema
+    },
+  });
+
+  console.log("✅ Users created (Admin & Regular)");
   console.log("🎉 Seeding completed successfully!");
 }
 

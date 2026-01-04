@@ -27,7 +27,7 @@ export interface UpdateTrainDto extends Partial<CreateTrainDto> {
   status?: string;
 }
 
-export function useAdminTrains(query?: { page?: number; limit?: number }) {
+export function useAdminTrains(query?: { page?: number; limit?: number; search?: string }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 

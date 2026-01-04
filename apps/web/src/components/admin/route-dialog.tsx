@@ -50,7 +50,7 @@ export function RouteDialog({ initialData, trigger, open: controlledOpen, onOpen
   
   const { toast } = useToast();
   const isEditing = !!initialData;
-  const { createRoute, isCreating } = useAdminRoutes();
+  const { createRoute, updateRoute, isCreating, isUpdating } = useAdminRoutes();
 
   const form = useForm<RouteFormValues>({
     resolver: zodResolver(routeSchema),
@@ -80,7 +80,7 @@ export function RouteDialog({ initialData, trigger, open: controlledOpen, onOpen
   const onSubmit = async (data: RouteFormValues) => {
     try {
       if (isEditing) {
-        toast({ title: "Note", description: "Update route not yet implemented in backend" });
+        await updateRoute({ id: initialData.id, dto: data });
       } else {
         await createRoute({ ...data, stops: [] });
       }
@@ -153,8 +153,8 @@ export function RouteDialog({ initialData, trigger, open: controlledOpen, onOpen
             </Select>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isCreating}>
-              {isCreating ? "Creating..." : (isEditing ? "Save Changes" : "Create Route")}
+            <Button type="submit" disabled={isCreating || isUpdating}>
+              {(isCreating || isUpdating) ? "Saving..." : (isEditing ? "Save Changes" : "Create Route")}
             </Button>
           </DialogFooter>
         </form>

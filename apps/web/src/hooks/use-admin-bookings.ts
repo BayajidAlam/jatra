@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import apiClient from "@/lib/axios-client";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
@@ -49,24 +49,23 @@ interface BookingsResponse {
   };
 }
 
-export function useAdminBookings(params: { page?: number; limit?: number } = {}) {
-  const { page = 1, limit = 10 } = params;
+export function useAdminBookings(params?: { page?: number; limit?: number; search?: string }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const page = params?.page || 1;
+  const limit = params?.limit || 10;
+  const search = params?.search || "";
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<BookingsResponse>({
-    queryKey: ["admin", "bookings", page, limit],
+  const bookingsQuery = useQuery<BookingsResponse>({
+    queryKey: ["admin", "bookings", page, limit, search],
     queryFn: async () => {
-      const { data } = await apiClient.get<BookingsResponse>(API_ENDPOINTS.ADMIN.BOOKINGS, {
-        params: { page, limit },
-      });
+      const { data } = await apiClient.get<BookingsResponse>(
+        API_ENDPOINTS.ADMIN.BOOKINGS,
+        { params: { page, limit, search } }
+      );
       return data;
     },
+    placeholderData: keepPreviousData,
   });
 
   const { mutateAsync: updateBookingStatus, isPending: isUpdating } = useMutation({
@@ -88,11 +87,11 @@ export function useAdminBookings(params: { page?: number; limit?: number } = {})
   });
 
   return {
-    bookings: data?.bookings ?? [],
-    pagination: data?.pagination,
-    isLoading,
-    error,
-    refetch,
+    bookings: bookingsQuery.data?.bookings ?? [],
+    pagination: bookingsQuery.data?.pagination,
+    isLoading: bookingsQuery.isLoading,
+    error: bookingsQuery.error,
+    refetch: bookingsQuery.refetch,
     updateBookingStatus,
     isUpdating,
   };

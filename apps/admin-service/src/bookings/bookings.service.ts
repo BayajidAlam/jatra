@@ -1,13 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BookingsService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(page = 1, limit = 20, status?: string) {
+  async findAll(page = 1, limit = 20, status?: string, search?: string) {
     const skip = (page - 1) * limit;
-    const where = status ? { status: status as any } : {};
+    const where: Prisma.BookingWhereInput = {
+      ...(status ? { status: status as any } : {}),
+      ...(search
+        ? {
+            OR: [
+              { id: { contains: search, mode: 'insensitive' } },
+              { user: { name: { contains: search, mode: 'insensitive' } } },
+              { user: { phone: { contains: search, mode: 'insensitive' } } },
+            ],
+          }
+        : {}),
+    };
 
     const [bookings, total] = await Promise.all([
       this.prisma.booking.findMany({

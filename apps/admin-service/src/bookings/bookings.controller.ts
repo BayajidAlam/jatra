@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { BookingsService } from './bookings.service';
 
 @ApiTags('bookings')
-@Controller('api/admin/bookings')
+@Controller('admin/bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
@@ -13,8 +13,9 @@ export class BookingsController {
     @Query('page') page?: number,
     @Query('limit') limit?: number,
     @Query('status') status?: string,
+    @Query('search') search?: string,
   ) {
-    return this.bookingsService.findAll(page, limit, status);
+    return this.bookingsService.findAll(page, limit, status, search);
   }
 
   @Get(':id')
