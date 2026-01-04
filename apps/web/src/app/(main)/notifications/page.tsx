@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import { useNotifications, Notification } from "@/hooks/use-notifications"; // Import hook
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Train, CreditCard, Ticket, CheckCircle2 } from "lucide-react";
+import { Bell, Train, CreditCard, Ticket, CheckCircle2, Info } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,91 +21,46 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-// Mock notifications
-const mockNotifications = [
-  {
-    id: "1",
-    type: "BOOKING",
-    title: "Booking Confirmed",
-    message: "Your booking for Suborno Express (Dhaka - Ctg) is confirmed.",
-    time: "2 hours ago",
-    read: false,
-    icon: CheckCircle2,
-    color: "text-green-600",
-    bg: "bg-green-100",
-  },
-  {
-    id: "2",
-    type: "PAYMENT",
-    title: "Payment Successful",
-    message: "Payment of BDT 1950 received via bKash.",
-    time: "2 hours ago",
-    read: false,
-    icon: CreditCard,
-    color: "text-blue-600",
-    bg: "bg-blue-100",
-  },
-  {
-    id: "3",
-    type: "TRAIN",
-    title: "Train Schedule Update",
-    message: "Suborno Express (701) will depart from Platform 3 today.",
-    time: "5 hours ago",
-    read: true,
-    icon: Train,
-    color: "text-orange-600",
-    bg: "bg-orange-100",
-  },
-  {
-    id: "4",
-    type: "PROMO",
-    title: "Special Offer Available",
-    message: "Get 10% off on your next journey to Sylhet!",
-    time: "1 day ago",
-    read: true,
-    icon: Ticket,
-    color: "text-purple-600",
-    bg: "bg-purple-100",
-  },
-];
+// Helper to map notification types to icons and colors
+const getNotificationStyle = (type: string) => {
+  switch (type) {
+    case "BOOKING_CONFIRMED":
+      return { icon: CheckCircle2, color: "text-green-600", bg: "bg-green-100" };
+    case "PAYMENT_SUCCESS":
+      return { icon: CreditCard, color: "text-blue-600", bg: "bg-blue-100" };
+    case "TRAIN_UPDATE":
+      return { icon: Train, color: "text-orange-600", bg: "bg-orange-100" };
+    case "PROMO":
+      return { icon: Ticket, color: "text-purple-600", bg: "bg-purple-100" };
+    case "PAYMENT_FAILED":
+    case "BOOKING_CANCELLED":
+      return { icon: Info, color: "text-red-600", bg: "bg-red-100" };
+    default:
+      return { icon: Bell, color: "text-slate-600", bg: "bg-slate-100" };
+  }
+};
 
 export default function NotificationsPage() {
   const [filter, setFilter] = useState<"ALL" | "UNREAD">("ALL");
-  const [notifications, setNotifications] = useState(mockNotifications);
-  const [selectedNotification, setSelectedNotification] = useState<typeof mockNotifications[0] | null>(null);
+  const { notifications, unreadCount, markAsRead, markAllAsRead, isLoading } = useNotifications();
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const markAllAsRead = () => {
-    setNotifications(
-      notifications.map((n) => ({ ...n, read: true }))
-    );
-  };
-
-  const markAsRead = (id: string) => {
-    setNotifications(
-      notifications.map((n) =>
-        n.id === id ? { ...n, read: true } : n
-      )
-    );
-  };
-
-  const unusedHandleClick = (n: typeof mockNotifications[0]) => {
-     markAsRead(n.id);
+  const handleNotificationClick = (n: Notification) => {
+     if (!n.isRead) {
+         markAsRead(n.id);
+     }
      setSelectedNotification(n);
      setIsDialogOpen(true);
   }
 
   const filteredNotifications = notifications.filter((n) => {
-    if (filter === "UNREAD") return !n.read;
+    if (filter === "UNREAD") return !n.isRead;
     return true;
   });
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
   return (
     <div className="min-h-screen bg-background">
-
-
       <div className="container mx-auto px-4 lg:px-8 py-8 max-w-3xl">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -154,7 +109,7 @@ export default function NotificationsPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={markAllAsRead}
+                onClick={() => markAllAsRead()}
                 className="text-primary hover:text-primary/80"
               >
                 Mark all as read
@@ -162,7 +117,11 @@ export default function NotificationsPage() {
             )}
           </CardHeader>
           <CardContent className="p-0">
-            {filteredNotifications.length === 0 ? (
+            {isLoading ? (
+                <div className="p-12 text-center text-muted-foreground">
+                    <p>Loading notifications...</p>
+                </div>
+            ) : filteredNotifications.length === 0 ? (
               <div className="p-12 text-center text-muted-foreground">
                 <Bell className="w-12 h-12 mx-auto mb-4 opacity-20" />
                 <p>No notifications found</p>
@@ -170,21 +129,22 @@ export default function NotificationsPage() {
             ) : (
               <div className="divide-y divide-border">
                 {filteredNotifications.map((notification) => {
-                  const Icon = notification.icon;
+                  const style = getNotificationStyle(notification.type);
+                  const Icon = style.icon;
                   return (
                     <div
                       key={notification.id}
-                      onClick={() => unusedHandleClick(notification)}
+                      onClick={() => handleNotificationClick(notification)}
                       className={cn(
                         "p-4 flex gap-4 hover:bg-muted/50 transition-colors cursor-pointer",
-                        !notification.read && "bg-primary/5"
+                        !notification.isRead && "bg-primary/5"
                       )}
                     >
                       <div
                         className={cn(
                           "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
-                          notification.bg,
-                          notification.color
+                          style.bg,
+                          style.color
                         )}
                       >
                         <Icon className="w-5 h-5" />
@@ -194,20 +154,20 @@ export default function NotificationsPage() {
                           <p
                             className={cn(
                               "font-medium truncate pr-2",
-                              !notification.read ? "text-foreground" : "text-muted-foreground"
+                              !notification.isRead ? "text-foreground" : "text-muted-foreground"
                             )}
                           >
-                            {notification.title}
+                            {notification.subject}
                           </p>
                           <span className="text-xs text-muted-foreground shrink-0">
-                            {notification.time}
+                            {new Date(notification.createdAt).toLocaleDateString()}
                           </span>
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-2">
-                          {notification.message}
+                          {notification.content}
                         </p>
                       </div>
-                      {!notification.read && (
+                      {!notification.isRead && (
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
                       )}
                     </div>
@@ -220,45 +180,49 @@ export default function NotificationsPage() {
 
         {/* Notification Detail Modal */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <div className="flex items-center gap-4 mb-2">
-                <div
-                  className={cn(
-                    "w-12 h-12 rounded-full flex items-center justify-center shrink-0",
-                    selectedNotification?.bg,
-                    selectedNotification?.color
-                  )}
-                >
-                  {selectedNotification && (
-                    <selectedNotification.icon className="w-6 h-6" />
-                  )}
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <div className="flex items-center gap-4 mb-2">
+                        {selectedNotification && (
+                            <>
+                            <div className={cn(
+                                "w-12 h-12 rounded-full flex items-center justify-center shrink-0",
+                                getNotificationStyle(selectedNotification.type).bg,
+                                getNotificationStyle(selectedNotification.type).color
+                            )}>
+                                {(() => {
+                                    const Icon = getNotificationStyle(selectedNotification.type).icon;
+                                    return <Icon className="w-6 h-6" />;
+                                })()}
+                            </div>
+                            <div>
+                                <DialogTitle className="text-xl">{selectedNotification.subject}</DialogTitle>
+                                <DialogDescription>
+                                    {new Date(selectedNotification.createdAt).toLocaleString()}
+                                </DialogDescription>
+                            </div>
+                            </>
+                        )}
+                    </div>
+                </DialogHeader>
+                <div className="py-4">
+                    <p className="text-sm text-foreground/80 leading-relaxed">
+                        {selectedNotification?.content}
+                    </p>
+                    <div className="mt-6 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground">
+                        <p className="font-mono">ID: {selectedNotification?.id}</p>
+                        <p>Type: {selectedNotification?.type}</p>
+                    </div>
                 </div>
-                <div>
-                  <DialogTitle className="text-xl">{selectedNotification?.title}</DialogTitle>
-                  <DialogDescription>
-                    {selectedNotification?.time}
-                  </DialogDescription>
-                </div>
-              </div>
-            </DialogHeader>
-            <div className="py-4">
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                {selectedNotification?.message}
-              </p>
-              <div className="mt-6 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground">
-                <p className="font-mono">ID: {selectedNotification?.id}</p>
-                <p>Status: {selectedNotification?.read ? "Read" : "Unread"}</p>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={() => setIsDialogOpen(false)} className="w-full">
-                Close
-              </Button>
-            </DialogFooter>
-          </DialogContent>
+                <DialogFooter>
+                    <Button onClick={() => setIsDialogOpen(false)} className="w-full">
+                        Close
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
         </Dialog>
       </div>
     </div>
   );
 }
+
