@@ -10,7 +10,7 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -20,7 +20,13 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "paths": {
-      "@jatra/database": ["../../libs/database/src/index.ts"]
+      "@jatra/database": ["libs/database/src/index.ts"],
+      "@jatra/common/types": ["libs/common/types/src/index.ts"],
+      "@jatra/common/interfaces": ["libs/common/interfaces/src/index.ts"],
+      "@jatra/common/dtos": ["libs/common/dtos/src/index.ts"],
+      "@jatra/common/errors": ["libs/common/errors/src/index.ts"],
+      "@jatra/common/constants": ["libs/common/constants/src/index.ts"],
+      "@jatra/common/utils": ["libs/common/utils/src/index.ts"]
     }
   },
   "include": ["src/**/*"],

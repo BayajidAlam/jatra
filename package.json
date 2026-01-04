@@ -4,7 +4,9 @@
   "license": "MIT",
   "scripts": {
     "prisma:generate": "cd libs/database/prisma && npx prisma generate",
-    "db:seed": "ts-node libs/database/prisma/seed.ts"
+    "db:seed": "ts-node libs/database/prisma/seed.ts",
+    "dev:all": "pnpm -w -r --parallel run start:dev",
+    "start:all": "pnpm -w -r --parallel start"
   },
   "prisma": {
     "seed": "ts-node libs/database/prisma/seed.ts"
@@ -15,18 +17,23 @@
     "@nestjs/common": "^10.4.20",
     "@nestjs/config": "^3.3.0",
     "@nestjs/core": "^10.4.20",
+    "@nestjs/jwt": "^10.2.0",
+    "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.4.20",
     "@nestjs/schedule": "^6.0.1",
     "@nestjs/swagger": "^7.4.2",
     "@prisma/client": "^6.19.0",
-    "@types/amqplib": "0.10.6",
     "@types/nodemailer": "^7.0.4",
-    "amqplib": "0.10.4",
+    "axios": "^1.13.2",
+    "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "empty": "0.10.1",
     "handlebars": "4.7.8",
     "nodemailer": "6.9.16",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
     "redis": "^5.10.0",
     "reflect-metadata": "^0.1.14",
     "rxjs": "^7.8.2"
@@ -40,15 +47,21 @@
     "@nx/react": "^22.0.3",
     "@nx/webpack": "^22.0.3",
     "@nx/workspace": "22.0.3",
+    "@types/amqplib": "0.10.6",
+    "@types/cookie-parser": "^1.4.10",
     "@types/node": "^20.10.0",
+    "@types/uuid": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^8.46.4",
     "@typescript-eslint/parser": "^8.46.4",
+    "amqplib": "0.10.4",
+    "cookie-parser": "^1.4.7",
     "eslint-config-prettier": "^10.1.8",
     "nx": "22.0.3",
     "prisma": "^6.19.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
-    "tsx": "^4.20.6"
+    "tsx": "^4.20.6",
+    "uuid": "^13.0.0"
   }
 }

@@ -1,0 +1,287 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-database
+  namespace: jatra
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h postgres-0.postgres-service -U jatra_user; do
+                echo "Waiting for PostgreSQL to be ready..."
+                sleep 2
+              done
+              echo "PostgreSQL is ready!"
+          env:
+            - name: PGPASSWORD
+              value: "jatra_password_change_in_prod"
+      containers:
+        - name: init-db
+          image: postgres:16-alpine
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              set -e
+              export PGPASSWORD="jatra_password_change_in_prod"
+              PGHOST="postgres-0.postgres-service"
+
+              echo "🚀 Starting database initialization..."
+
+              # ===========================================
+              # AUTH DATABASE - Users and Authentication
+              # ===========================================
+              echo "📋 Initializing auth_db..."
+
+              # Create Role enum (idempotent)
+              psql -h $PGHOST -U jatra_user -d auth_db -c "
+                DO \$\$ 
+                BEGIN
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'Role') THEN
+                    CREATE TYPE \"Role\" AS ENUM ('USER', 'ADMIN');
+                  END IF;
+                END \$\$;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Create users table
+              psql -h $PGHOST -U jatra_user -d auth_db -c "
+                CREATE TABLE IF NOT EXISTS users (
+                  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                  nid VARCHAR(13) UNIQUE NOT NULL,
+                  email VARCHAR(255) UNIQUE NOT NULL,
+                  phone VARCHAR(20) UNIQUE NOT NULL,
+                  \"passwordHash\" VARCHAR(255) NOT NULL,
+                  name VARCHAR(255) NOT NULL,
+                  role \"Role\" DEFAULT 'USER',
+                  \"emailVerified\" BOOLEAN DEFAULT FALSE,
+                  \"phoneVerified\" BOOLEAN DEFAULT FALSE,
+                  \"createdAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  \"updatedAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Create refresh_tokens table
+              psql -h $PGHOST -U jatra_user -d auth_db -c "
+                CREATE TABLE IF NOT EXISTS refresh_tokens (
+                  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                  token VARCHAR(500) UNIQUE NOT NULL,
+                  \"userId\" UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                  \"expiresAt\" TIMESTAMP NOT NULL,
+                  \"createdAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE INDEX IF NOT EXISTS idx_refresh_tokens_userId ON refresh_tokens(\"userId\");
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              echo "✅ auth_db initialized"
+
+              # ===========================================
+              # SCHEDULE DATABASE - Trains and Stations
+              # ===========================================
+              echo "📋 Initializing schedule_db..."
+
+              # Create TrainType enum
+              psql -h $PGHOST -U jatra_user -d schedule_db -c "
+                DO \$\$ 
+                BEGIN
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'TrainType') THEN
+                    CREATE TYPE \"TrainType\" AS ENUM ('LOCAL', 'INTERCITY', 'EXPRESS', 'MAIL');
+                  END IF;
+                END \$\$;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Create CoachType enum
+              psql -h $PGHOST -U jatra_user -d schedule_db -c "
+                DO \$\$ 
+                BEGIN
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'CoachType') THEN
+                    CREATE TYPE \"CoachType\" AS ENUM ('SNIGDHA', 'SHOVAN', 'AC_CHAIR', 'AC_BERTH', 'SHULOV', 'FIRST_CLASS', 'SECOND_CLASS');
+                  END IF;
+                END \$\$;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Create stations table
+              psql -h $PGHOST -U jatra_user -d schedule_db -c "
+                CREATE TABLE IF NOT EXISTS stations (
+                  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                  code VARCHAR(10) UNIQUE NOT NULL,
+                  name VARCHAR(255) NOT NULL,
+                  city VARCHAR(100) NOT NULL,
+                  district VARCHAR(100) NOT NULL,
+                  latitude FLOAT,
+                  longitude FLOAT,
+                  \"isActive\" BOOLEAN DEFAULT TRUE,
+                  \"createdAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  \"updatedAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE INDEX IF NOT EXISTS idx_stations_code ON stations(code);
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Create trains table
+              psql -h $PGHOST -U jatra_user -d schedule_db -c "
+                CREATE TABLE IF NOT EXISTS trains (
+                  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                  \"trainNumber\" VARCHAR(20) UNIQUE NOT NULL,
+                  name VARCHAR(255) NOT NULL,
+                  type \"TrainType\" DEFAULT 'INTERCITY',
+                  \"isActive\" BOOLEAN DEFAULT TRUE,
+                  \"createdAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  \"updatedAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Create coaches table
+              psql -h $PGHOST -U jatra_user -d schedule_db -c "
+                CREATE TABLE IF NOT EXISTS coaches (
+                  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                  \"trainId\" UUID NOT NULL REFERENCES trains(id) ON DELETE CASCADE,
+                  \"coachCode\" VARCHAR(20) NOT NULL,
+                  \"coachType\" \"CoachType\" NOT NULL,
+                  \"totalSeats\" INTEGER NOT NULL,
+                  \"createdAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  \"updatedAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  UNIQUE(\"trainId\", \"coachCode\")
+                );
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Create journeys table
+              psql -h $PGHOST -U jatra_user -d schedule_db -c "
+                CREATE TABLE IF NOT EXISTS journeys (
+                  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                  \"trainId\" UUID NOT NULL REFERENCES trains(id) ON DELETE CASCADE,
+                  \"fromStationId\" UUID NOT NULL REFERENCES stations(id),
+                  \"toStationId\" UUID NOT NULL REFERENCES stations(id),
+                  \"departureTime\" TIME NOT NULL,
+                  \"arrivalTime\" TIME NOT NULL,
+                  \"runDays\" VARCHAR(50),
+                  \"createdAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  \"updatedAt\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              echo "✅ schedule_db tables created"
+
+              # ===========================================
+              # SEED DATA - Stations and Trains
+              # ===========================================
+              echo "🌱 Seeding initial data..."
+
+              # Seed stations (Bangladesh railway stations)
+              psql -h $PGHOST -U jatra_user -d schedule_db -c "
+                INSERT INTO stations (code, name, city, district, latitude, longitude) 
+                VALUES 
+                  ('DHK', 'Dhaka', 'Dhaka', 'Dhaka', 23.8103, 90.4125),
+                  ('CTG', 'Chittagong', 'Chittagong', 'Chittagong', 22.3569, 91.7832),
+                  ('SYL', 'Sylhet', 'Sylhet', 'Sylhet', 24.8949, 91.8687),
+                  ('RJS', 'Rajshahi', 'Rajshahi', 'Rajshahi', 24.3745, 88.6042),
+                  ('KHL', 'Khulna', 'Khulna', 'Khulna', 22.8456, 89.5403)
+                ON CONFLICT (code) DO NOTHING;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Seed trains
+              psql -h $PGHOST -U jatra_user -d schedule_db -c "
+                INSERT INTO trains (\"trainNumber\", name, type)
+                VALUES 
+                  ('SUBORNO-701', 'Suborno Express', 'INTERCITY'),
+                  ('TURNA-741', 'Turna Nishitha', 'INTERCITY'),
+                  ('SONAR-BANGLA-759', 'Sonar Bangla Express', 'INTERCITY'),
+                  ('UPABAN-731', 'Upaban Express', 'INTERCITY')
+                ON CONFLICT (\"trainNumber\") DO NOTHING;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              echo "✅ Seed data inserted"
+
+              # ===========================================
+              # OTHER DATABASES - Create basic tables
+              # ===========================================
+              echo "📋 Verifying other databases..."
+
+              # Booking database
+              psql -h $PGHOST -U jatra_user -d booking_db -c "
+                DO \$\$ 
+                BEGIN
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'BookingStatus') THEN
+                    CREATE TYPE \"BookingStatus\" AS ENUM ('PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED');
+                  END IF;
+                END \$\$;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Payment database
+              psql -h $PGHOST -U jatra_user -d payment_db -c "
+                DO \$\$ 
+                BEGIN
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'PaymentStatus') THEN
+                    CREATE TYPE \"PaymentStatus\" AS ENUM ('PENDING', 'COMPLETED', 'FAILED', 'REFUNDED');
+                  END IF;
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'PaymentMethod') THEN
+                    CREATE TYPE \"PaymentMethod\" AS ENUM ('CREDIT_CARD', 'DEBIT_CARD', 'MOBILE_BANKING', 'NET_BANKING');
+                  END IF;
+                END \$\$;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Seat Reservation database
+              psql -h $PGHOST -U jatra_user -d seat_reservation_db -c "
+                DO \$\$ 
+                BEGIN
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'SeatStatus') THEN
+                    CREATE TYPE \"SeatStatus\" AS ENUM ('AVAILABLE', 'LOCKED', 'BOOKED');
+                  END IF;
+                END \$\$;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Ticket database
+              psql -h $PGHOST -U jatra_user -d ticket_db -c "
+                DO \$\$ 
+                BEGIN
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'TicketStatus') THEN
+                    CREATE TYPE \"TicketStatus\" AS ENUM ('ACTIVE', 'USED', 'CANCELLED', 'EXPIRED');
+                  END IF;
+                END \$\$;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Notification database
+              psql -h $PGHOST -U jatra_user -d notification_db -c "
+                DO \$\$ 
+                BEGIN
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'NotificationType') THEN
+                    CREATE TYPE \"NotificationType\" AS ENUM ('EMAIL', 'SMS', 'PUSH');
+                  END IF;
+                  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'NotificationStatus') THEN
+                    CREATE TYPE \"NotificationStatus\" AS ENUM ('PENDING', 'SENT', 'FAILED');
+                  END IF;
+                END \$\$;
+              " 2>&1 | grep -v "NOTICE:" || true
+
+              # Verify all databases are accessible
+              for DB in user_db booking_db payment_db seat_reservation_db ticket_db notification_db search_db admin_db reporting_db; do
+                if psql -h $PGHOST -U jatra_user -d $DB -c "SELECT 1" >/dev/null 2>&1; then
+                  echo "✅ $DB accessible"
+                else
+                  echo "⚠️  $DB not accessible"
+                fi
+              done
+
+              echo ""
+              echo "🎉 Database initialization complete!"
+              echo "✅ All schemas created (idempotent)"
+              echo "✅ All seed data inserted"
+              echo "✅ Ready for service deployments"
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "jatra_password_change_in_prod"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"

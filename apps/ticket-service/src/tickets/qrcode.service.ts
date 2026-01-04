@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import * as QRCode from 'qrcode';
+import { Injectable, Logger } from "@nestjs/common";
+import * as QRCode from "qrcode";
 
 @Injectable()
 export class QRCodeService {
@@ -11,21 +11,26 @@ export class QRCodeService {
   async generateQRCode(data: string): Promise<string> {
     try {
       const options = {
-        errorCorrectionLevel: process.env.QR_CODE_ERROR_CORRECTION || 'M',
+        errorCorrectionLevel: process.env.QR_CODE_ERROR_CORRECTION || "M",
         margin: parseInt(process.env.QR_CODE_MARGIN) || 1,
         width: parseInt(process.env.QR_CODE_WIDTH) || 300,
         color: {
-          dark: '#000000',
-          light: '#FFFFFF',
+          dark: "#000000",
+          light: "#FFFFFF",
         },
       };
 
-      const qrCodeBase64 = await QRCode.toDataURL(data, options);
-      this.logger.log(`✅ QR code generated for data: ${data.substring(0, 50)}...`);
+      const qrCodeBase64: string = await (QRCode.toDataURL as any)(
+        data,
+        options
+      );
+      this.logger.log(
+        `✅ QR code generated for data: ${data.substring(0, 50)}...`
+      );
       return qrCodeBase64;
     } catch (error) {
-      this.logger.error('Failed to generate QR code', error);
-      throw new Error('QR code generation failed');
+      this.logger.error("Failed to generate QR code", error);
+      throw new Error("QR code generation failed");
     }
   }
 
@@ -35,16 +40,15 @@ export class QRCodeService {
   async generateQRCodeBuffer(data: string): Promise<Buffer> {
     try {
       const options = {
-        errorCorrectionLevel: process.env.QR_CODE_ERROR_CORRECTION || 'M',
+        errorCorrectionLevel: process.env.QR_CODE_ERROR_CORRECTION || "M",
         margin: parseInt(process.env.QR_CODE_MARGIN) || 1,
         width: parseInt(process.env.QR_CODE_WIDTH) || 300,
       };
 
-      const buffer = await QRCode.toBuffer(data, options);
-      return buffer;
+      return await (QRCode.toBuffer as any)(data, options);
     } catch (error) {
-      this.logger.error('Failed to generate QR code buffer', error);
-      throw new Error('QR code buffer generation failed');
+      this.logger.error("Failed to generate QR code buffer", error);
+      throw new Error("QR code buffer generation failed");
     }
   }
 

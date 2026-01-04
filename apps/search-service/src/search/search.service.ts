@@ -1,27 +1,39 @@
-import { Injectable, Inject, Logger, HttpException, HttpStatus } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../common/prisma.service';
-import { RedisClientType } from 'redis';
-import { REDIS_CLIENT } from '../common/redis.module';
-import { SearchJourneysDto } from './dto/search-journeys.dto';
-import { AutocompleteStationsDto } from './dto/autocomplete-stations.dto';
-import { InvalidateCacheDto } from './dto/invalidate-cache.dto';
+import {
+  Injectable,
+  Inject,
+  Logger,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { PrismaService } from "../common/prisma.service";
+import { RedisClientType } from "redis";
+import { REDIS_CLIENT } from "../common/redis.module";
+import { SearchJourneysDto } from "./dto/search-journeys.dto";
+import { AutocompleteStationsDto } from "./dto/autocomplete-stations.dto";
+import { InvalidateCacheDto } from "./dto/invalidate-cache.dto";
 
 @Injectable()
 export class SearchService {
   private readonly logger = new Logger(SearchService.name);
-  private readonly cachePrefix = 'search:';
+  private readonly cachePrefix = "search:";
   private readonly cacheTTL = {
-    journeys: parseInt(this.configService.get('CACHE_TTL_SEARCH_RESULTS', '300')),
-    popularRoutes: parseInt(this.configService.get('CACHE_TTL_POPULAR_ROUTES', '3600')),
-    stations: parseInt(this.configService.get('CACHE_TTL_STATIONS', '7200')),
-    autocomplete: parseInt(this.configService.get('CACHE_TTL_AUTOCOMPLETE', '1800')),
+    journeys: parseInt(
+      this.configService.get("CACHE_TTL_SEARCH_RESULTS", "300")
+    ),
+    popularRoutes: parseInt(
+      this.configService.get("CACHE_TTL_POPULAR_ROUTES", "3600")
+    ),
+    stations: parseInt(this.configService.get("CACHE_TTL_STATIONS", "7200")),
+    autocomplete: parseInt(
+      this.configService.get("CACHE_TTL_AUTOCOMPLETE", "1800")
+    ),
   };
 
   constructor(
     @Inject(REDIS_CLIENT) private readonly redis: RedisClientType,
     private readonly prisma: PrismaService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   /**
@@ -42,7 +54,7 @@ export class SearchService {
 
     // Cache miss - fetch from database
     this.logger.log(`Cache miss for journey search: ${cacheKey}`);
-    
+
     const page = dto.page ?? 1;
     const limit = dto.limit ?? 10;
     const skip = (page - 1) * limit;
@@ -53,7 +65,7 @@ export class SearchService {
     const toStation = await this.findStation(dto.to);
 
     if (!fromStation || !toStation) {
-      throw new HttpException('Station not found', HttpStatus.NOT_FOUND);
+      throw new HttpException("Station not found", HttpStatus.NOT_FOUND);
     }
 
     // Find routes connecting these stations
@@ -70,7 +82,7 @@ export class SearchService {
       },
       include: {
         stops: {
-          orderBy: { stopOrder: 'asc' },
+          orderBy: { stopOrder: "asc" },
           include: {
             fromStation: true,
             toStation: true,
@@ -81,11 +93,13 @@ export class SearchService {
 
     // Filter routes that have both stations in correct order
     const validRoutes = routes.filter((route: any) => {
-      const hasFrom = route.stops.some((s: any) => 
-        s.fromStationId === fromStation.id || s.toStationId === fromStation.id
+      const hasFrom = route.stops.some(
+        (s: any) =>
+          s.fromStationId === fromStation.id || s.toStationId === fromStation.id
       );
-      const hasTo = route.stops.some((s: any) => 
-        s.fromStationId === toStation.id || s.toStationId === toStation.id
+      const hasTo = route.stops.some(
+        (s: any) =>
+          s.fromStationId === toStation.id || s.toStationId === toStation.id
       );
       return hasFrom && hasTo;
     });
@@ -128,7 +142,7 @@ export class SearchService {
         route: {
           include: {
             stops: {
-              orderBy: { stopOrder: 'asc' },
+              orderBy: { stopOrder: "asc" },
               include: {
                 fromStation: true,
                 toStation: true,
@@ -137,7 +151,7 @@ export class SearchService {
           },
         },
       },
-      orderBy: { departureTime: 'asc' },
+      orderBy: { departureTime: "asc" },
       skip,
       take,
     });
@@ -155,7 +169,7 @@ export class SearchService {
 
     // Cache the result
     await this.setCachedData(cacheKey, result, this.cacheTTL.journeys);
-    
+
     // Track search analytics
     await this.incrementSearchCount(dto.from, dto.to);
 
@@ -180,13 +194,13 @@ export class SearchService {
       `${this.cachePrefix}analytics:routes`,
       0,
       limit - 1,
-      { REV: true },
+      { REV: true }
     );
 
     const popularRoutes = [];
     for (const item of searchCounts) {
-      const [from, to] = item.value.split(':');
-      
+      const [from, to] = item.value.split(":");
+
       const fromStation = await this.findStation(from);
       const toStation = await this.findStation(to);
 
@@ -211,7 +225,9 @@ export class SearchService {
    * Station name autocomplete
    */
   async autocompleteStations(dto: AutocompleteStationsDto) {
-    const cacheKey = `${this.cachePrefix}autocomplete:${dto.query.toLowerCase()}:${dto.limit}`;
+    const cacheKey = `${
+      this.cachePrefix
+    }autocomplete:${dto.query.toLowerCase()}:${dto.limit}`;
 
     // Try cache first
     const cached = await this.getCachedData(cacheKey);
@@ -224,13 +240,13 @@ export class SearchService {
     const stations = await this.prisma.station.findMany({
       where: {
         OR: [
-          { name: { contains: dto.query, mode: 'insensitive' } },
-          { code: { contains: dto.query, mode: 'insensitive' } },
-          { city: { contains: dto.query, mode: 'insensitive' } },
+          { name: { contains: dto.query, mode: "insensitive" } },
+          { code: { contains: dto.query, mode: "insensitive" } },
+          { city: { contains: dto.query, mode: "insensitive" } },
         ],
       },
       take: dto.limit,
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
 
     const result = { data: stations, fromCache: false };
@@ -253,7 +269,7 @@ export class SearchService {
     }
 
     const stations = await this.prisma.station.findMany({
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
 
     const result = { data: stations, fromCache: false };
@@ -270,21 +286,23 @@ export class SearchService {
       `${this.cachePrefix}analytics:routes`,
       0,
       limit - 1,
-      { REV: true },
+      { REV: true }
     );
 
     const analytics = await Promise.all(
-      routes.map(async ({ value: key, score }: { value: string; score: number }) => {
-        const [from, to] = key.split(':');
-        const fromStation = await this.findStation(from);
-        const toStation = await this.findStation(to);
+      routes.map(
+        async ({ value: key, score }: { value: string; score: number }) => {
+          const [from, to] = key.split(":");
+          const fromStation = await this.findStation(from);
+          const toStation = await this.findStation(to);
 
-        return {
-          from: fromStation?.name || from,
-          to: toStation?.name || to,
-          searchCount: score,
-        };
-      }),
+          return {
+            from: fromStation?.name || from,
+            to: toStation?.name || to,
+            searchCount: score,
+          };
+        }
+      )
     );
 
     return { data: analytics };
@@ -312,7 +330,10 @@ export class SearchService {
     }
 
     this.logger.log(`Invalidated ${deletedCount} cache keys`);
-    return { message: `Invalidated ${deletedCount} cache entries`, count: deletedCount };
+    return {
+      message: `Invalidated ${deletedCount} cache entries`,
+      count: deletedCount,
+    };
   }
 
   /**
@@ -321,13 +342,16 @@ export class SearchService {
   async clearAllCache() {
     const pattern = `${this.cachePrefix}*`;
     const keys = await this.redis.keys(pattern);
-    
+
     if (keys.length > 0) {
       await this.redis.del(keys);
     }
 
     this.logger.log(`Cleared ${keys.length} cache entries`);
-    return { message: `Cleared ${keys.length} cache entries`, count: keys.length };
+    return {
+      message: `Cleared ${keys.length} cache entries`,
+      count: keys.length,
+    };
   }
 
   /**
@@ -348,7 +372,7 @@ export class SearchService {
           pattern,
           count: keys.length,
         };
-      }),
+      })
     );
 
     const totalKeys = await this.redis.dbSize();
@@ -356,7 +380,9 @@ export class SearchService {
     return {
       totalKeys,
       searchCache: stats,
-      analyticsKeys: await this.redis.zCard(`${this.cachePrefix}analytics:routes`),
+      analyticsKeys: await this.redis.zCard(
+        `${this.cachePrefix}analytics:routes`
+      ),
     };
   }
 
@@ -379,18 +405,29 @@ export class SearchService {
   private async getCachedData(key: string): Promise<any> {
     try {
       const cached = await this.redis.get(key);
-      return cached ? JSON.parse(cached) : null;
+      if (!cached || typeof cached !== "string") return null;
+      return JSON.parse(cached as string);
     } catch (error) {
-      this.logger.error(`Cache get error: ${error.message}`);
+      const errorMessage: string = (
+        error instanceof Error ? error.message : String(error)
+      ) as string;
+      this.logger.error(`Cache get error: ${errorMessage}`);
       return null;
     }
   }
 
-  private async setCachedData(key: string, data: any, ttl: number): Promise<void> {
+  private async setCachedData(
+    key: string,
+    data: any,
+    ttl: number
+  ): Promise<void> {
     try {
       await this.redis.setEx(key, ttl, JSON.stringify(data));
     } catch (error) {
-      this.logger.error(`Cache set error: ${error.message}`);
+      const errorMessage: string = (
+        error instanceof Error ? error.message : String(error)
+      ) as string;
+      this.logger.error(`Cache set error: ${errorMessage}`);
     }
   }
 
@@ -399,7 +436,10 @@ export class SearchService {
       const key = `${from}:${to}`;
       await this.redis.zIncrBy(`${this.cachePrefix}analytics:routes`, 1, key);
     } catch (error) {
-      this.logger.error(`Analytics increment error: ${error.message}`);
+      const errorMessage: string = (
+        error instanceof Error ? error.message : String(error)
+      ) as string;
+      this.logger.error(`Analytics increment error: ${errorMessage}`);
     }
   }
 }

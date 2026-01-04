@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { NotificationsModule } from "./notifications/notifications.module";
+import { SmsModule } from "./sms/sms.module";
 import { PrismaService } from "./common/prisma.service";
 import { RabbitMQModule } from "./common/rabbitmq.module";
 
@@ -11,6 +12,7 @@ import { RabbitMQModule } from "./common/rabbitmq.module";
     }),
     RabbitMQModule,
     NotificationsModule,
+    SmsModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

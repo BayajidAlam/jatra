@@ -20,7 +20,14 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "paths": {
-      "@jatra/database": ["../../libs/database/src/index.ts"]
+      "@jatra/database": ["../../libs/database/src/index.ts"],
+      "@prisma/client": ["../../node_modules/.prisma/client"],
+      "@jatra/common/types": ["../../libs/common/types/src"],
+      "@jatra/common/interfaces": ["../../libs/common/interfaces/src"],
+      "@jatra/common/dtos": ["../../libs/common/dtos/src"],
+      "@jatra/common/constants": ["../../libs/common/constants/src"],
+      "@jatra/common/errors": ["../../libs/common/errors/src"],
+      "@jatra/common/utils": ["../../libs/common/utils/src"]
     }
   },
   "include": ["src/**/*"],

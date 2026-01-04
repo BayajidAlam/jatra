@@ -1,9 +1,14 @@
-import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
-import { QRCodeService } from './qrcode.service';
-import { PDFService } from './pdf.service';
-import { GenerateTicketDto } from './dto/generate-ticket.dto';
-import { ValidateTicketDto } from './dto/validate-ticket.dto';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { PrismaService } from "../common/prisma.service";
+import { QRCodeService } from "./qrcode.service";
+import { PDFService } from "./pdf.service";
+import { GenerateTicketDto } from "./dto/generate-ticket.dto";
+import { ValidateTicketDto } from "./dto/validate-ticket.dto";
 
 @Injectable()
 export class TicketsService {
@@ -12,7 +17,7 @@ export class TicketsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly qrCodeService: QRCodeService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PDFService
   ) {}
 
   /**
@@ -31,7 +36,7 @@ export class TicketsService {
     }
 
     // Get booking with all details
-    const booking = await this.prisma.booking.findUnique({
+    const booking: any = await this.prisma.booking.findUnique({
       where: { id: dto.bookingId },
       include: {
         user: true,
@@ -42,7 +47,8 @@ export class TicketsService {
               include: {
                 stops: {
                   include: {
-                    station: true,
+                    fromStation: true,
+                    toStation: true,
                   },
                 },
               },
@@ -63,11 +69,13 @@ export class TicketsService {
     });
 
     if (!booking) {
-      throw new NotFoundException('Booking not found');
+      throw new NotFoundException("Booking not found");
     }
 
-    if (booking.status !== 'CONFIRMED') {
-      throw new BadRequestException('Booking must be confirmed to generate ticket');
+    if (booking.status !== "CONFIRMED") {
+      throw new BadRequestException(
+        "Booking must be confirmed to generate ticket"
+      );
     }
 
     // Generate ticket number
@@ -79,9 +87,11 @@ export class TicketsService {
     const qrCodeBuffer = await this.qrCodeService.generateQRCodeBuffer(qrData);
 
     // Find from and to stations
-    const stops = booking.journey.route.stops.sort((a, b) => a.stopOrder - b.stopOrder);
-    const fromStation = stops.find(s => s.fromStationId)?.station?.name || 'Unknown';
-    const toStation = stops.find(s => s.toStationId)?.station?.name || 'Unknown';
+    const stops = booking.journey.route.stops.sort(
+      (a: any, b: any) => a.stopOrder - b.stopOrder
+    );
+    const fromStation = stops[0]?.fromStation?.name || "Unknown";
+    const toStation = stops[stops.length - 1]?.toStation?.name || "Unknown";
 
     // Generate PDF
     const pdfUrl = await this.pdfService.generateTicketPDF({
@@ -97,7 +107,7 @@ export class TicketsService {
       departureTime: booking.journey.departureTime.toLocaleString(),
       arrivalTime: booking.journey.arrivalTime.toLocaleString(),
       journeyDate: booking.journey.journeyDate.toLocaleDateString(),
-      seats: booking.seats.map(bs => ({
+      seats: booking.seats.map((bs: any) => ({
         seatNumber: bs.seat.seatNumber,
         coach: bs.seat.coach.coachName,
         class: bs.seat.coach.coachClass,
@@ -166,7 +176,8 @@ export class TicketsService {
                   include: {
                     stops: {
                       include: {
-                        station: true,
+                        fromStation: true,
+                        toStation: true,
                       },
                     },
                   },
@@ -189,7 +200,7 @@ export class TicketsService {
     });
 
     if (!ticket) {
-      throw new NotFoundException('Ticket not found');
+      throw new NotFoundException("Ticket not found");
     }
 
     return ticket;
@@ -232,7 +243,7 @@ export class TicketsService {
     });
 
     if (!ticket) {
-      throw new NotFoundException('Ticket not found for this booking');
+      throw new NotFoundException("Ticket not found for this booking");
     }
 
     return ticket;
@@ -269,7 +280,7 @@ export class TicketsService {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
 
@@ -292,15 +303,15 @@ export class TicketsService {
     });
 
     if (!ticket) {
-      throw new NotFoundException('Ticket not found');
+      throw new NotFoundException("Ticket not found");
     }
 
     if (ticket.isValidated) {
-      throw new BadRequestException('Ticket already validated');
+      throw new BadRequestException("Ticket already validated");
     }
 
-    if (ticket.booking.status !== 'CONFIRMED') {
-      throw new BadRequestException('Booking is not confirmed');
+    if (ticket.booking.status !== "CONFIRMED") {
+      throw new BadRequestException("Booking is not confirmed");
     }
 
     // Update ticket as validated
@@ -340,11 +351,13 @@ export class TicketsService {
       },
     });
 
-    this.logger.log(`✅ Ticket validated: ${dto.ticketNumber} by ${dto.validatedBy}`);
+    this.logger.log(
+      `✅ Ticket validated: ${dto.ticketNumber} by ${dto.validatedBy}`
+    );
 
     return {
       ...validatedTicket,
-      message: 'Ticket validated successfully. Passenger can board.',
+      message: "Ticket validated successfully. Passenger can board.",
     };
   }
 
@@ -357,7 +370,7 @@ export class TicketsService {
     });
 
     if (!ticket) {
-      throw new NotFoundException('Ticket not found');
+      throw new NotFoundException("Ticket not found");
     }
 
     return ticket.qrCode;
@@ -372,14 +385,14 @@ export class TicketsService {
     });
 
     if (!ticket) {
-      throw new NotFoundException('Ticket not found');
+      throw new NotFoundException("Ticket not found");
     }
 
     const pdfPath = this.pdfService.getPDFPath(ticket.ticketNumber);
     const exists = await this.pdfService.pdfExists(ticket.ticketNumber);
 
     if (!exists) {
-      throw new NotFoundException('PDF file not found');
+      throw new NotFoundException("PDF file not found");
     }
 
     return pdfPath;
@@ -389,8 +402,8 @@ export class TicketsService {
    * Generate unique ticket number
    */
   private generateTicketNumber(): string {
-    const prefix = process.env.TICKET_NUMBER_PREFIX || 'TKT';
-    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    const prefix = process.env.TICKET_NUMBER_PREFIX || "TKT";
+    const date = new Date().toISOString().split("T")[0].replace(/-/g, "");
     const random = Math.floor(10000 + Math.random() * 90000);
     return `${prefix}-${date}-${random}`;
   }

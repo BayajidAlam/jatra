@@ -1,7 +1,8 @@
-import { Injectable, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
-import { CreateStationDto } from './dto/create-station.dto';
-import { Prisma } from '@prisma/client';
+import { Injectable, ConflictException } from "@nestjs/common";
+import { PrismaService } from "../common/prisma.service";
+import { CreateStationDto } from "./dto/create-station.dto";
+import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 @Injectable()
 export class StationsService {
@@ -25,8 +26,8 @@ export class StationsService {
       });
     } catch (error) {
       // Handle any other Prisma unique constraint errors
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
           throw new ConflictException(
             `Station with this ${error.meta?.target} already exists`
           );
@@ -39,7 +40,7 @@ export class StationsService {
   async findAll() {
     return this.prisma.station.findMany({
       where: { isActive: true },
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
   }
 
@@ -60,11 +61,11 @@ export class StationsService {
       where: {
         city: {
           contains: city,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
         isActive: true,
       },
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
   }
 }

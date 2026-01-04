@@ -1,16 +1,16 @@
 # Stage 1: Build
-FROM golang:1.21-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 
-# Copy go mod files
-COPY go.mod go.sum* ./
+# Copy go mod files from api-gateway directory
+COPY apps/api-gateway/go.mod apps/api-gateway/go.sum* ./
 
 # Download dependencies
 RUN go mod download
 
-# Copy source code
-COPY . .
+# Copy source code from api-gateway directory
+COPY apps/api-gateway ./
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o api-gateway .

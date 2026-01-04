@@ -9,7 +9,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { NotificationType, NotificationChannel } from "@jatra/common/types";
 
 export class CreateNotificationDto {
-  @ApiProperty({ description: 'User UUID' })
+  @ApiProperty({ description: "User UUID" })
   @IsUUID()
   userId: string;
 
@@ -32,6 +32,11 @@ export class CreateNotificationDto {
   @IsEnum(NotificationChannel)
   @IsOptional()
   channel?: NotificationChannel;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  recipient?: string;
 
   @ApiProperty({ required: false })
   @IsObject()

@@ -1,5 +1,16 @@
+packages:
+  - "apps/*"
+  - "libs/*"
+
 autoInstallPeers: true
 
 ignoredBuiltDependencies:
-  - '@prisma/engines'
+  - "@nestjs/core"
+  - "@parcel/watcher"
+  - "@prisma/client"
+  - "@prisma/engines"
+  - esbuild
+  - nx
   - prisma
+  - sharp
+  - unrs-resolver

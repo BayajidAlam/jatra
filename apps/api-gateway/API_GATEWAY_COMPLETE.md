@@ -7,6 +7,7 @@ The **API Gateway** has been successfully implemented as the single entry point 
 ## ✅ Completed Features
 
 ### 1. **Core Functionality**
+
 - ✅ Single entry point on port **3000**
 - ✅ Request routing to all 7 microservices
 - ✅ JWT token validation for protected routes
@@ -14,18 +15,21 @@ The **API Gateway** has been successfully implemented as the single entry point 
 - ✅ User context propagation (X-User-ID, X-User-Email, X-User-Role headers)
 
 ### 2. **Security**
+
 - ✅ JWT authentication middleware
 - ✅ Token validation using jwt/v5
 - ✅ Protected vs public route separation
 - ✅ Authorization header validation
 
 ### 3. **Rate Limiting**
+
 - ✅ IP-based rate limiting
 - ✅ Configurable limits (default: 100 req/60sec)
 - ✅ Automatic visitor cleanup
 - ✅ Token bucket algorithm
 
 ### 4. **Middleware Stack**
+
 - ✅ Request logging with latency tracking
 - ✅ CORS support with configurable origins
 - ✅ Panic recovery
@@ -35,9 +39,10 @@ The **API Gateway** has been successfully implemented as the single entry point 
 ### 5. **Route Mapping**
 
 #### Public Routes (No Auth)
+
 ```
 POST /api/auth/register           → auth-service:3001
-POST /api/auth/login              → auth-service:3001  
+POST /api/auth/login              → auth-service:3001
 POST /api/auth/refresh-token      → auth-service:3001
 GET  /api/trains                  → schedule-service:3002
 GET  /api/stations                → schedule-service:3002
@@ -46,6 +51,7 @@ GET  /api/journeys/search         → schedule-service:3002
 ```
 
 #### Protected Routes (JWT Required)
+
 ```
 POST /api/auth/logout             → auth-service:3001
 GET  /api/users/me                → auth-service:3001
@@ -86,23 +92,27 @@ apps/api-gateway/
 ## 🚀 Running the Gateway
 
 ### Option 1: Direct Execution
+
 ```bash
 cd apps/api-gateway
 ./api-gateway
 ```
 
 ### Option 2: Using Start Script
+
 ```bash
 cd apps/api-gateway
 ./start.sh
 ```
 
 ### Option 3: Background Process
+
 ```bash
 nohup ./api-gateway > gateway.log 2>&1 &
 ```
 
 ### Option 4: Docker
+
 ```bash
 docker build -t jatra-api-gateway .
 docker run -p 3000:3000 --env-file .env jatra-api-gateway
@@ -145,6 +155,7 @@ CORS_ALLOWED_HEADERS=Content-Type,Authorization
 **API Gateway**: ✅ **RUNNING** on port 3000
 
 **Test Results**:
+
 ```bash
 $ curl http://localhost:3000/health
 {"service":"api-gateway","status":"healthy"}
@@ -155,11 +166,13 @@ $ curl http://localhost:3000/health
 ## 🧪 Testing
 
 ### Health Check
+
 ```bash
 curl http://localhost:3000/health
 ```
 
 ### Public Endpoint (No Auth)
+
 ```bash
 # Get all stations
 curl http://localhost:3000/api/stations
@@ -169,6 +182,7 @@ curl "http://localhost:3000/api/journeys/search?from=DHK&to=CTG&date=2025-12-08"
 ```
 
 ### Protected Endpoint (With Auth)
+
 ```bash
 # Login first
 TOKEN=$(curl -X POST http://localhost:3000/api/auth/login \
@@ -193,16 +207,19 @@ curl http://localhost:3000/api/users/me \
 ## 🔐 Security Features
 
 1. **JWT Validation**
+
    - Verifies token signature
    - Checks token expiration
    - Extracts user claims
 
 2. **Rate Limiting**
+
    - Per-IP token bucket
    - Automatic cleanup of old visitors
    - Configurable limits
 
 3. **CORS**
+
    - Configurable allowed origins
    - Method whitelisting
    - Header control
@@ -217,6 +234,7 @@ curl http://localhost:3000/api/users/me \
 ## 📝 Logs
 
 Logs include:
+
 ```
 [GET] /api/trains HTTP/1.1 | Status: 200 | Latency: 45ms | IP: 127.0.0.1
 [POST] /api/auth/login HTTP/1.1 | Status: 200 | Latency: 123ms | IP: 127.0.0.1
@@ -225,6 +243,7 @@ Logs include:
 ## 🎯 Next Steps
 
 ### Integration Tasks
+
 1. ✅ API Gateway implemented
 2. ⏳ Start all backend services
 3. ⏳ Test end-to-end flow through gateway
@@ -232,6 +251,7 @@ Logs include:
 5. ⏳ Load testing
 
 ### Production Readiness
+
 - [ ] Set GIN_MODE=release
 - [ ] Configure trusted proxies
 - [ ] Add request ID tracing
@@ -243,25 +263,30 @@ Logs include:
 ## 🐛 Troubleshooting
 
 ### Service Unavailable
+
 **Error**: `{"error":"Service unavailable"}`
 
 **Cause**: Target microservice not running
 
 **Solution**: Start the required service
+
 ```bash
 cd apps/schedule-service
 pnpm start:dev
 ```
 
 ### Invalid Token
+
 **Error**: `{"error":"Invalid or expired token"}`
 
 **Solutions**:
+
 - Ensure JWT_ACCESS_SECRET matches auth-service
 - Check token hasn't expired
 - Get fresh token via `/api/auth/login`
 
 ### Rate Limit Exceeded
+
 **Error**: `{"error":"Rate limit exceeded"}`
 
 **Solution**: Wait for window to reset or increase limits in `.env`
@@ -277,6 +302,7 @@ pnpm start:dev
 ## 📚 API Documentation
 
 Once all services are running, access Swagger docs for each:
+
 - Gateway health: http://localhost:3000/health
 - Auth Service: http://localhost:3001/api/docs
 - Schedule Service: http://localhost:3002/api/docs
@@ -289,7 +315,7 @@ The API Gateway is **fully functional** and ready to route requests to all backe
 
 - ✅ Single entry point on port 3000
 - ✅ JWT authentication
-- ✅ Rate limiting  
+- ✅ Rate limiting
 - ✅ Request logging
 - ✅ CORS support
 - ✅ All 7 services mapped
