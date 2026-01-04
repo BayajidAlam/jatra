@@ -1,6 +1,3 @@
-// This is your Prisma schema file for Jatra Railway
-// Learn more: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "../../../node_modules/.prisma/client"
@@ -13,9 +10,9 @@ datasource db {
 
 model User {
   id            String         @id @default(uuid())
-  nid           String         @unique @db.VarChar(13) // National ID (10 or 13 digits)
+  nid           String         @unique @db.VarChar(13)
   email         String         @unique @db.VarChar(255)
-  phone         String         @unique @db.VarChar(20) // BD format: +880 or 01...
+  phone         String         @unique @db.VarChar(20)
   passwordHash  String         @db.VarChar(255)
   name          String         @db.VarChar(255)
   role          Role           @default(USER)
@@ -23,9 +20,9 @@ model User {
   phoneVerified Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  refreshTokens RefreshToken[]
   bookings      Booking[]
   notifications Notification[]
+  refreshTokens RefreshToken[]
 
   @@map("users")
 }
@@ -34,36 +31,29 @@ model RefreshToken {
   id        String   @id @default(uuid())
   token     String   @unique @db.VarChar(500)
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("refresh_tokens")
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
-// Schedule Service Models
 model Station {
-  id        String   @id @default(uuid())
-  code      String   @unique @db.VarChar(10) // e.g., DHK, CTG, SYL
-  name      String   @db.VarChar(255)
-  city      String   @db.VarChar(100)
-  district  String   @db.VarChar(100)
-  latitude  Float?
-  longitude Float?
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  routeStopsFrom   RouteStop[]   @relation("FromStation")
-  routeStopsTo     RouteStop[]   @relation("ToStation")
+  id               String        @id @default(uuid())
+  code             String        @unique @db.VarChar(10)
+  name             String        @db.VarChar(255)
+  city             String        @db.VarChar(100)
+  district         String        @db.VarChar(100)
+  latitude         Float?
+  longitude        Float?
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
   reservationsFrom Reservation[] @relation("ReservationFrom")
   reservationsTo   Reservation[] @relation("ReservationTo")
+  routeStopsFrom   RouteStop[]   @relation("FromStation")
+  routeStopsTo     RouteStop[]   @relation("ToStation")
 
   @@index([code])
   @@index([city])
@@ -72,31 +62,29 @@ model Station {
 
 model Train {
   id          String    @id @default(uuid())
-  trainNumber String    @unique @db.VarChar(20) // e.g., SUBORNO-EXPRESS-701
-  name        String    @db.VarChar(255) // e.g., Suborno Express
+  trainNumber String    @unique @db.VarChar(20)
+  name        String    @db.VarChar(255)
   type        TrainType @default(INTERCITY)
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  coaches  Coach[]
-  journeys Journey[]
+  coaches     Coach[]
+  journeys    Journey[]
 
   @@index([trainNumber])
   @@map("trains")
 }
 
 model Coach {
-  id         String     @id @default(uuid())
+  id         String    @id @default(uuid())
   trainId    String
-  train      Train      @relation(fields: [trainId], references: [id], onDelete: Cascade)
-  coachCode  String     @db.VarChar(20) // e.g., KA, KHA, GA
+  coachCode  String    @db.VarChar(20)
   coachType  CoachType
   totalSeats Int
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  seats Seat[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  train      Train     @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  seats      Seat[]
 
   @@unique([trainId, coachCode])
   @@index([trainId])
@@ -106,13 +94,13 @@ model Coach {
 model Seat {
   id           String         @id @default(uuid())
   coachId      String
-  coach        Coach          @relation(fields: [coachId], references: [id], onDelete: Cascade)
-  seatNumber   String         @db.VarChar(10) // e.g., A1, B2
+  seatNumber   String         @db.VarChar(10)
   seatType     SeatType
-  baseFare     Float          @db.DoublePrecision
-  bookingSeats BookingsSeat[]
+  baseFare     Float
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+  bookingSeats BookingsSeat[]
+  coach        Coach          @relation(fields: [coachId], references: [id], onDelete: Cascade)
 
   @@unique([coachId, seatNumber])
   @@index([coachId])
@@ -120,15 +108,14 @@ model Seat {
 }
 
 model Route {
-  id            String   @id @default(uuid())
-  routeName     String   @db.VarChar(255) // e.g., "Dhaka-Chittagong"
-  totalDistance Float    @db.DoublePrecision // in kilometers
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  stops    RouteStop[]
-  journeys Journey[]
+  id            String      @id @default(uuid())
+  routeName     String      @db.VarChar(255)
+  totalDistance Float
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  journeys      Journey[]
+  stops         RouteStop[]
 
   @@map("routes")
 }
@@ -136,16 +123,16 @@ model Route {
 model RouteStop {
   id                String   @id @default(uuid())
   routeId           String
-  route             Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
   fromStationId     String
-  fromStation       Station  @relation("FromStation", fields: [fromStationId], references: [id])
   toStationId       String
-  toStation         Station  @relation("ToStation", fields: [toStationId], references: [id])
-  stopOrder         Int // Order of this stop in the route
-  distanceFromStart Float    @db.DoublePrecision // Distance from first station
-  durationMinutes   Int // Estimated travel time from previous stop
+  stopOrder         Int
+  distanceFromStart Float
+  durationMinutes   Int
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  fromStation       Station  @relation("FromStation", fields: [fromStationId], references: [id])
+  route             Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  toStation         Station  @relation("ToStation", fields: [toStationId], references: [id])
 
   @@unique([routeId, stopOrder])
   @@index([routeId])
@@ -155,28 +142,175 @@ model RouteStop {
 }
 
 model Journey {
-  id               String        @id @default(uuid())
-  trainId          String
-  train            Train         @relation(fields: [trainId], references: [id])
-  routeId          String
-  route            Route         @relation(fields: [routeId], references: [id])
-  departureTime    DateTime
-  arrivalTime      DateTime
-  journeyDate      DateTime      @db.Date
-  status           JourneyStatus @default(SCHEDULED)
-  availableSeats   Int
-  totalSeats       Int
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-
-  reservations     Reservation[]
-  bookings         Booking[]
+  id             String        @id @default(uuid())
+  trainId        String
+  routeId        String
+  departureTime  DateTime
+  arrivalTime    DateTime
+  journeyDate    DateTime      @db.Date
+  status         JourneyStatus @default(SCHEDULED)
+  availableSeats Int
+  totalSeats     Int
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  bookings       Booking[]
+  route          Route         @relation(fields: [routeId], references: [id])
+  train          Train         @relation(fields: [trainId], references: [id])
+  reservations   Reservation[]
 
   @@index([trainId])
   @@index([routeId])
   @@index([journeyDate])
   @@index([departureTime])
   @@map("journeys")
+}
+
+model Reservation {
+  id            String            @id @default(uuid())
+  userId        String
+  journeyId     String
+  seatIds       String[]
+  fromStationId String
+  toStationId   String
+  status        ReservationStatus @default(LOCKED)
+  lockExpiry    DateTime
+  totalFare     Float
+  lockId        String            @unique
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  booking       Booking?
+  payment       Payment?
+  fromStation   Station           @relation("ReservationFrom", fields: [fromStationId], references: [id])
+  journey       Journey           @relation(fields: [journeyId], references: [id])
+  toStation     Station           @relation("ReservationTo", fields: [toStationId], references: [id])
+
+  @@index([userId])
+  @@index([journeyId])
+  @@index([lockId])
+  @@index([status])
+  @@index([lockExpiry])
+  @@map("reservations")
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  reservationId   String        @unique
+  userId          String
+  amount          Float
+  currency        String        @default("BDT") @db.VarChar(3)
+  paymentMethod   PaymentMethod
+  status          PaymentStatus @default(PENDING)
+  transactionId   String?       @unique @db.VarChar(100)
+  gatewayResponse Json?
+  failureReason   String?       @db.VarChar(500)
+  paidAt          DateTime?
+  refundedAt      DateTime?
+  refundAmount    Float?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  booking         Booking?
+  reservation     Reservation   @relation(fields: [reservationId], references: [id])
+
+  @@index([userId])
+  @@index([reservationId])
+  @@index([transactionId])
+  @@index([status])
+  @@map("payments")
+}
+
+model Booking {
+  id            String         @id @default(uuid())
+  userId        String
+  journeyId     String
+  reservationId String         @unique
+  paymentId     String         @unique
+  totalAmount   Float
+  status        BookingStatus  @default(DRAFT)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  journey       Journey        @relation(fields: [journeyId], references: [id])
+  payment       Payment        @relation(fields: [paymentId], references: [id])
+  reservation   Reservation    @relation(fields: [reservationId], references: [id])
+  user          User           @relation(fields: [userId], references: [id])
+  seats         BookingsSeat[]
+  ticket        Ticket?
+
+  @@index([userId])
+  @@index([journeyId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("bookings")
+}
+
+model BookingsSeat {
+  id        String  @id @default(uuid())
+  bookingId String
+  seatId    String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  seat      Seat    @relation(fields: [seatId], references: [id])
+
+  @@unique([bookingId, seatId])
+  @@map("bookings_seats")
+}
+
+model Notification {
+  id         String              @id @default(uuid())
+  userId     String
+  type       NotificationType
+  channel    NotificationChannel @default(EMAIL)
+  subject    String              @db.VarChar(255)
+  content    String
+  status     NotificationStatus  @default(PENDING)
+  metadata   Json?
+  sentAt     DateTime?
+  error      String?
+  retryCount Int                 @default(0)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  user       User                @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([status])
+  @@index([type])
+  @@map("notifications")
+}
+
+model Ticket {
+  id              String    @id @default(uuid())
+  bookingId       String    @unique
+  ticketNumber    String    @unique @db.VarChar(50) // Format: TKT-YYYYMMDD-XXXXX
+  qrCode          String    @db.Text // Base64 encoded QR code
+  pdfUrl          String?   @db.VarChar(500) // URL to PDF file
+  isValidated     Boolean   @default(false)
+  validatedAt     DateTime?
+  validatedBy     String?   @db.VarChar(255) // Staff ID or system
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  booking         Booking   @relation(fields: [bookingId], references: [id])
+
+  @@index([bookingId])
+  @@index([ticketNumber])
+  @@index([isValidated])
+  @@map("tickets")
+}
+
+model GlobalSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String   @db.Text
+  type      String   @default("string") // string, number, boolean, json
+  group     String?  @default("general") // general, payment, booking, etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("global_settings")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 enum TrainType {
@@ -209,154 +343,59 @@ enum JourneyStatus {
   COMPLETED
 }
 
-// Seat Reservation Service Models
-model Reservation {
-  id                String            @id @default(uuid())
-  userId            String
-  journeyId         String
-  journey           Journey           @relation(fields: [journeyId], references: [id])
-  seatIds           String[]          // Array of seat IDs reserved
-  fromStationId     String
-  fromStation       Station           @relation("ReservationFrom", fields: [fromStationId], references: [id])
-  toStationId       String
-  toStation         Station           @relation("ReservationTo", fields: [toStationId], references: [id])
-  status            ReservationStatus @default(LOCKED)
-  lockExpiry        DateTime
-  totalFare         Float             @db.DoublePrecision
-  lockId            String            @unique // Redis lock identifier
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-
-  payment           Payment?
-  booking           Booking?
-
-  @@index([userId])
-  @@index([journeyId])
-  @@index([lockId])
-  @@index([status])
-  @@index([lockExpiry])
-  @@map("reservations")
-}
-
 enum ReservationStatus {
-  LOCKED      // Temporary lock during checkout
-  CONFIRMED   // Payment completed
-  CANCELLED   // User cancelled
-  EXPIRED     // Lock expired without payment
-  RELEASED    // Manually released
-}
-
-// Payment Service Models
-model Payment {
-  id                String        @id @default(uuid())
-  reservationId     String        @unique
-  userId            String
-  amount            Float         @db.DoublePrecision
-  currency          String        @default("BDT") @db.VarChar(3)
-  paymentMethod     PaymentMethod
-  status            PaymentStatus @default(PENDING)
-  transactionId     String?       @unique @db.VarChar(100)
-  gatewayResponse   Json?         // Store full gateway response
-  failureReason     String?       @db.VarChar(500)
-  paidAt            DateTime?
-  refundedAt        DateTime?
-  refundAmount      Float?        @db.DoublePrecision
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-
-  reservation       Reservation   @relation(fields: [reservationId], references: [id])
-  booking           Booking?
-
-  @@index([userId])
-  @@index([reservationId])
-  @@index([transactionId])
-  @@index([status])
-  @@map("payments")
+  LOCKED
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+  RELEASED
 }
 
 enum PaymentMethod {
   CREDIT_CARD
   DEBIT_CARD
-  MOBILE_BANKING    // bKash, Nagad, Rocket
+  MOBILE_BANKING
   NET_BANKING
   WALLET
 }
 
 enum PaymentStatus {
-  PENDING           // Payment initiated
-  PROCESSING        // Payment in progress
-  COMPLETED         // Payment successful
-  FAILED            // Payment failed
-  REFUNDED          // Payment refunded
-  PARTIALLY_REFUNDED // Partial refund
-  CANCELLED         // Payment cancelled
-}
-
-// Booking Service Models
-model Booking {
-  id              String        @id @default(uuid())
-  userId          String
-  journeyId       String
-  reservationId   String        @unique
-  paymentId       String        @unique
-  totalAmount     Float         @db.DoublePrecision
-  status          BookingStatus @default(DRAFT)
-  seats           BookingsSeat[]
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  user            User          @relation(fields: [userId], references: [id])
-  journey         Journey       @relation(fields: [journeyId], references: [id])
-  reservation     Reservation   @relation(fields: [reservationId], references: [id])
-  payment         Payment       @relation(fields: [paymentId], references: [id])
-  ticket          Ticket?
-
-  @@index([userId])
-  @@index([journeyId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("bookings")
-}
-
-model BookingsSeat {
-  id         String   @id @default(uuid())
-  bookingId  String
-  seatId     String
-
-  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  seat       Seat     @relation(fields: [seatId], references: [id])
-
-  @@unique([bookingId, seatId])
-  @@map("bookings_seats")
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+  CANCELLED
 }
 
 enum BookingStatus {
-  DRAFT          // Initial state
-  SEATS_LOCKED   // Seats locked, awaiting payment
-  PAYMENT_PENDING // Payment initiated
-  CONFIRMED      // Payment completed, ticket generated
-  CANCELLED      // User cancelled
-  FAILED         // Payment or process failed
-  EXPIRED        // Timeout during process
+  DRAFT
+  SEATS_LOCKED
+  PAYMENT_PENDING
+  CONFIRMED
+  CANCELLED
+  FAILED
+  EXPIRED
 }
 
-// Ticket Service Models
-model Ticket {
-  id              String    @id @default(uuid())
-  bookingId       String    @unique
-  ticketNumber    String    @unique @db.VarChar(50) // Format: TKT-YYYYMMDD-XXXXX
-  qrCode          String    @db.Text // Base64 encoded QR code
-  pdfUrl          String?   @db.VarChar(500) // URL to PDF file
-  isValidated     Boolean   @default(false)
-  validatedAt     DateTime?
-  validatedBy     String?   @db.VarChar(255) // Staff ID or system
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+}
 
-  booking         Booking   @relation(fields: [bookingId], references: [id])
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  RETRYING
+}
 
-  @@index([bookingId])
-  @@index([ticketNumber])
-  @@index([isValidated])
-  @@map("tickets")
+enum NotificationType {
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  PAYMENT_FAILED
+  JOURNEY_REMINDER
+  TICKET_GENERATED
 }
