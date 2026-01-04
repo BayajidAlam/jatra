@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Search, Edit2, Trash2, Filter } from "lucide-react";
+import { Search, Edit2, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -13,14 +13,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuSeparator,
-    DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
 import {
     Pagination,
     PaginationContent,
@@ -32,43 +24,38 @@ import {
 import { TrainDialog } from "@/components/admin/train-dialog";
 import { DeleteConfirmDialog } from "@/components/admin/delete-confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
-
-// Mock Data
-const initialTrains = [
-  { id: 1, name: "Suborno Express", trainNumber: "701", type: "Intercity", seats: 850, status: "Active" },
-  { id: 2, name: "Parabat Express", trainNumber: "709", type: "Intercity", seats: 920, status: "Maintenance" },
-  { id: 3, name: "Sonar Bangla", trainNumber: "788", type: "Non-Stop", seats: 600, status: "Active" },
-  { id: 4, name: "Mahanagar Provati", trainNumber: "703", type: "Intercity", seats: 750, status: "Active" },
-  { id: 5, name: "Turna Express", trainNumber: "705", type: "Intercity", seats: 800, status: "Active" },
-  { id: 6, name: "Chattala Express", trainNumber: "801", type: "Mail", seats: 500, status: "Active" },
-];
+import { useAdminTrains } from "@/hooks/use-admin-trains";
 
 export default function TrainsPage() {
-  const [trains, setTrains] = useState(initialTrains);
   const [searchTerm, setSearchTerm] = useState("");
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const { toast } = useToast();
 
-  const filteredTrains = trains.filter((train) =>
-    train.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    train.trainNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const { 
+    trains, 
+    isLoading, 
+    deleteTrain, 
+    isDeleting,
+    pagination 
+  } = useAdminTrains({ 
+    page: currentPage, 
+    limit: itemsPerPage 
+  });
 
-  const totalPages = Math.ceil(filteredTrains.length / itemsPerPage);
+  const totalItems = pagination?.total || 0;
+  const totalPages = pagination?.totalPages || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedTrains = filteredTrains.slice(startIndex, startIndex + itemsPerPage);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      setTrains(trains.filter(t => t.id !== deleteId));
-      toast({
-        title: "Train Deleted",
-        description: "The train has been removed from the fleet.",
-        variant: "destructive",
-      });
-      setDeleteId(null);
+      try {
+        await deleteTrain(deleteId);
+        setDeleteId(null);
+      } catch (error) {
+        // Error handled by hook
+      }
     }
   };
 
@@ -97,21 +84,6 @@ export default function TrainsPage() {
                 }}
               />
             </div>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
-                        <Filter className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuLabel>Filter by Type</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setSearchTerm("")}>All Types</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSearchTerm("Intercity")}>Intercity</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSearchTerm("Non-Stop")}>Non-Stop</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSearchTerm("Mail")}>Mail</DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </CardHeader>
         <CardContent>
@@ -121,27 +93,31 @@ export default function TrainsPage() {
                 <TableHead>Train Name</TableHead>
                 <TableHead>Train No</TableHead>
                 <TableHead>Type</TableHead>
-                <TableHead>Capacity</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedTrains.map((train) => (
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    Loading trains...
+                  </TableCell>
+                </TableRow>
+              ) : trains.map((train: any) => (
                 <TableRow key={train.id}>
                   <TableCell className="font-medium">{train.name}</TableCell>
                   <TableCell>{train.trainNumber}</TableCell>
                   <TableCell>{train.type}</TableCell>
-                  <TableCell>{train.seats} seats</TableCell>
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        train.status === "Active"
+                        train.isActive
                           ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                           : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
                       }`}
                     >
-                      {train.status}
+                      {train.isActive ? "Active" : "Inactive"}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
@@ -159,6 +135,7 @@ export default function TrainsPage() {
                         size="icon" 
                         className="h-8 w-8 hover:bg-destructive/10 text-destructive"
                         onClick={() => setDeleteId(train.id)}
+                        disabled={isDeleting}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -166,9 +143,9 @@ export default function TrainsPage() {
                   </TableCell>
                 </TableRow>
               ))}
-              {paginatedTrains.length === 0 && (
+              {!isLoading && trains.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
                     No trains found.
                   </TableCell>
                 </TableRow>
@@ -179,7 +156,7 @@ export default function TrainsPage() {
         {totalPages > 1 && (
             <CardFooter className="flex items-center justify-between border-t dark:border-slate-800 py-4">
                 <div className="text-sm text-muted-foreground">
-                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredTrains.length)} of {filteredTrains.length} trains
+                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalItems)} of {totalItems} trains
                 </div>
                 <Pagination className="mx-0 w-auto">
                     <PaginationContent>
@@ -216,7 +193,7 @@ export default function TrainsPage() {
         open={deleteId !== null}
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
-        itemName={trains.find(t => t.id === deleteId)?.name}
+        itemName={trains.find((t: any) => t.id === deleteId)?.name}
       />
     </div>
   );

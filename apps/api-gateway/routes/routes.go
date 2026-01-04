@@ -171,6 +171,14 @@ func SetupRoutes(router *gin.Engine) {
 			admin.POST("/settings", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
 			admin.PUT("/settings/:key", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
 			admin.DELETE("/settings/:key", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+
+			// Payment Management
+			admin.GET("/payments", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.GET("/payments/stats", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.GET("/payments/:id", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+
+			// Dashboard Stats
+			admin.GET("/stats/dashboard", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
 		}
 
 		reports := api.Group("/reports")

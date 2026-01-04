@@ -20,29 +20,34 @@ import {
   Users,
   TrendingUp,
   ArrowUpRight,
+  Loader2,
 } from "lucide-react";
-
-// Mock Data
-const revenueData = [
-  { name: "Mon", total: 45000 },
-  { name: "Tue", total: 52000 },
-  { name: "Wed", total: 48000 },
-  { name: "Thu", total: 61000 },
-  { name: "Fri", total: 55000 },
-  { name: "Sat", total: 75000 },
-  { name: "Sun", total: 72000 },
-];
-
-const trafficData = [
-  { time: "06:00", visitors: 120 },
-  { time: "09:00", visitors: 450 },
-  { time: "12:00", visitors: 380 },
-  { time: "15:00", visitors: 420 },
-  { time: "18:00", visitors: 650 },
-  { time: "21:00", visitors: 300 },
-];
+import { useAdminStats } from "@/hooks/use-admin-stats";
 
 export default function AdminDashboardPage() {
+  const { data: stats, isLoading } = useAdminStats();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const { overview, charts, recentBookings } = stats || {
+    overview: { 
+      totalRevenue: 0, revenueGrowth: "0", 
+      totalBookings: 0, bookingGrowth: "0",
+      activeTrains: 0, 
+      totalUsers: 0, userGrowth: "0"
+    },
+    charts: { revenue: [], traffic: [] },
+    recentBookings: []
+  };
+
+  const isPositive = (val: string) => !val.startsWith('-');
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -66,25 +71,31 @@ export default function AdminDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">৳ 4,23,500</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">৳ {overview.totalRevenue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
-              <TrendingUp className="h-3 w-3 mr-1 text-emerald-500" />
-              <span className="text-emerald-500 font-medium">+20.1%</span> from last month
+              <TrendingUp className={cn("h-3 w-3 mr-1", isPositive(overview.revenueGrowth) ? "text-emerald-500" : "text-rose-500")} />
+              <span className={cn("font-medium", isPositive(overview.revenueGrowth) ? "text-emerald-500" : "text-rose-500")}>
+                {isPositive(overview.revenueGrowth) ? '+' : ''}{overview.revenueGrowth}%
+              </span> 
+              <span className="ml-1">from last month</span>
             </p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500 delay-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Bookings</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Bookings</CardTitle>
             <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                <Ticket className="h-4 w-4 text-blue-600" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">+2,350</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">{overview.totalBookings.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
-              <TrendingUp className="h-3 w-3 mr-1 text-emerald-500" />
-              <span className="text-emerald-500 font-medium">+18.2%</span> from last month
+              <TrendingUp className={cn("h-3 w-3 mr-1", isPositive(overview.bookingGrowth) ? "text-emerald-500" : "text-rose-500")} />
+              <span className={cn("font-medium", isPositive(overview.bookingGrowth) ? "text-emerald-500" : "text-rose-500")}>
+                 {isPositive(overview.bookingGrowth) ? '+' : ''}{overview.bookingGrowth}%
+              </span>
+              <span className="ml-1">from last month</span>
             </p>
           </CardContent>
         </Card>
@@ -96,24 +107,27 @@ export default function AdminDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">42</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">{overview.activeTrains}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Currently running on schedule
+              Scheduled for today
             </p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-shadow dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-500 delay-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Users</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Users</CardTitle>
             <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
                <Users className="h-4 w-4 text-emerald-600" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">12,234</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">{overview.totalUsers.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
-              <ArrowUpRight className="h-3 w-3 mr-1 text-emerald-500" />
-              <span className="text-emerald-500 font-medium">+543</span> this hour
+              <ArrowUpRight className={cn("h-3 w-3 mr-1", isPositive(overview.userGrowth) ? "text-emerald-500" : "text-rose-500")} />
+              <span className={cn("font-medium", isPositive(overview.userGrowth) ? "text-emerald-500" : "text-rose-500")}>
+                 {isPositive(overview.userGrowth) ? '+' : ''}{overview.userGrowth}%
+              </span>
+              <span className="ml-1">from last month</span>
             </p>
           </CardContent>
         </Card>
@@ -123,12 +137,12 @@ export default function AdminDashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4 shadow-sm dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-700 delay-400">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">Revenue Overview</CardTitle>
+            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">Revenue Overview (Last 7 Days)</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <div className="h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={revenueData}>
+                <BarChart data={charts.revenue}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                   <XAxis
                     dataKey="name"
@@ -160,15 +174,15 @@ export default function AdminDashboardPage() {
         </Card>
         <Card className="col-span-3 shadow-sm dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-700 delay-500">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">Recent Traffic</CardTitle>
+            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">Today's Traffic</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Peak booking hours today
+              Bookings by hour
             </p>
           </CardHeader>
           <CardContent>
             <div className="h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={trafficData}>
+                <LineChart data={charts.traffic}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                    <XAxis
                     dataKey="time"
@@ -201,33 +215,46 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
       
-      {/* Recent Bookings Placeholder */}
+      {/* Recent Bookings */}
       <Card className="dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 animate-in fade-in-50 duration-700 delay-600">
         <CardHeader>
           <CardTitle>Recent Bookings</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-              {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
-                      <div className="flex items-center gap-4">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100">
-                             <Ticket className="h-4 w-4 text-blue-600" />
-                          </div>
-                          <div>
-                              <p className="text-sm font-medium leading-none">Booking #BK-{202500 + i}</p>
-                              <p className="text-xs text-muted-foreground mt-1">Suborno Express • Dhaka to Ctg</p>
-                          </div>
-                      </div>
-                      <div className="text-right">
-                          <p className="text-sm font-medium">৳ 1,250</p>
-                          <p className="text-xs text-green-600 font-medium">Paid</p>
-                      </div>
-                  </div>
-              ))}
+              {recentBookings.length > 0 ? (
+                recentBookings.map((booking) => (
+                    <div key={booking.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100">
+                               <Ticket className="h-4 w-4 text-blue-600" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium leading-none">Booking #{booking.bookingId}</p>
+                                <p className="text-xs text-muted-foreground mt-1">{booking.trainName} • {booking.route}</p>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-sm font-medium">৳ {booking.amount}</p>
+                            <p className={cn("text-xs font-medium", 
+                                booking.status === "CONFIRMED" ? "text-green-600" : 
+                                booking.status === "PENDING" ? "text-amber-600" : "text-red-600"
+                            )}>
+                                {booking.status}
+                            </p>
+                        </div>
+                    </div>
+                ))
+              ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">No recent bookings found.</p>
+              )}
           </div>
         </CardContent>
       </Card>
     </div>
   );
+}
+
+function cn(...classes: (string | undefined | null | false)[]) {
+  return classes.filter(Boolean).join(' ');
 }

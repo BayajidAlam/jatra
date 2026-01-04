@@ -49,6 +49,16 @@ const sidebarItems = [
     icon: Calendar,
   },
   {
+    title: "Coaches",
+    href: "/admin/coaches",
+    icon: Train,
+  },
+  {
+    title: "Seats",
+    href: "/admin/seats",
+    icon: ShoppingCart, // Using ShoppingCart temporarily as icon, ideally distinct from Payments
+  },
+  {
     title: "Bookings",
     href: "/admin/bookings",
     icon: Ticket,

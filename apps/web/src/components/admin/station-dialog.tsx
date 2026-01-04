@@ -20,18 +20,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
+import { useAdminStations } from "@/hooks/use-admin-stations";
+
 const stationSchema = z.object({
   code: z.string().min(2, "Station code must be at least 2 characters"),
   name: z.string().min(3, "Station name is required"),
   city: z.string().min(2, "City is required"),
   district: z.string().min(2, "District is required"),
-  platformCount: z.number().min(1, "At least 1 platform required"),
 });
 
 export type StationFormValues = z.infer<typeof stationSchema>;
 
 interface StationDialogProps {
-  initialData?: StationFormValues;
+  initialData?: any;
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -44,6 +45,7 @@ export function StationDialog({ initialData, trigger, open: controlledOpen, onOp
   
   const { toast } = useToast();
   const isEditing = !!initialData;
+  const { createStation, isCreating } = useAdminStations();
 
   const form = useForm<StationFormValues>({
     resolver: zodResolver(stationSchema),
@@ -52,32 +54,40 @@ export function StationDialog({ initialData, trigger, open: controlledOpen, onOp
       name: "",
       city: "",
       district: "",
-      platformCount: 4,
     },
   });
 
   useEffect(() => {
     if (initialData && open) {
-      form.reset(initialData);
+      form.reset({
+        code: initialData.code,
+        name: initialData.name,
+        city: initialData.city,
+        district: initialData.district,
+      });
     } else if (!isEditing && open) {
       form.reset({
         code: "",
         name: "",
         city: "",
         district: "",
-        platformCount: 4,
       });
     }
   }, [initialData, open, form, isEditing]);
 
-  const onSubmit = (data: StationFormValues) => {
-    console.log(isEditing ? "Updating station:" : "Creating station:", data);
-    toast({
-      title: isEditing ? "Station Updated" : "Station Created",
-      description: `${data.name} has been ${isEditing ? "updated" : "created"} successfully.`,
-    });
-    setOpen(false);
-    if (!isEditing) form.reset();
+  const onSubmit = async (data: StationFormValues) => {
+    try {
+      if (isEditing) {
+        // Update station logic if implemented in hook/backend
+        toast({ title: "Note", description: "Update station not yet implemented in backend" });
+      } else {
+        await createStation(data);
+      }
+      setOpen(false);
+      if (!isEditing) form.reset();
+    } catch (error) {
+      // Error handled by hook
+    }
   };
 
   return (
@@ -146,19 +156,10 @@ export function StationDialog({ initialData, trigger, open: controlledOpen, onOp
               placeholder="Dhaka"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="platformCount" className="text-right">
-              Platforms
-            </Label>
-            <Input
-              id="platformCount"
-              type="number"
-              {...form.register("platformCount", { valueAsNumber: true })}
-              className="col-span-3"
-            />
-          </div>
           <DialogFooter>
-            <Button type="submit">{isEditing ? "Save Changes" : "Save Station"}</Button>
+            <Button type="submit" disabled={isCreating}>
+              {isCreating ? "Saving..." : (isEditing ? "Save Changes" : "Save Station")}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

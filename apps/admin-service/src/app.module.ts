@@ -11,6 +11,7 @@ import { StatsModule } from './stats/stats.module';
 import { CoachesModule } from './coaches/coaches.module';
 import { SeatsModule } from './seats/seats.module';
 import { SettingsModule } from './settings/settings.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -27,8 +28,10 @@ import { SettingsModule } from './settings/settings.module';
     BookingsModule,
     StatsModule,
     CoachesModule,
+    CoachesModule,
     SeatsModule,
     SettingsModule,
+    PaymentsModule,
   ],
 })
 export class AppModule {}

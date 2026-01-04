@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useAdminUsers } from "@/hooks/use-admin-users";
 
 const userSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -33,13 +34,12 @@ const userSchema = z.object({
   phone: z.string().min(11, "Phone number is required"),
   nid: z.string().min(10, "NID must be 10 or 13 digits"),
   role: z.string(),
-  status: z.string(),
 });
 
 export type UserFormValues = z.infer<typeof userSchema>;
 
 interface UserDialogProps {
-  initialData?: UserFormValues;
+  initialData?: any;
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -52,6 +52,7 @@ export function UserDialog({ initialData, trigger, open: controlledOpen, onOpenC
   
   const { toast } = useToast();
   const isEditing = !!initialData;
+  const { updateUser, isUpdating } = useAdminUsers();
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
@@ -61,13 +62,18 @@ export function UserDialog({ initialData, trigger, open: controlledOpen, onOpenC
       phone: "",
       nid: "",
       role: "USER",
-      status: "Active",
     },
   });
 
   useEffect(() => {
     if (initialData && open) {
-      form.reset(initialData);
+      form.reset({
+        name: initialData.name,
+        email: initialData.email,
+        phone: initialData.phone,
+        nid: initialData.nid,
+        role: initialData.role,
+      });
     } else if (!isEditing && open) {
       form.reset({
         name: "",
@@ -75,19 +81,22 @@ export function UserDialog({ initialData, trigger, open: controlledOpen, onOpenC
         phone: "",
         nid: "",
         role: "USER",
-        status: "Active",
       });
     }
   }, [initialData, open, form, isEditing]);
 
-  const onSubmit = (data: UserFormValues) => {
-    console.log(isEditing ? "Updating user:" : "Creating user:", data);
-    toast({
-      title: isEditing ? "User Updated" : "User Created",
-      description: `${data.name} has been ${isEditing ? "updated" : "created"} successfully.`,
-    });
-    setOpen(false);
-    if (!isEditing) form.reset();
+  const onSubmit = async (data: UserFormValues) => {
+    try {
+      if (isEditing) {
+        await updateUser({ id: initialData.id, ...data } as any);
+      } else {
+          // Creating users is typically done via registration or a separate endpoint
+          toast({ title: "Note", description: "Creating new users from admin is currently disabled. Please use registration." });
+      }
+      setOpen(false);
+    } catch (error) {
+      // Error handled by hook
+    }
   };
 
   return (
@@ -119,6 +128,7 @@ export function UserDialog({ initialData, trigger, open: controlledOpen, onOpenC
               {...form.register("name")}
               className="col-span-3"
               placeholder="Full Name"
+              disabled={isEditing} // Usually name is not changed like this
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -131,6 +141,7 @@ export function UserDialog({ initialData, trigger, open: controlledOpen, onOpenC
               {...form.register("email")}
               className="col-span-3"
               placeholder="user@example.com"
+              disabled={isEditing}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -142,6 +153,7 @@ export function UserDialog({ initialData, trigger, open: controlledOpen, onOpenC
               {...form.register("phone")}
               className="col-span-3"
               placeholder="01712xxxxxx"
+              disabled={isEditing}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -153,6 +165,7 @@ export function UserDialog({ initialData, trigger, open: controlledOpen, onOpenC
               {...form.register("nid")}
               className="col-span-3"
               placeholder="10 or 13 digits"
+              disabled={isEditing}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -173,26 +186,10 @@ export function UserDialog({ initialData, trigger, open: controlledOpen, onOpenC
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="status" className="text-right">
-              Status
-            </Label>
-            <Select
-              onValueChange={(val) => form.setValue("status", val)}
-              value={form.watch("status")}
-            >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Inactive">Inactive</SelectItem>
-                <SelectItem value="Suspended">Suspended</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
           <DialogFooter>
-            <Button type="submit">{isEditing ? "Update User" : "Create User"}</Button>
+            <Button type="submit" disabled={isUpdating}>
+              {isUpdating ? "Saving..." : (isEditing ? "Update User" : "Create User")}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
