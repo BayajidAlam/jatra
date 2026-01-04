@@ -21,9 +21,11 @@ import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useAuthStore } from "@/stores/auth-store";
 import { Settings, LogOut, User, LayoutDashboard } from "lucide-react";
+import { useNotifications } from "@/hooks/use-notifications";
 
 export default function Header() {
   const { user, isAuthenticated, logout, isLoading } = useAuthStore();
+  const { notifications, unreadCount, markAsRead } = useNotifications();
   
   // Prevent hydration mismatch/flicker by valid check or mounting check
   // But strictly for functionality:
@@ -86,7 +88,11 @@ export default function Header() {
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
                   <Bell className="h-5 w-5" />
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full box-content border-2 border-background" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-bold border-2 border-background">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-0" align="end">
@@ -97,35 +103,25 @@ export default function Header() {
                   </Link>
                 </div>
                 <div className="max-h-[300px] overflow-y-auto">
-                    {
-                      [
-                        {
-                          title: "Booking Confirmed",
-                          desc: "Your booking for Suborno Express is confirmed.",
-                          time: "2h ago",
-                          unread: true
-                        },
-                        {
-                          title: "Payment Successful",
-                          desc: "Payment of BDT 1950 received.",
-                          time: "2h ago",
-                          unread: true
-                        },
-                        {
-                          title: "Train Update",
-                          desc: "Suborno Express (701) departing Platform 3.",
-                          time: "5h ago",
-                          unread: false
-                        }
-                      ].map((item, i) => (
-                        <div key={i} className={cn("p-4 border-b last:border-0 hover:bg-muted/50 transition-colors cursor-pointer", item.unread && "bg-muted/20")}>
-                          <div className="flex justify-between items-start mb-1">
-                            <p className="font-medium text-sm">{item.title}</p>
-                            <span className="text-[10px] text-muted-foreground">{item.time}</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground line-clamp-2">{item.desc}</p>
+                    {notifications.length === 0 ? (
+                        <div className="p-8 text-center text-sm text-muted-foreground">
+                            No notifications
                         </div>
-                      ))}
+                    ) : (
+                        notifications.slice(0, 5).map((item) => (
+                        <div 
+                            key={item.id} 
+                            onClick={() => !item.isRead && markAsRead(item.id)}
+                            className={cn("p-4 border-b last:border-0 hover:bg-muted/50 transition-colors cursor-pointer", !item.isRead && "bg-muted/20")}
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <p className="font-medium text-sm truncate pr-2">{item.subject}</p>
+                            <span className="text-[10px] text-muted-foreground whitespace-nowrap">{new Date(item.createdAt).toLocaleDateString()}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-2">{item.content}</p>
+                        </div>
+                      ))
+                    )}
                 </div>
                 <div className="p-2 border-t bg-muted/20">
                   <Link href="/notifications">

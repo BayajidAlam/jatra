@@ -13,7 +13,7 @@ import { CreateBookingDto } from "./dto/create-booking.dto";
 import { ConfirmBookingDto } from "./dto/confirm-booking.dto";
 import { CancelBookingDto } from "./dto/cancel-booking.dto";
 import { QueryBookingsDto } from "./dto/query-bookings.dto";
-import { PaymentFailedEvent } from "@jatra/common/interfaces";
+import { PaymentFailedEvent, TrainUpdateEvent } from "@jatra/common/interfaces";
 
 @Injectable()
 export class BookingsService implements OnModuleInit {
@@ -33,6 +33,11 @@ export class BookingsService implements OnModuleInit {
     // Subscribe to payment failure events when module initializes
     await this.rabbitMQ.subscribeToPaymentFailures(
       this.handlePaymentFailed.bind(this)
+    );
+    
+    // Subscribe to train update events (Delays, Cancellations)
+    await this.rabbitMQ.subscribeToTrainUpdates(
+      this.handleTrainUpdate.bind(this)
     );
   }
 
@@ -581,6 +586,75 @@ export class BookingsService implements OnModuleInit {
         error.stack
       );
       throw error;
+    }
+  }
+
+  /**
+   * Handle train update events (Delay, Cancellation)
+   * Finds all passengers of the affected journey and notifies them.
+   */
+  private async handleTrainUpdate(event: TrainUpdateEvent) {
+    this.logger.log(`📢 Handling train update: ${event.data.updateType} for train ${event.data.trainNumber}`);
+
+    try {
+      const { journeyId, trainNumber, trainName, updateType, delayMinutes, reason, newDepartureTime } = event.data;
+
+      if (!journeyId) {
+        this.logger.warn("Skipping train update notification: No journeyId provided");
+        return;
+      }
+
+      // Find all CONFIRMED bookings for this journey
+      const bookings = await this.prisma.booking.findMany({
+        where: {
+          journeyId: journeyId,
+          status: "CONFIRMED",
+        },
+        include: {
+          user: true, // Need email
+        },
+      });
+
+      if (bookings.length === 0) {
+        this.logger.log(`No confirmed bookings found for journey ${journeyId}, skipping notifications.`);
+        return;
+      }
+
+      this.logger.log(`Found ${bookings.length} passengers to notify.`);
+
+      // Send notification to each passenger
+      for (const booking of bookings) {
+        let subject = "";
+        let content = "";
+
+        if (updateType === 'DELAY') {
+            subject = `Train Delayed - ${trainName} (${trainNumber})`;
+            content = `We regret to inform you that your train ${trainName} (${trainNumber}) has been delayed by approximately ${delayMinutes} minutes.\n` +
+                      `New Departure Time: ${new Date(newDepartureTime).toLocaleString()}\n` +
+                      `Reason: ${reason}\n\n` +
+                      `We are sorry for the inconvenience.`;
+        } else if (updateType === 'CANCEL') {
+            subject = `Train Cancelled - ${trainName}`;
+            content = `Your train ${trainName} (${trainNumber}) has been CANCELLED.\nReason: ${reason}.\nA full refund will be processed shortly.`;
+        }
+
+        if (subject) {
+            await this.rabbitMQ.publishSendEmail({
+                userId: booking.userId,
+                to: booking.user.email,
+                subject: subject,
+                template: 'booking_confirmation', // HACK
+                context: {
+                    trainName,
+                    trainNumber,
+                    message: content,
+                }
+            });
+            this.logger.log(`Queued notification for user ${booking.userId} (${booking.user.email})`);
+        }
+      }
+    } catch (error) {
+       this.logger.error("Failed to handle train update", error);
     }
   }
 }

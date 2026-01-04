@@ -25,3 +25,136 @@
 [32m[Nest] 34234  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +41ms[39m
 📧 Notification Service is running on: http://localhost:3007
 📚 Swagger docs available at: http://localhost:3007/api/docs
+[INFO] 03:42:37 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/libs/common/interfaces/src/lib/events.interface.ts has been modified
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[SmsService] [39m[32m📱 Initializing SMS provider: MOCK[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[MockSmsProvider] [39m[32m✅ Mock SMS provider initialized (no actual SMS sent)[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[EmailService] [39m[32m📧 Initializing email provider: MOCK[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[MockEmailProvider] [39m[32m✅ Mock email provider initialized (no actual emails sent)[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSmsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/notifications}:[39m[38;5;3m +20ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id/resend, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RabbitMQConsumerService] [39m[32m✅ Connected to RabbitMQ and listening on queue: notification.events[39m
+[32m[Nest] 332485  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +38ms[39m
+📧 Notification Service is running on: http://localhost:3007
+📚 Swagger docs available at: http://localhost:3007/api/docs
+[INFO] 03:44:20 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/libs/common/interfaces/src/lib/events.interface.ts has been modified
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +17ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[SmsService] [39m[32m📱 Initializing SMS provider: MOCK[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[MockSmsProvider] [39m[32m✅ Mock SMS provider initialized (no actual SMS sent)[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[EmailService] [39m[32m📧 Initializing email provider: MOCK[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[MockEmailProvider] [39m[32m✅ Mock email provider initialized (no actual emails sent)[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSmsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/notifications}:[39m[38;5;3m +25ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id/resend, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RabbitMQConsumerService] [39m[32m✅ Connected to RabbitMQ and listening on queue: notification.events[39m
+[32m[Nest] 334600  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +41ms[39m
+📧 Notification Service is running on: http://localhost:3007
+📚 Swagger docs available at: http://localhost:3007/api/docs
+[INFO] 03:46:11 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/apps/notification-service/src/common/rabbitmq-consumer.service.ts has been modified
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +23ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[SmsService] [39m[32m📱 Initializing SMS provider: MOCK[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[MockSmsProvider] [39m[32m✅ Mock SMS provider initialized (no actual SMS sent)[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[EmailService] [39m[32m📧 Initializing email provider: MOCK[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[MockEmailProvider] [39m[32m✅ Mock email provider initialized (no actual emails sent)[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSmsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/notifications}:[39m[38;5;3m +31ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications, POST} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id/resend, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[RabbitMQConsumerService] [39m[32m✅ Connected to RabbitMQ and listening on queue: notification.events[39m
+[32m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +54ms[39m
+[31m[Nest] 337053  - [39m01/05/2026, 3:46:12 AM [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3007[39m[38;5;3m +3ms[39m
+Error: listen EADDRINUSE: address already in use :::3007
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at Server.listen (node:net:2067:7)
+    at ExpressAdapter.listen (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+platform-express@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-v_54be18514676384dd42473397a598f64/node_modules/@nestjs/platform-express/adapters/express-adapter.js:95:32)
+    at /home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/nest-application.js:173:16)
+    at bootstrap (/home/bayajidswe/My-files/my-projects/jatra-railway/apps/notification-service/src/main.ts:34:3)
+[ERROR] 03:46:12 Error: listen EADDRINUSE: address already in use :::3007
+[INFO] 03:46:13 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/apps/notification-service/src/common/rabbitmq-consumer.service.ts has been modified
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +11ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[SmsService] [39m[32m📱 Initializing SMS provider: MOCK[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[MockSmsProvider] [39m[32m✅ Mock SMS provider initialized (no actual SMS sent)[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[EmailService] [39m[32m📧 Initializing email provider: MOCK[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[MockEmailProvider] [39m[32m✅ Mock email provider initialized (no actual emails sent)[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSmsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/notifications}:[39m[38;5;3m +11ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId/stats, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id/resend, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[RabbitMQConsumerService] [39m[32m✅ Connected to RabbitMQ and listening on queue: notification.events[39m
+[32m[Nest] 337139  - [39m01/05/2026, 3:46:14 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +47ms[39m
+📧 Notification Service is running on: http://localhost:3007
+📚 Swagger docs available at: http://localhost:3007/api/docs
+[INFO] 03:46:22 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/libs/common/interfaces/src/lib/events.interface.ts has been modified
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +49ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[SmsService] [39m[32m📱 Initializing SMS provider: MOCK[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[MockSmsProvider] [39m[32m✅ Mock SMS provider initialized (no actual SMS sent)[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[EmailService] [39m[32m📧 Initializing email provider: MOCK[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[MockEmailProvider] [39m[32m✅ Mock email provider initialized (no actual emails sent)[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSmsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/notifications}:[39m[38;5;3m +50ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id/resend, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RabbitMQConsumerService] [39m[32m✅ Connected to RabbitMQ and listening on queue: notification.events[39m
+[32m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +41ms[39m
+[31m[Nest] 337369  - [39m01/05/2026, 3:46:24 AM [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3007[39m[38;5;3m +1ms[39m
+Error: listen EADDRINUSE: address already in use :::3007
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at Server.listen (node:net:2067:7)
+    at ExpressAdapter.listen (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+platform-express@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-v_54be18514676384dd42473397a598f64/node_modules/@nestjs/platform-express/adapters/express-adapter.js:95:32)
+    at /home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/nest-application.js:173:16)
+    at bootstrap (/home/bayajidswe/My-files/my-projects/jatra-railway/apps/notification-service/src/main.ts:34:3)
+[ERROR] 03:46:24 Error: listen EADDRINUSE: address already in use :::3007

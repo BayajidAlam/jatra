@@ -13,6 +13,8 @@ import {
   BookingConfirmedEvent,
   BookingCancelledEvent,
   PaymentFailedEvent,
+  SendEmailEvent,
+  TrainUpdateEvent,
 } from "@jatra/common/interfaces";
 
 @Injectable()
@@ -184,9 +186,53 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Generic consume method for subscribing to a queue
-   */
+  async publishSendEmail(data: SendEmailEvent["data"]): Promise<void> {
+    const event: SendEmailEvent = {
+      eventId: this.generateEventId(),
+      eventType: EventRoutingKeys.SEND_EMAIL,
+      timestamp: new Date(),
+      source: "booking-service",
+      data,
+    };
+
+    await this.publishEvent(event, Exchanges.NOTIFICATION);
+  }
+
+  async subscribeToTrainUpdates(
+    callback: (event: TrainUpdateEvent) => Promise<void>
+  ): Promise<void> {
+    if (!this.channel) {
+      this.logger.warn("RabbitMQ channel not available");
+      return;
+    }
+
+    const queue = "booking-service.train-updates";
+    await this.channel.assertQueue(queue, { durable: true });
+    
+    // Bind queue to exchange
+    await this.channel.bindQueue(queue, Exchanges.TRAIN, EventRoutingKeys.TRAIN_UPDATED);
+
+    await this.channel.consume(queue, async (msg) => {
+      if (!msg) return;
+
+      try {
+        const event = JSON.parse(msg.content.toString()) as TrainUpdateEvent;
+        this.logger.log(`📥 Received train.updated event: ${event.eventId}`);
+
+        await callback(event);
+
+        this.channel.ack(msg);
+        this.logger.log(`✅ Processed train.updated event: ${event.eventId}`);
+      } catch (error) {
+        this.logger.error("Failed to process train.updated event", error);
+        this.channel.nack(msg, false, true); // Requeue
+      }
+    });
+
+    this.logger.log("👂 Subscribed to train update events");
+  }
+
+  // Generic consume was here...
   async consume<T>(
     queue: string,
     callback: (message: T) => Promise<void>

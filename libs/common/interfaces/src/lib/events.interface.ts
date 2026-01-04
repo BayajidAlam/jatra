@@ -175,6 +175,7 @@ export interface ReservationConfirmedEvent extends BaseEvent {
 export interface SendEmailEvent extends BaseEvent {
   eventType: 'notification.send_email';
   data: {
+    userId?: string;
     to: string;
     subject: string;
     template: 'booking_confirmation' | 'payment_success' | 'ticket_generated' | 'booking_cancelled' | 'payment_failed';
@@ -189,6 +190,21 @@ export interface SendSMSEvent extends BaseEvent {
     message: string;
     template?: 'booking_confirmation' | 'ticket_generated';
     context?: Record<string, any>;
+  };
+}
+
+// Schedule/Train Events
+export interface TrainUpdateEvent extends BaseEvent {
+  eventType: 'train.updated';
+  data: {
+    journeyId?: string; // Optional because train cancellation might affect multiple journeys? No, usually specific.
+    trainId: string;
+    trainName: string;
+    trainNumber: string;
+    updateType: 'DELAY' | 'CANCEL' | 'RESCHEDULE';
+    delayMinutes?: number;
+    newDepartureTime?: Date;
+    reason?: string;
   };
 }
 
@@ -208,7 +224,8 @@ export type DomainEvent =
   | SeatsReleasedEvent
   | ReservationConfirmedEvent
   | SendEmailEvent
-  | SendSMSEvent;
+  | SendSMSEvent
+  | TrainUpdateEvent;
 
 // Event routing keys for RabbitMQ
 export const EventRoutingKeys = {
@@ -227,6 +244,7 @@ export const EventRoutingKeys = {
   RESERVATION_CONFIRMED: 'reservation.confirmed',
   SEND_EMAIL: 'notification.send_email',
   SEND_SMS: 'notification.send_sms',
+  TRAIN_UPDATED: 'train.updated',
 } as const;
 
 // Exchange names
@@ -236,6 +254,7 @@ export const Exchanges = {
   TICKET: 'ticket.exchange',
   RESERVATION: 'reservation.exchange',
   NOTIFICATION: 'notification.exchange',
+  TRAIN: 'train.exchange',
 } as const;
 
 // Queue names
@@ -246,4 +265,5 @@ export const Queues = {
   RESERVATION_EVENTS: 'reservation.events',
   NOTIFICATION_EMAIL: 'notification.email',
   NOTIFICATION_SMS: 'notification.sms',
+  TRAIN_EVENTS: 'train.events',
 } as const;

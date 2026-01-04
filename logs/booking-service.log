@@ -23,3 +23,225 @@
 [32m[Nest] 34278  - [39m01/04/2026, 9:05:50 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +113ms[39m
 🎟️  Booking Service is running on: http://localhost:3005
 📚 Swagger docs available at: http://localhost:3005/api/docs
+[INFO] 03:42:37 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/libs/common/interfaces/src/lib/events.interface.ts has been modified
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +11ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +22ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +6ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+[32m[Nest] 332492  - [39m01/05/2026, 3:42:38 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +85ms[39m
+🎟️  Booking Service is running on: http://localhost:3005
+📚 Swagger docs available at: http://localhost:3005/api/docs
+[INFO] 03:44:04 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/common/rabbitmq.service.ts has been modified
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +12ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +27ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+[32m[Nest] 334212  - [39m01/05/2026, 3:44:05 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +88ms[39m
+🎟️  Booking Service is running on: http://localhost:3005
+📚 Swagger docs available at: http://localhost:3005/api/docs
+[INFO] 03:44:06 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/common/rabbitmq.service.ts has been modified
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +9ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +17ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:06 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+[32m[Nest] 334331  - [39m01/05/2026, 3:44:07 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +81ms[39m
+🎟️  Booking Service is running on: http://localhost:3005
+📚 Swagger docs available at: http://localhost:3005/api/docs
+[INFO] 03:44:20 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/libs/common/interfaces/src/lib/events.interface.ts has been modified
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +18ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +47ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+[32m[Nest] 334581  - [39m01/05/2026, 3:44:22 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +101ms[39m
+🎟️  Booking Service is running on: http://localhost:3005
+📚 Swagger docs available at: http://localhost:3005/api/docs
+[INFO] 03:44:45 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/bookings/bookings.service.ts has been modified
+Compilation error in /home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/bookings/bookings.service.ts
+[ERROR] 03:44:45 ⨯ Unable to compile TypeScript:
+src/bookings/bookings.service.ts(20,3): error TS1434: Unexpected keyword or identifier.
+src/bookings/bookings.service.ts(20,24): error TS1005: ';' expected.
+src/bookings/bookings.service.ts(35,3): error TS1434: Unexpected keyword or identifier.
+src/bookings/bookings.service.ts(35,26): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(35,46): error TS1005: ';' expected.
+src/bookings/bookings.service.ts(147,3): error TS1434: Unexpected keyword or identifier.
+src/bookings/bookings.service.ts(147,33): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(147,46): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(147,67): error TS1005: ';' expected.
+src/bookings/bookings.service.ts(259,3): error TS1434: Unexpected keyword or identifier.
+src/bookings/bookings.service.ts(259,29): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(259,39): error TS1005: ';' expected.
+src/bookings/bookings.service.ts(313,3): error TS1434: Unexpected keyword or identifier.
+src/bookings/bookings.service.ts(313,31): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(313,46): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(313,66): error TS1005: ';' expected.
+src/bookings/bookings.service.ts(377,3): error TS1434: Unexpected keyword or identifier.
+src/bookings/bookings.service.ts(377,32): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(377,45): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(377,65): error TS1005: ';' expected.
+src/bookings/bookings.service.ts(475,3): error TS1434: Unexpected keyword or identifier.
+src/bookings/bookings.service.ts(475,35): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(475,45): error TS1005: ';' expected.
+src/bookings/bookings.service.ts(507,3): error TS1128: Declaration or statement expected.
+src/bookings/bookings.service.ts(507,11): error TS1434: Unexpected keyword or identifier.
+src/bookings/bookings.service.ts(507,42): error TS1005: ',' expected.
+src/bookings/bookings.service.ts(507,64): error TS1005: ';' expected.
+src/bookings/bookings.service.ts(579,1): error TS1128: Declaration or statement expected.
+
+[INFO] 03:45:17 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/bookings/bookings.service.ts has been modified
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +18ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 336084  - [39m01/05/2026, 3:45:18 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+TypeError: Cannot read properties of undefined (reading 'bind')
+    at BookingsService.onModuleInit (/home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/bookings/bookings.service.ts:40:30)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Promise.all (index 0)
+    at callModuleInitHook (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/hooks/on-module-init.hook.js:43:5)
+    at NestApplication.callInitHook (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/nest-application-context.js:234:13)
+    at NestApplication.init (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/nest-application.js:100:9)
+    at NestApplication.listen (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/nest-application.js:170:13)
+    at bootstrap (/home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/main.ts:38:3)
+[ERROR] 03:45:18 TypeError: Cannot read properties of undefined (reading 'bind')
+[INFO] 03:45:37 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/bookings/bookings.service.ts has been modified
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +29ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 336337  - [39m01/05/2026, 3:45:38 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+Error: Channel closed by server: 404 (NOT-FOUND) with message "NOT_FOUND - no exchange 'train.exchange' in vhost 'jatra'"
+    at Channel.accept (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/amqplib@0.10.4/node_modules/amqplib/lib/channel.js:320:19)
+    at Connection.mainAccept [as accept] (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/amqplib@0.10.4/node_modules/amqplib/lib/connection.js:582:33)
+    at Socket.go (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/amqplib@0.10.4/node_modules/amqplib/lib/connection.js:434:16)
+    at Socket.emit (node:events:524:28)
+    at emitReadable_ (node:internal/streams/readable:834:12)
+    at processTicksAndRejections (node:internal/process/task_queues:81:21)
+[ERROR] 03:45:38 Error: Channel closed by server: 404 (NOT-FOUND) with message "NOT_FOUND - no exchange 'train.exchange' in vhost 'jatra'"
+[INFO] 03:46:22 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/libs/common/interfaces/src/lib/events.interface.ts has been modified
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +28ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +47ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 337344  - [39m01/05/2026, 3:46:24 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+Error: Channel closed by server: 404 (NOT-FOUND) with message "NOT_FOUND - no exchange 'train.exchange' in vhost 'jatra'"
+    at Channel.accept (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/amqplib@0.10.4/node_modules/amqplib/lib/channel.js:320:19)
+    at Connection.mainAccept [as accept] (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/amqplib@0.10.4/node_modules/amqplib/lib/connection.js:582:33)
+    at Socket.go (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/amqplib@0.10.4/node_modules/amqplib/lib/connection.js:434:16)
+    at Socket.emit (node:events:524:28)
+    at emitReadable_ (node:internal/streams/readable:834:12)
+    at processTicksAndRejections (node:internal/process/task_queues:81:21)
+[ERROR] 03:46:24 Error: Channel closed by server: 404 (NOT-FOUND) with message "NOT_FOUND - no exchange 'train.exchange' in vhost 'jatra'"
+[INFO] 03:46:24 Restarting: /home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/bookings/bookings.service.ts has been modified
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +11ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +14ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 337604  - [39m01/05/2026, 3:46:25 AM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+Error: Channel closed by server: 404 (NOT-FOUND) with message "NOT_FOUND - no exchange 'train.exchange' in vhost 'jatra'"
+    at Channel.accept (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/amqplib@0.10.4/node_modules/amqplib/lib/channel.js:320:19)
+    at Connection.mainAccept [as accept] (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/amqplib@0.10.4/node_modules/amqplib/lib/connection.js:582:33)
+    at Socket.go (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/amqplib@0.10.4/node_modules/amqplib/lib/connection.js:434:16)
+    at Socket.emit (node:events:524:28)
+    at emitReadable_ (node:internal/streams/readable:834:12)
+    at processTicksAndRejections (node:internal/process/task_queues:81:21)
+[ERROR] 03:46:25 Error: Channel closed by server: 404 (NOT-FOUND) with message "NOT_FOUND - no exchange 'train.exchange' in vhost 'jatra'"

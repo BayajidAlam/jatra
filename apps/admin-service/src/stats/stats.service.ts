@@ -23,12 +23,16 @@ export class StatsService {
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
 
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
     const [
       totalUsers,
       totalTrains,
       totalBookings,
       revenueStats,
       activeTrains,
+      activeTrainsYesterday,
       recentBookings,
       dailyRevenue,
       hourlyTraffic,
@@ -51,6 +55,12 @@ export class StatsService {
         where: {
           journeyDate: { equals: today },
           status: 'SCHEDULED'
+        }
+      }),
+      this.prisma.journey.count({
+        where: {
+          journeyDate: { equals: yesterday }, 
+          status: 'SCHEDULED' // or just count any active journey that happened yesterday? using same logic as today for consistency
         }
       }),
       this.prisma.booking.findMany({
@@ -94,6 +104,7 @@ export class StatsService {
     const revenueGrowth = calculateGrowth(currentMonthRevenue._sum.totalAmount || 0, previousMonthRevenue._sum.totalAmount || 0);
     const bookingGrowth = calculateGrowth(currentMonthBookings, previousMonthBookings);
     const userGrowth = calculateGrowth(currentMonthUsers, previousMonthUsers);
+    const activeTrainsGrowth = calculateGrowth(activeTrains, activeTrainsYesterday);
 
     const data = {
       overview: {
@@ -102,6 +113,7 @@ export class StatsService {
         totalBookings,
         bookingGrowth: bookingGrowth.toFixed(1),
         activeTrains,
+        activeTrainsGrowth: activeTrainsGrowth.toFixed(1),
         totalUsers,
         userGrowth: userGrowth.toFixed(1),
       },
