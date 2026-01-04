@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, Train, Clock, Edit2, Trash2, Filter } from "lucide-react";
+import { Search, Clock, Edit2, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -13,14 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuSeparator,
-    DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
 import {
     Pagination,
     PaginationContent,
@@ -31,43 +23,32 @@ import {
 } from "@/components/ui/pagination";
 import { ScheduleDialog } from "@/components/admin/schedule-dialog";
 import { DeleteConfirmDialog } from "@/components/admin/delete-confirm-dialog";
-import { useToast } from "@/hooks/use-toast";
-
-// Mock Data
-const initialSchedules = [
-  { id: 1, trainName: "Suborno Express", trainNumber: "701", route: "Dhaka - Chattogram", departureTime: "07:00", arrivalTime: "12:30", frequency: "Daily", status: "On Time" },
-  { id: 2, trainName: "Mohanagar Provati", trainNumber: "703", route: "Dhaka - Chattogram", departureTime: "07:45", arrivalTime: "13:40", frequency: "Daily", status: "Delayed" },
-  { id: 3, trainName: "Parabat Express", trainNumber: "709", route: "Dhaka - Sylhet", departureTime: "06:20", arrivalTime: "13:00", frequency: "Weekly", status: "On Time" },
-  { id: 4, trainName: "Turna Express", trainNumber: "705", route: "Dhaka - Chattogram", departureTime: "23:00", arrivalTime: "05:15", frequency: "Daily", status: "On Time" },
-  { id: 5, trainName: "Sonar Bangla", trainNumber: "788", route: "Dhaka - Chattogram", departureTime: "17:00", arrivalTime: "22:15", frequency: "Weekend", status: "On Time" },
-  { id: 6, trainName: "Kalni Express", trainNumber: "773", route: "Dhaka - Sylhet", departureTime: "15:00", arrivalTime: "21:30", frequency: "Daily", status: "Cancelled" },
-];
+import { useAdminSchedules } from "@/hooks/use-admin-schedules";
 
 export default function SchedulesPage() {
-  const [schedules, setSchedules] = useState(initialSchedules);
   const [searchTerm, setSearchTerm] = useState("");
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-  const { toast } = useToast();
+  const itemsPerPage = 10;
 
-  const filteredSchedules = schedules.filter((schedule) =>
-    schedule.trainName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    schedule.route.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const {
+    schedules,
+    pagination,
+    isLoading,
+    deleteSchedule,
+    isDeleting,
+  } = useAdminSchedules({
+    page: currentPage,
+    limit: itemsPerPage,
+  });
 
-  const totalPages = Math.ceil(filteredSchedules.length / itemsPerPage);
+  const totalItems = pagination?.total || 0;
+  const totalPages = pagination?.totalPages || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedSchedules = filteredSchedules.slice(startIndex, startIndex + itemsPerPage);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      setSchedules(schedules.filter(s => s.id !== deleteId));
-      toast({
-        title: "Schedule Deleted",
-        description: "The schedule has been removed from the system.",
-        variant: "destructive",
-      });
+      await deleteSchedule(deleteId);
       setDeleteId(null);
     }
   };
@@ -97,21 +78,6 @@ export default function SchedulesPage() {
                 }}
               />
             </div>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
-                        <Filter className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setSearchTerm("")}>All Schedules</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSearchTerm("On Time")}>On Time Only</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSearchTerm("Delayed")}>Delayed</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSearchTerm("Cancelled")}>Cancelled</DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </CardHeader>
         <CardContent>
@@ -120,35 +86,43 @@ export default function SchedulesPage() {
               <TableRow>
                 <TableHead>Train</TableHead>
                 <TableHead>Route</TableHead>
+                <TableHead>Date</TableHead>
                 <TableHead>Time</TableHead>
-                <TableHead>Frequency</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedSchedules.map((schedule) => (
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    Loading schedules...
+                  </TableCell>
+                </TableRow>
+              ) : schedules.map((schedule) => (
                 <TableRow key={schedule.id}>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="font-medium text-slate-900 dark:text-slate-100">{schedule.trainName}</span>
-                      <span className="text-xs text-slate-500">#{schedule.trainNumber}</span>
+                      <span className="font-medium text-slate-900 dark:text-slate-100">{schedule.train.modelName}</span>
+                      <span className="text-xs text-slate-500">#{schedule.train.trainNumber}</span>
                     </div>
                   </TableCell>
-                  <TableCell>{schedule.route}</TableCell>
+                  <TableCell>{schedule.route.routeName}</TableCell>
+                  <TableCell>
+                    {new Date(schedule.journeyDate).toLocaleDateString()}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2 text-sm">
                       <Clock className="h-3 w-3 text-muted-foreground" />
-                      {schedule.departureTime} - {schedule.arrivalTime}
+                      {new Date(schedule.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(schedule.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </TableCell>
-                  <TableCell>{schedule.frequency}</TableCell>
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        schedule.status === "On Time"
+                        schedule.status === "ACTIVE"
                           ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                          : schedule.status === "Delayed"
+                          : schedule.status === "DELAYED"
                           ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
                           : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
                       }`}
@@ -178,7 +152,7 @@ export default function SchedulesPage() {
                   </TableCell>
                 </TableRow>
               ))}
-              {paginatedSchedules.length === 0 && (
+              {!isLoading && schedules.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                     No schedules found.
@@ -191,7 +165,7 @@ export default function SchedulesPage() {
         {totalPages > 1 && (
             <CardFooter className="flex items-center justify-between border-t dark:border-slate-800 py-4">
                 <div className="text-sm text-muted-foreground">
-                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredSchedules.length)} of {filteredSchedules.length} schedules
+                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalItems)} of {totalItems} schedules
                 </div>
                 <Pagination className="mx-0 w-auto">
                     <PaginationContent>
@@ -228,7 +202,8 @@ export default function SchedulesPage() {
         open={deleteId !== null}
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
-        itemName={`Schedule for ${schedules.find(s => s.id === deleteId)?.trainName}`}
+        isLoading={isDeleting}
+        itemName={`Schedule for ${schedules.find(s => s.id === deleteId)?.train.modelName}`}
       />
     </div>
   );

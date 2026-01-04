@@ -26,21 +26,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useAdminSchedules } from "@/hooks/use-admin-schedules";
+import { useAdminTrains } from "@/hooks/use-admin-trains";
+import { useAdminRoutes } from "@/hooks/use-admin-routes";
 
 const scheduleSchema = z.object({
-  trainName: z.string().min(2, "Train name is required"),
-  trainNumber: z.string().min(3, "Train number is required"),
-  route: z.string().min(3, "Route is required"),
+  trainId: z.string().min(1, "Train is required"),
+  routeId: z.string().min(1, "Route is required"),
   departureTime: z.string().min(1, "Departure time is required"),
   arrivalTime: z.string().min(1, "Arrival time is required"),
-  frequency: z.string(),
+  journeyDate: z.string().min(1, "Journey date is required"),
   status: z.string(),
 });
 
 export type ScheduleFormValues = z.infer<typeof scheduleSchema>;
 
 interface ScheduleDialogProps {
-  initialData?: ScheduleFormValues;
+  initialData?: any;
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -53,44 +55,67 @@ export function ScheduleDialog({ initialData, trigger, open: controlledOpen, onO
   
   const { toast } = useToast();
   const isEditing = !!initialData;
+  const { createSchedule, isCreating } = useAdminSchedules();
+  const { trains, isLoading: isLoadingTrains } = useAdminTrains({ limit: 100 });
+  const { routes, isLoading: isLoadingRoutes } = useAdminRoutes();
 
   const form = useForm<ScheduleFormValues>({
     resolver: zodResolver(scheduleSchema),
     defaultValues: {
-      trainName: "",
-      trainNumber: "",
-      route: "",
+      trainId: "",
+      routeId: "",
       departureTime: "",
       arrivalTime: "",
-      frequency: "Daily",
-      status: "On Time",
+      journeyDate: new Date().toISOString().split('T')[0],
+      status: "SCHEDULED",
     },
   });
 
   useEffect(() => {
     if (initialData && open) {
-      form.reset(initialData);
+      form.reset({
+        trainId: initialData.train.id,
+        routeId: initialData.route.id,
+        departureTime: new Date(initialData.departureTime).toTimeString().slice(0, 5),
+        arrivalTime: new Date(initialData.arrivalTime).toTimeString().slice(0, 5),
+        journeyDate: new Date(initialData.journeyDate).toISOString().split('T')[0],
+        status: initialData.status,
+      });
     } else if (!isEditing && open) {
       form.reset({
-        trainName: "",
-        trainNumber: "",
-        route: "",
+        trainId: "",
+        routeId: "",
         departureTime: "",
         arrivalTime: "",
-        frequency: "Daily",
-        status: "On Time",
+        journeyDate: new Date().toISOString().split('T')[0],
+        status: "SCHEDULED",
       });
     }
   }, [initialData, open, form, isEditing]);
 
-  const onSubmit = (data: ScheduleFormValues) => {
-    console.log(isEditing ? "Updating schedule:" : "Creating schedule:", data);
-    toast({
-      title: isEditing ? "Schedule Updated" : "Schedule Created",
-      description: `Schedule for ${data.trainName} has been ${isEditing ? "updated" : "created"} successfully.`,
-    });
-    setOpen(false);
-    if (!isEditing) form.reset();
+  const onSubmit = async (data: ScheduleFormValues) => {
+    try {
+      // Convert time to ISO string for the specific date
+      const dep = new Date(`${data.journeyDate}T${data.departureTime}:00`);
+      const arr = new Date(`${data.journeyDate}T${data.arrivalTime}:00`);
+      
+      const payload = {
+          ...data,
+          departureTime: dep.toISOString(),
+          arrivalTime: arr.toISOString(),
+          journeyDate: new Date(data.journeyDate).toISOString(),
+      };
+
+      if (isEditing) {
+        toast({ title: "Note", description: "Update journey not yet implemented in backend" });
+      } else {
+        await createSchedule(payload);
+      }
+      setOpen(false);
+      if (!isEditing) form.reset();
+    } catch (error) {
+      // Error handled by hook
+    }
   };
 
   return (
@@ -113,19 +138,47 @@ export function ScheduleDialog({ initialData, trigger, open: controlledOpen, onO
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="trainName">Train Name</Label>
-              <Input id="trainName" {...form.register("trainName")} placeholder="Suborno Express" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="trainNumber">Number</Label>
-              <Input id="trainNumber" {...form.register("trainNumber")} placeholder="701" />
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="trainId">Train</Label>
+            <Select
+              onValueChange={(val) => form.setValue("trainId", val)}
+              value={form.watch("trainId")}
+              disabled={isLoadingTrains}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={isLoadingTrains ? "Loading trains..." : "Select Train"} />
+              </SelectTrigger>
+              <SelectContent>
+                {trains.map((train) => (
+                    <SelectItem key={train.id} value={train.id}>
+                        {train.modelName} (#{train.trainNumber})
+                    </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="route">Route</Label>
-            <Input id="route" {...form.register("route")} placeholder="Dhaka - Chattogram" />
+            <Label htmlFor="routeId">Route</Label>
+            <Select
+              onValueChange={(val) => form.setValue("routeId", val)}
+              value={form.watch("routeId")}
+              disabled={isLoadingRoutes}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={isLoadingRoutes ? "Loading routes..." : "Select Route"} />
+              </SelectTrigger>
+              <SelectContent>
+                {routes.map((route) => (
+                    <SelectItem key={route.id} value={route.id}>
+                        {route.routeName}
+                    </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+              <Label htmlFor="journeyDate">Journey Date</Label>
+              <Input id="journeyDate" {...form.register("journeyDate")} type="date" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
@@ -137,42 +190,28 @@ export function ScheduleDialog({ initialData, trigger, open: controlledOpen, onO
               <Input id="arrivalTime" {...form.register("arrivalTime")} type="time" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="frequency">Frequency</Label>
-              <Select
-                onValueChange={(val) => form.setValue("frequency", val)}
-                value={form.watch("frequency")}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Daily">Daily</SelectItem>
-                  <SelectItem value="Weekly">Weekly</SelectItem>
-                  <SelectItem value="Weekend">Weekend</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                onValueChange={(val) => form.setValue("status", val)}
-                value={form.watch("status")}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="On Time">On Time</SelectItem>
-                  <SelectItem value="Delayed">Delayed</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="status">Status</Label>
+            <Select
+              onValueChange={(val) => form.setValue("status", val)}
+              value={form.watch("status")}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SCHEDULED">Scheduled</SelectItem>
+                <SelectItem value="ACTIVE">Active / Running</SelectItem>
+                <SelectItem value="COMPLETED">Completed</SelectItem>
+                <SelectItem value="DELAYED">Delayed</SelectItem>
+                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <DialogFooter>
-            <Button type="submit">{isEditing ? "Save Changes" : "Create Schedule"}</Button>
+            <Button type="submit" disabled={isCreating}>
+              {isCreating ? "Creating..." : (isEditing ? "Save Changes" : "Create Schedule")}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
