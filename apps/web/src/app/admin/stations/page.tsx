@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Edit2, Trash2, Filter } from "lucide-react";
+import { Search, MapPin, Edit2, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -13,14 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
 import {
   Pagination,
   PaginationContent,
@@ -32,25 +24,21 @@ import {
 import { StationDialog } from "@/components/admin/station-dialog";
 import { DeleteConfirmDialog } from "@/components/admin/delete-confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
-
-// Mock Data
-const initialStations = [
-  { id: 1, code: "DA", name: "Dhaka Kamalapur", city: "Dhaka", district: "Dhaka", platformCount: 12 },
-  { id: 2, code: "CTG", name: "Chittagong", city: "Chittagong", district: "Chittagong", platformCount: 8 },
-  { id: 3, code: "SYL", name: "Sylhet", city: "Sylhet", district: "Sylhet", platformCount: 5 },
-  { id: 4, code: "RAJ", name: "Rajshahi", city: "Rajshahi", district: "Rajshahi", platformCount: 6 },
-  { id: 5, code: "KH", name: "Khulna", city: "Khulna", district: "Khulna", platformCount: 6 },
-  { id: 6, code: "MYM", name: "Mymensingh", city: "Mymensingh", district: "Mymensingh", platformCount: 4 },
-  { id: 7, code: "BAR", name: "Barishal", city: "Barishal", district: "Barishal", platformCount: 3 },
-];
+import { useAdminStations } from "@/hooks/use-admin-stations";
 
 export default function StationsPage() {
-  const [stations, setStations] = useState(initialStations);
   const [searchTerm, setSearchTerm] = useState("");
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const { toast } = useToast();
+
+  const {
+    stations,
+    isLoading,
+    deleteStation,
+    isDeleting
+  } = useAdminStations();
 
   const filteredStations = stations.filter((station) =>
     station.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,15 +50,14 @@ export default function StationsPage() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedStations = filteredStations.slice(startIndex, startIndex + itemsPerPage);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      setStations(stations.filter(s => s.id !== deleteId));
-      toast({
-        title: "Station Deleted",
-        description: "The station has been removed from the system.",
-        variant: "destructive",
-      });
-      setDeleteId(null);
+      try {
+        await deleteStation(deleteId);
+        setDeleteId(null);
+      } catch (error) {
+        // Error handled by hook
+      }
     }
   };
 
@@ -99,20 +86,6 @@ export default function StationsPage() {
                 }}
               />
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Filter className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Filter by District</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setSearchTerm("")}>All Districts</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSearchTerm("Dhaka")}>Dhaka</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSearchTerm("Chittagong")}>Chittagong</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </CardHeader>
         <CardContent>
@@ -122,13 +95,17 @@ export default function StationsPage() {
                 <TableHead>Code</TableHead>
                 <TableHead>Station Name</TableHead>
                 <TableHead>City</TableHead>
-                <TableHead>District</TableHead>
-                <TableHead className="text-right">Platforms</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedStations.map((station) => (
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="h-24 text-center">
+                    Loading stations...
+                  </TableCell>
+                </TableRow>
+              ) : paginatedStations.map((station: any) => (
                 <TableRow key={station.id}>
                   <TableCell className="font-mono font-medium">{station.code}</TableCell>
                   <TableCell>
@@ -138,8 +115,6 @@ export default function StationsPage() {
                     </div>
                   </TableCell>
                   <TableCell>{station.city}</TableCell>
-                  <TableCell>{station.district}</TableCell>
-                  <TableCell className="text-right">{station.platformCount}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <StationDialog 
@@ -155,6 +130,7 @@ export default function StationsPage() {
                         size="icon" 
                         className="h-8 w-8 hover:bg-destructive/10 text-destructive"
                         onClick={() => setDeleteId(station.id)}
+                        disabled={isDeleting}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -162,9 +138,9 @@ export default function StationsPage() {
                   </TableCell>
                 </TableRow>
               ))}
-              {paginatedStations.length === 0 && (
+              {!isLoading && paginatedStations.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
                     No stations found.
                   </TableCell>
                 </TableRow>
@@ -212,7 +188,7 @@ export default function StationsPage() {
         open={deleteId !== null}
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
-        itemName={stations.find(s => s.id === deleteId)?.name}
+        itemName={stations.find((s: any) => s.id === deleteId)?.name}
       />
     </div>
   );

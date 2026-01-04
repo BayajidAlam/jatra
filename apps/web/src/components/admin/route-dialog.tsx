@@ -26,19 +26,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useAdminRoutes } from "@/hooks/use-admin-routes";
 
 const routeSchema = z.object({
   routeName: z.string().min(3, "Route name is required (e.g. Dhaka - Chattogram)"),
-  stations: z.number().min(2, "At least 2 stations required"),
-  distance: z.string().min(1, "Distance is required"),
-  duration: z.string().min(1, "Duration is required"),
-  status: z.string(),
+  totalDistance: z.number().min(0, "Distance must be positive"),
+  isActive: z.boolean(),
 });
 
 export type RouteFormValues = z.infer<typeof routeSchema>;
 
 interface RouteDialogProps {
-  initialData?: RouteFormValues;
+  initialData?: any;
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -51,40 +50,45 @@ export function RouteDialog({ initialData, trigger, open: controlledOpen, onOpen
   
   const { toast } = useToast();
   const isEditing = !!initialData;
+  const { createRoute, isCreating } = useAdminRoutes();
 
   const form = useForm<RouteFormValues>({
     resolver: zodResolver(routeSchema),
     defaultValues: {
       routeName: "",
-      stations: 10,
-      distance: "",
-      duration: "",
-      status: "Active",
+      totalDistance: 0,
+      isActive: true,
     },
   });
 
   useEffect(() => {
     if (initialData && open) {
-      form.reset(initialData);
+      form.reset({
+        routeName: initialData.routeName,
+        totalDistance: initialData.totalDistance,
+        isActive: initialData.isActive,
+      });
     } else if (!isEditing && open) {
       form.reset({
         routeName: "",
-        stations: 10,
-        distance: "",
-        duration: "",
-        status: "Active",
+        totalDistance: 0,
+        isActive: true,
       });
     }
   }, [initialData, open, form, isEditing]);
 
-  const onSubmit = (data: RouteFormValues) => {
-    console.log(isEditing ? "Updating route:" : "Creating route:", data);
-    toast({
-      title: isEditing ? "Route Updated" : "Route Created",
-      description: `Route ${data.routeName} has been ${isEditing ? "updated" : "created"} successfully.`,
-    });
-    setOpen(false);
-    if (!isEditing) form.reset();
+  const onSubmit = async (data: RouteFormValues) => {
+    try {
+      if (isEditing) {
+        toast({ title: "Note", description: "Update route not yet implemented in backend" });
+      } else {
+        await createRoute({ ...data, stops: [] });
+      }
+      setOpen(false);
+      if (!isEditing) form.reset();
+    } catch (error) {
+      // Error handled by hook
+    }
   };
 
   return (
@@ -121,58 +125,37 @@ export function RouteDialog({ initialData, trigger, open: controlledOpen, onOpen
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="stations" className="text-right">
-              Stations
+            <Label htmlFor="totalDistance" className="text-right">
+              Distance (km)
             </Label>
             <Input
-              id="stations"
+              id="totalDistance"
               type="number"
-              {...form.register("stations", { valueAsNumber: true })}
+              {...form.register("totalDistance", { valueAsNumber: true })}
               className="col-span-3"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="distance" className="text-right">
-              Distance
-            </Label>
-            <Input
-              id="distance"
-              {...form.register("distance")}
-              className="col-span-3"
-              placeholder="e.g. 320 km"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="duration" className="text-right">
-              Duration
-            </Label>
-            <Input
-              id="duration"
-              {...form.register("duration")}
-              className="col-span-3"
-              placeholder="e.g. 5h 30m"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="status" className="text-right">
+            <Label htmlFor="isActive" className="text-right">
               Status
             </Label>
             <Select
-              onValueChange={(val) => form.setValue("status", val)}
-              value={form.watch("status")}
+              onValueChange={(val) => form.setValue("isActive", val === "Active")}
+              value={form.watch("isActive") ? "Active" : "Inactive"}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Maintenance">Maintenance</SelectItem>
                 <SelectItem value="Inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <DialogFooter>
-            <Button type="submit">{isEditing ? "Save Changes" : "Create Route"}</Button>
+            <Button type="submit" disabled={isCreating}>
+              {isCreating ? "Creating..." : (isEditing ? "Save Changes" : "Create Route")}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

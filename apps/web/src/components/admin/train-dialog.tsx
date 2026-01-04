@@ -27,17 +27,18 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
+import { useAdminTrains } from "@/hooks/use-admin-trains";
+
 const trainSchema = z.object({
   name: z.string().min(2, "Train name must be at least 2 characters"),
   trainNumber: z.string().min(3, "Train number is required"),
   type: z.string(),
-  seats: z.number().min(1, "Capacity must be at least 1"),
 });
 
 export type TrainFormValues = z.infer<typeof trainSchema>;
 
 interface TrainDialogProps {
-  initialData?: TrainFormValues;
+  initialData?: any; // Using any for simplicity as it comes from API
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -50,6 +51,7 @@ export function TrainDialog({ initialData, trigger, open: controlledOpen, onOpen
   
   const { toast } = useToast();
   const isEditing = !!initialData;
+  const { createTrain, updateTrain, isCreating, isUpdating } = useAdminTrains();
 
   const form = useForm<TrainFormValues>({
     resolver: zodResolver(trainSchema),
@@ -57,31 +59,37 @@ export function TrainDialog({ initialData, trigger, open: controlledOpen, onOpen
       name: "",
       trainNumber: "",
       type: "Intercity",
-      seats: 500,
     },
   });
 
   useEffect(() => {
     if (initialData && open) {
-      form.reset(initialData);
+      form.reset({
+        name: initialData.name,
+        trainNumber: initialData.trainNumber,
+        type: initialData.type,
+      });
     } else if (!isEditing && open) {
        form.reset({
         name: "",
         trainNumber: "",
         type: "Intercity",
-        seats: 500,
       });
     }
   }, [initialData, open, form, isEditing]);
 
-  const onSubmit = (data: TrainFormValues) => {
-    console.log(isEditing ? "Updating train:" : "Creating train:", data);
-    toast({
-      title: isEditing ? "Train Updated" : "Train Created",
-      description: `${data.name} (${data.trainNumber}) has been ${isEditing ? "updated" : "created"} successfully.`,
-    });
-    setOpen(false);
-    if (!isEditing) form.reset();
+  const onSubmit = async (data: TrainFormValues) => {
+    try {
+      if (isEditing) {
+        await updateTrain({ id: initialData.id, dto: data });
+      } else {
+        await createTrain({ ...data, totalSeats: 500 }); // Assuming default capacity for now or adding field
+      }
+      setOpen(false);
+      if (!isEditing) form.reset();
+    } catch (error) {
+      // Error handled by hook
+    }
   };
 
   return (
@@ -147,19 +155,15 @@ export function TrainDialog({ initialData, trigger, open: controlledOpen, onOpen
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="seats" className="text-right">
-              Capacity
-            </Label>
-            <Input
-              id="seats"
-              type="number"
-              {...form.register("seats", { valueAsNumber: true })}
-              className="col-span-3"
-            />
+          <div className="grid grid-cols-4 items-center gap-4 text-xs italic text-muted-foreground">
+            <div className="col-start-2 col-span-3">
+              * Capacity is managed via Coaches
+            </div>
           </div>
           <DialogFooter>
-            <Button type="submit">{isEditing ? "Save Changes" : "Save Train"}</Button>
+            <Button type="submit" disabled={isCreating || isUpdating}>
+              {(isCreating || isUpdating) ? "Saving..." : (isEditing ? "Save Changes" : "Save Train")}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

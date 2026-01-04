@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:30000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:30000/api";
 
 export const ROUTES = {
   HOME: "/",
@@ -19,30 +19,43 @@ export const API_ENDPOINTS = {
     REGISTER: "/auth/register",
     LOGOUT: "/auth/logout",
     ME: "/auth/me",
-    REFRESH: "/auth/refresh",
+    REFRESH: "/auth/refresh-token",
   },
   SCHEDULE: {
-    JOURNEYS: "/schedule/journeys",
-    STATIONS: "/schedule/stations",
-    TRAINS: "/schedule/trains",
+    JOURNEYS: "/journeys",
+    STATIONS: "/stations",
+    TRAINS: "/trains",
+    SEARCH: "/search/journeys",
   },
   BOOKING: {
-    CREATE: "/booking/create",
-    MY_BOOKINGS: "/booking/my-bookings",
-    DETAILS: (id: string) => `/booking/${id}`,
+    CREATE: "/bookings/create",
+    MY_BOOKINGS: "/bookings",
+    DETAILS: (id: string) => `/bookings/${id}`,
   },
   SEAT_RESERVATION: {
-    SEATS: "/seat-reservation/seats",
-    RESERVE: "/seat-reservation/reserve",
-    RELEASE: "/seat-reservation/release",
+    SEATS: "/locks/check",
+    RESERVE: "/locks/acquire",
+    RELEASE: "/locks/release",
   },
   PAYMENT: {
     INITIATE: "/payments/initiate",
-    STATUS: (id: string) => `/payments/status/${id}`,
+    STATUS: (id: string) => `/gateway/status/${id}`,
     CONFIRM: "/payments/confirm",
   },
   TICKET: {
     DETAILS: (id: string) => `/tickets/${id}`,
-    DOWNLOAD: (id: string) => `/tickets/${id}/download`,
+    DOWNLOAD: (id: string) => `/tickets/${id}/pdf`,
+  },
+  ADMIN: {
+    USERS: "/admin/users",
+    TRAINS: "/admin/trains",
+    STATIONS: "/admin/stations",
+    ROUTES: "/admin/routes",
+    JOURNEYS: "/admin/journeys",
+    BOOKINGS: "/admin/bookings",
+    COACHES: "/admin/coaches",
+    SEATS: "/admin/seats",
+    SETTINGS: "/admin/settings",
+    STATS: "/reports/dashboard",
   },
 } as const;
