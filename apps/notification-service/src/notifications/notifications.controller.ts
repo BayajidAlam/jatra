@@ -52,15 +52,15 @@ export class NotificationsController {
 
   @Get(":id")
   @ApiOperation({ summary: "Get a notification by ID" })
-  @ApiParam({ name: "id", type: "number" })
-  async getNotification(@Param("id", ParseIntPipe) id: number) {
+  @ApiParam({ name: "id", type: "string" })
+  async getNotification(@Param("id") id: string) {
     return this.notificationsService.getNotificationById(id);
   }
 
   @Post(":id/resend")
   @ApiOperation({ summary: "Resend a failed notification" })
-  @ApiParam({ name: "id", type: "number" })
-  async resendNotification(@Param("id", ParseIntPipe) id: number) {
+  @ApiParam({ name: "id", type: "string" })
+  async resendNotification(@Param("id") id: string) {
     const notification = await this.notificationsService.getNotificationById(
       id
     );

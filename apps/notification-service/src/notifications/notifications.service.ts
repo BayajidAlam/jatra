@@ -75,7 +75,7 @@ export class NotificationsService {
     };
   }
 
-  async getNotificationById(id: number) {
+  async getNotificationById(id: string) {
     const notification = await this.prisma.notification.findUnique({
       where: { id },
       include: {
@@ -97,7 +97,7 @@ export class NotificationsService {
   }
 
   async updateNotificationStatus(
-    id: number,
+    id: string,
     status: NotificationStatus,
     error: string | null = null,
     retryCount?: number

@@ -81,7 +81,7 @@ export class EmailService {
     subject: string,
     templateName: string,
     context: any,
-    notificationId: number
+    notificationId: string
   ): Promise<void> {
     // Check if provider is configured
     if (!this.emailProvider.isConfigured()) {

@@ -69,7 +69,7 @@ export class JourneysService {
 
     if (existingJourney) {
       throw new ConflictException(
-        `Journey already exists for train ${train.name} on route ${route.name} for date ${journeyDate}`
+        `Journey already exists for train ${train.name} on route ${route.routeName} for date ${journeyDate}`
       );
     }
 

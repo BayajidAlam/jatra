@@ -60,6 +60,16 @@ func SetupRoutes(router *gin.Engine) {
 			journeys.POST("", middleware.JWTAuth(), proxy.ProxyRequest(config.AppConfig.ScheduleServiceURL))
 		}
 
+		locks := api.Group("/locks")
+		locks.Use(middleware.JWTAuth())
+		{
+			locks.POST("/acquire", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
+			locks.GET("/check/:id", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
+			locks.POST("/extend/:id", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
+			locks.POST("/release/:id", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
+			locks.GET("/user/me", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
+		}
+
 		bookings := api.Group("/bookings")
 		bookings.Use(middleware.JWTAuth())
 		{
@@ -139,6 +149,28 @@ func SetupRoutes(router *gin.Engine) {
 			admin.DELETE("/journeys/:id", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
 			admin.GET("/bookings", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
 			admin.PATCH("/bookings/:id/status", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+
+			// Coach Management
+			admin.GET("/coaches", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.GET("/coaches/:id", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.POST("/coaches", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.PUT("/coaches/:id", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.DELETE("/coaches/:id", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+
+			// Seat Management
+			admin.GET("/seats", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.GET("/seats/:id", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.POST("/seats", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.POST("/seats/bulk", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.PUT("/seats/:id", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.DELETE("/seats/:id", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+
+			// Global Settings
+			admin.GET("/settings", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.GET("/settings/:key", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.POST("/settings", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.PUT("/settings/:key", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
+			admin.DELETE("/settings/:key", proxy.ProxyRequest(config.AppConfig.AdminServiceURL))
 		}
 
 		reports := api.Group("/reports")

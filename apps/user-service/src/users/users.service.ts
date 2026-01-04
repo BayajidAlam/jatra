@@ -262,7 +262,7 @@ export class UsersService {
 
       if (journey) {
         favoriteRoute = {
-          routeName: journey.route.name || 'Unknown Route',
+          routeName: journey.route.routeName || 'Unknown Route',
           bookings: routeBookings[0]._count.id,
         };
       }

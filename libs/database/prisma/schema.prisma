@@ -23,6 +23,7 @@ model User {
   bookings      Booking[]
   notifications Notification[]
   refreshTokens RefreshToken[]
+  savedPassengers Passenger[]
 
   @@map("users")
 }
@@ -223,17 +224,20 @@ model Booking {
   userId        String
   journeyId     String
   reservationId String         @unique
-  paymentId     String         @unique
+  paymentId     String?        @unique
   totalAmount   Float
   status        BookingStatus  @default(DRAFT)
+  confirmedAt   DateTime?
+  cancelledAt   DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   journey       Journey        @relation(fields: [journeyId], references: [id])
-  payment       Payment        @relation(fields: [paymentId], references: [id])
+  payment       Payment?       @relation(fields: [paymentId], references: [id])
   reservation   Reservation    @relation(fields: [reservationId], references: [id])
   user          User           @relation(fields: [userId], references: [id])
   seats         BookingsSeat[]
   ticket        Ticket?
+  passengers    BookingPassenger[] @relation("BookingToPassengers")
 
   @@index([userId])
   @@index([journeyId])
@@ -308,6 +312,41 @@ model GlobalSetting {
   @@map("global_settings")
 }
 
+model BookingPassenger {
+  id              String   @id @default(uuid())
+  bookingId       String
+  coachId         String
+  seatId          String
+  seatNumber      String   @db.VarChar(10)
+  passengerName   String   @db.VarChar(255)
+  passengerAge    Int
+  passengerGender String   @db.VarChar(20)
+  fare            Float
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  booking         Booking  @relation("BookingToPassengers", fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+  @@map("booking_passengers")
+}
+
+model Passenger {
+  id             String   @id @default(uuid())
+  userId         String
+  fullName       String   @db.VarChar(255)
+  dateOfBirth    DateTime @db.Date
+  gender         String   @db.VarChar(20)
+  nidNumber      String?  @db.VarChar(50)
+  passportNumber String?  @db.VarChar(50)
+  isDefault      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("passengers")
+}
+
 enum Role {
   USER
   ADMIN
@@ -373,6 +412,8 @@ enum BookingStatus {
   DRAFT
   SEATS_LOCKED
   PAYMENT_PENDING
+  PAYMENT_PROCESSING
+  PAYMENT_FAILED
   CONFIRMED
   CANCELLED
   FAILED
@@ -382,6 +423,7 @@ enum BookingStatus {
 enum NotificationChannel {
   EMAIL
   SMS
+  BOTH
   PUSH
 }
 
@@ -389,13 +431,18 @@ enum NotificationStatus {
   PENDING
   SENT
   FAILED
+  RETRY
   RETRYING
 }
 
 enum NotificationType {
+  OTP
   BOOKING_CONFIRMED
-  BOOKING_CANCELLED
+  BOOKING_CONFIRMATION
+  PAYMENT_SUCCESS
   PAYMENT_FAILED
-  JOURNEY_REMINDER
   TICKET_GENERATED
+  BOOKING_CANCELLED
+  SEAT_EXPIRY_WARNING
+  JOURNEY_REMINDER
 }

@@ -50,7 +50,7 @@ export class SmsService {
   async sendSms(
     to: string,
     message: string,
-    notificationId: number
+    notificationId: string
   ): Promise<void> {
     if (!this.smsProvider.isConfigured()) {
       const errorMsg = `${this.smsProvider.getProviderName()} provider not configured`;
@@ -128,7 +128,7 @@ export class SmsService {
   async sendOtp(
     phoneNumber: string,
     otp: string,
-    notificationId: number
+    notificationId: string
   ): Promise<void> {
     const message = `Your Jatra Railway OTP is: ${otp}. Valid for 10 minutes. Do not share this code.`;
     await this.sendSms(phoneNumber, message, notificationId);
@@ -138,7 +138,7 @@ export class SmsService {
     phoneNumber: string,
     bookingId: string,
     trainName: string,
-    notificationId: number
+    notificationId: string
   ): Promise<void> {
     const message = `Booking confirmed! ${trainName}, Booking ID: ${bookingId}. Check your email for details.`;
     await this.sendSms(phoneNumber, message, notificationId);
@@ -147,7 +147,7 @@ export class SmsService {
   async sendCancellationSms(
     phoneNumber: string,
     bookingId: string,
-    notificationId: number
+    notificationId: string
   ): Promise<void> {
     const message = `Booking ${bookingId} has been cancelled. Refund will be processed within 5-7 business days.`;
     await this.sendSms(phoneNumber, message, notificationId);

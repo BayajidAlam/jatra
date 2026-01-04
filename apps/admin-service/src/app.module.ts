@@ -8,6 +8,9 @@ import { StationsModule } from './stations/stations.module';
 import { UsersModule } from './users/users.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { StatsModule } from './stats/stats.module';
+import { CoachesModule } from './coaches/coaches.module';
+import { SeatsModule } from './seats/seats.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -23,6 +26,9 @@ import { StatsModule } from './stats/stats.module';
     UsersModule,
     BookingsModule,
     StatsModule,
+    CoachesModule,
+    SeatsModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}

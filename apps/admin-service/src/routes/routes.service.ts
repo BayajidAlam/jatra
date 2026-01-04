@@ -8,7 +8,7 @@ export class RoutesService {
   async findAll() {
     return this.prisma.route.findMany({
       include: {
-        routeStops: {
+        stops: {
           include: {
             fromStation: true,
             toStation: true,
@@ -23,7 +23,7 @@ export class RoutesService {
     return this.prisma.route.findUnique({
       where: { id },
       include: {
-        routeStops: {
+        stops: {
           include: {
             fromStation: true,
             toStation: true,
