@@ -13,7 +13,7 @@ interface Coach {
   totalSeats: number;
   train: {
     id: string;
-    modelName: string; // In frontend, Train type has modelName
+    name: string;
     trainNumber: string;
   };
   _count?: {

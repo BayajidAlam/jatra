@@ -56,7 +56,7 @@ export function CoachDialog({ initialData, trigger, open: controlledOpen, onOpen
   const { trains, isLoading: isLoadingTrains } = useAdminTrains({ limit: 100 });
 
   const form = useForm<CoachFormValues>({
-    resolver: zodResolver(coachSchema),
+    resolver: zodResolver(coachSchema) as any,
     defaultValues: {
       trainId: "",
       coachCode: "",
@@ -132,7 +132,7 @@ export function CoachDialog({ initialData, trigger, open: controlledOpen, onOpen
               <SelectContent>
                 {trains.map((train) => (
                     <SelectItem key={train.id} value={train.id}>
-                        {train.modelName} (#{train.trainNumber})
+                        {train.name} (#{train.trainNumber})
                     </SelectItem>
                 ))}
               </SelectContent>

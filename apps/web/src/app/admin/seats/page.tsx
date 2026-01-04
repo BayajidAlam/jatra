@@ -115,7 +115,7 @@ export default function SeatsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col text-sm">
-                        <span>{seat.coach.train.modelName}</span>
+                        <span>{seat.coach.train.name}</span>
                          <span className="text-xs text-slate-500">#{seat.coach.train.trainNumber}</span>
                     </div>
                   </TableCell>

@@ -13,7 +13,7 @@ interface Journey {
   status: string;
   train: {
     id: string;
-    modelName: string;
+    name: string;
     trainNumber: string;
   };
   route: {

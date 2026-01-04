@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export interface Train {
   id: string;
-  name: string;
+  name: string; // The train name, e.g. "Subarna Express"
   trainNumber: string;
   type: string;
   totalSeats: number;

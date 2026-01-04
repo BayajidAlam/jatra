@@ -39,6 +39,8 @@ const seatSchema = z.object({
   baseFare: z.coerce.number().min(0, "Fare must be positive"),
 });
 
+type SeatFormValues = z.infer<typeof seatSchema>;
+
 const bulkSeatSchema = z.object({
   coachId: z.string().min(1, "Coach is required"),
   prefix: z.string().optional(),
@@ -48,7 +50,6 @@ const bulkSeatSchema = z.object({
   baseFare: z.coerce.number().min(0, "Fare must be positive"),
 });
 
-type SeatFormValues = z.infer<typeof seatSchema>;
 type BulkSeatFormValues = z.infer<typeof bulkSeatSchema>;
 
 interface SeatDialogProps {
@@ -75,7 +76,7 @@ export function SeatDialog({ initialData, trigger, open: controlledOpen, onOpenC
   const { coaches } = useAdminCoaches({ limit: 100, trainId: selectedTrainId || undefined });
 
   const form = useForm<SeatFormValues>({
-    resolver: zodResolver(seatSchema),
+    resolver: zodResolver(seatSchema) as any,
     defaultValues: {
       coachId: "",
       seatNumber: "",
@@ -85,7 +86,7 @@ export function SeatDialog({ initialData, trigger, open: controlledOpen, onOpenC
   });
 
   const bulkForm = useForm<BulkSeatFormValues>({
-      resolver: zodResolver(bulkSeatSchema),
+      resolver: zodResolver(bulkSeatSchema) as any,
       defaultValues: {
           coachId: "",
           prefix: "",
@@ -188,7 +189,7 @@ export function SeatDialog({ initialData, trigger, open: controlledOpen, onOpenC
                             <Select onValueChange={setSelectedTrainId} value={selectedTrainId}>
                                 <SelectTrigger><SelectValue placeholder="Select Train" /></SelectTrigger>
                                 <SelectContent>
-                                    {trains.map(t => <SelectItem key={t.id} value={t.id}>{t.modelName} ({t.trainNumber})</SelectItem>)}
+                                    {trains.map(t => <SelectItem key={t.id} value={t.id}>{t.name} ({t.trainNumber})</SelectItem>)}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -243,7 +244,7 @@ export function SeatDialog({ initialData, trigger, open: controlledOpen, onOpenC
                             <Select onValueChange={setSelectedTrainId} value={selectedTrainId}>
                                 <SelectTrigger><SelectValue placeholder="Select Train" /></SelectTrigger>
                                 <SelectContent>
-                                    {trains.map(t => <SelectItem key={t.id} value={t.id}>{t.modelName} ({t.trainNumber})</SelectItem>)}
+                                    {trains.map(t => <SelectItem key={t.id} value={t.id}>{t.name} ({t.trainNumber})</SelectItem>)}
                                 </SelectContent>
                             </Select>
                         </div>

@@ -22,7 +22,7 @@ export interface AdminBooking {
         departureTime: string;
         arrivalTime: string;
         train: {
-            modelName: string;
+            name: string;
             trainNumber: string;
         };
         route: {

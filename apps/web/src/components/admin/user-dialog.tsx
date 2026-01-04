@@ -88,7 +88,7 @@ export function UserDialog({ initialData, trigger, open: controlledOpen, onOpenC
   const onSubmit = async (data: UserFormValues) => {
     try {
       if (isEditing) {
-        await updateUser({ id: initialData.id, ...data });
+        await updateUser({ id: initialData.id, ...data } as any);
       } else {
           // Creating users is typically done via registration or a separate endpoint
           toast({ title: "Note", description: "Creating new users from admin is currently disabled. Please use registration." });

@@ -69,7 +69,7 @@ export default function BookingsPage() {
           passenger: booking.user.name,
           email: booking.user.email,
           phone: booking.user.phone,
-          train: booking.journey.train.modelName,
+          train: booking.journey.train.name,
           date: new Date(booking.journey.journeyDate).toLocaleDateString(),
           departureTime: new Date(booking.journey.departureTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
           arrivalTime: new Date(booking.journey.arrivalTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
@@ -138,7 +138,7 @@ export default function BookingsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col text-sm">
-                      <span className="font-medium">{booking.journey.train.modelName}</span>
+                      <span className="font-medium">{booking.journey.train.name}</span>
                       <span className="text-xs text-slate-500">
                           {new Date(booking.journey.journeyDate).toLocaleDateString()}
                       </span>

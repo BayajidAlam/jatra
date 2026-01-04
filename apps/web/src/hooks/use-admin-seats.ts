@@ -15,7 +15,7 @@ interface Seat {
     id: string;
     coachCode: string;
     train: {
-      modelName: string;
+      name: string;
       trainNumber: string;
     }
   }

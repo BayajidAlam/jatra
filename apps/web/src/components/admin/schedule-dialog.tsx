@@ -151,7 +151,7 @@ export function ScheduleDialog({ initialData, trigger, open: controlledOpen, onO
               <SelectContent>
                 {trains.map((train) => (
                     <SelectItem key={train.id} value={train.id}>
-                        {train.modelName} (#{train.trainNumber})
+                        {train.name} (#{train.trainNumber})
                     </SelectItem>
                 ))}
               </SelectContent>

@@ -114,7 +114,7 @@ export default function CoachesPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                        <span className="font-medium">{coach.train.modelName}</span>
+                        <span className="font-medium">{coach.train.name}</span>
                          <span className="text-xs text-slate-500">#{coach.train.trainNumber}</span>
                     </div>
                   </TableCell>

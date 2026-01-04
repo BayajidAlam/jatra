@@ -103,7 +103,7 @@ export default function SchedulesPage() {
                 <TableRow key={schedule.id}>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="font-medium text-slate-900 dark:text-slate-100">{schedule.train.modelName}</span>
+                      <span className="font-medium text-slate-900 dark:text-slate-100">{schedule.train.name}</span>
                       <span className="text-xs text-slate-500">#{schedule.train.trainNumber}</span>
                     </div>
                   </TableCell>
@@ -203,7 +203,7 @@ export default function SchedulesPage() {
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
         isLoading={isDeleting}
-        itemName={`Schedule for ${schedules.find(s => s.id === deleteId)?.train.modelName}`}
+        itemName={`Schedule for ${schedules.find(s => s.id === deleteId)?.train.name}`}
       />
     </div>
   );
