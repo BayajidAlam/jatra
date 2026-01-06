@@ -300,6 +300,11 @@ We leveraged **AWS CloudWatch** as a fully managed observability suite to mainta
 1.  **Distributed Tracing (AWS X-Ray)**: Every request entering the API Gateway is tagged with a unique `Trace-ID`. This allow us to visualize the entire journey of a request (e.g., Gateway -> Auth -> Booking -> Payment). If a request fails, we can pinpoint exactly which microservice caused the latency or error.
 2.  **Auto-Scaling Triggers**: We configured CloudWatch Alarms to monitor CPU usage. If average CPU > 50% for 3 minutes, an alarm triggers the Kubernetes HPA to scale up pods.
 
+### 3.5.5 CI/CD & Artifact Management
+To achieve rapid iteration, we implemented an automated pipeline:
+1.  **Jenkins (CI/CD)**: A self-hosted Jenkins server automatically triggers on every `git push`. It runs unit tests, builds the Docker images, and handles versioning.
+2.  **AWS ECR (Elastic Container Registry)**: We use ECR as a secure, private registry to store our Docker images. ECR's tight integration with EKS eliminates the need for managing complex image pull secrets, ensuring faster and more secure deployments.
+
 *[Figure 3.1: Activity Diagram of the system]*
 *(This diagram illustrates the user flow: Search -> Select Seat -> Hold Seat -> Pay -> Receive Ticket)*
 
