@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Mail, Lock, Train, Shield, UserIcon, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
 const testAccounts = [
@@ -34,13 +34,14 @@ const testAccounts = [
   },
 ];
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
   const { login, isLoading } = useAuthStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
 
   const handleTestAccountSelect = (account: (typeof testAccounts)[0]) => {
@@ -53,7 +54,9 @@ export default function LoginPage() {
     try {
       await login({ emailOrPhone: email, password });
       toast({ title: "Login successful", description: "Welcome back!" });
-      router.push("/");
+      
+      const redirectUrl = searchParams.get("redirect") || "/";
+      router.push(redirectUrl);
     } catch (error: any) {
       toast({
         title: "Login failed",
@@ -179,5 +182,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

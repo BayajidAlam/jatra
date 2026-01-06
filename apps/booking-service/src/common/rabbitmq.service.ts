@@ -39,6 +39,9 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       await this.channel.assertExchange(Exchanges.PAYMENT, "topic", {
         durable: true,
       });
+      await this.channel.assertExchange(Exchanges.TRAIN, "topic", {
+        durable: true,
+      });
 
       // Create queue for payment failure events
       const queue = "booking-service.payment-failed";

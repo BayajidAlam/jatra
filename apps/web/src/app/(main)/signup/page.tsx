@@ -3,6 +3,8 @@
 import type React from "react";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 import {
   Mail,
   Lock,
@@ -16,8 +18,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SignupPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -31,13 +37,51 @@ export default function SignupPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive",
+      });
       return;
     }
-    console.log("Signup:", formData);
+
+    setIsLoading(true);
+
+    try {
+      const { confirmPassword, ...registerData } = formData;
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:30000/api/v1'}/auth/register`,
+        registerData
+      );
+
+      // Store tokens
+      if (response.data.accessToken) {
+        localStorage.setItem("accessToken", response.data.accessToken);
+        localStorage.setItem("refreshToken", response.data.refreshToken);
+      }
+
+      toast({
+        title: "Success",
+        description: "Account created successfully! Redirecting to login...",
+      });
+
+      // Redirect to login or home
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
+    } catch (error: any) {
+      toast({
+        title: "Registration Failed",
+        description: error.response?.data?.message || "Failed to create account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -159,9 +203,10 @@ export default function SignupPage() {
 
                 <Button
                   type="submit"
+                  disabled={isLoading}
                   className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
                 >
-                  Create Account
+                  {isLoading ? "Creating Account..." : "Create Account"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </form>

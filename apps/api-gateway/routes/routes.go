@@ -65,6 +65,7 @@ func SetupRoutes(router *gin.Engine) {
 		locks.Use(middleware.JWTAuth())
 		{
 			locks.POST("/acquire", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
+			locks.GET("/availability/:journeyId", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
 			locks.GET("/check/:id", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
 			locks.POST("/extend/:id", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
 			locks.POST("/release/:id", proxy.ProxyRequest(config.AppConfig.SeatReservationServiceURL))
@@ -77,15 +78,33 @@ func SetupRoutes(router *gin.Engine) {
 			bookings.POST("/create", proxy.ProxyRequest(config.AppConfig.BookingServiceURL))
 			bookings.GET("", proxy.ProxyRequest(config.AppConfig.BookingServiceURL))
 			bookings.GET("/:id", proxy.ProxyRequest(config.AppConfig.BookingServiceURL))
+			bookings.GET("/user/:userId", proxy.ProxyRequest(config.AppConfig.BookingServiceURL))
 			bookings.POST("/:id/confirm", proxy.ProxyRequest(config.AppConfig.BookingServiceURL))
 			bookings.POST("/:id/cancel", proxy.ProxyRequest(config.AppConfig.BookingServiceURL))
 		}
 
 		tickets := api.Group("/tickets")
+	{
+		// Public endpoints (no auth required for PDF download)
+		tickets.GET("/:id/pdf", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
+		
+		// Protected endpoints
 		tickets.Use(middleware.JWTAuth())
+		tickets.POST("/generate", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
+		tickets.GET("/:id", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
+		tickets.POST("/:id/email", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
+		tickets.GET("/booking/:bookingId", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
+		tickets.GET("/user/:userId", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
+		tickets.GET("/:id/qr", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
+		tickets.POST("/validate", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
+	}
+
+		notifications := api.Group("/notifications")
+		notifications.Use(middleware.JWTAuth())
 		{
-			tickets.GET("/:id", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
-			tickets.GET("/:id/pdf", proxy.ProxyRequest(config.AppConfig.TicketServiceURL))
+			notifications.GET("/user/:userId", proxy.ProxyRequest(config.AppConfig.NotificationServiceURL))
+			notifications.PATCH("/:id/read", proxy.ProxyRequest(config.AppConfig.NotificationServiceURL))
+			notifications.PATCH("/user/:userId/read-all", proxy.ProxyRequest(config.AppConfig.NotificationServiceURL))
 		}
 
 		payments := api.Group("/payments")

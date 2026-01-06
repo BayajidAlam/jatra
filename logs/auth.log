@@ -1,0 +1,39 @@
+
+> @jatra/auth-service@0.0.1 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/auth-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 13:15:42 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +29ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +37ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh-token, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/verify-token, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218273  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +151ms[39m
+🚀 Auth Service running on: http://localhost:3001
+📚 API Documentation: http://localhost:3001/api/docs
+::ffff:127.0.0.1 - - [06/Jan/2026:07:16:00 +0000] "POST /auth/login HTTP/1.1" 200 867 "http://localhost:3000/login" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:16:00 +0000] "GET /auth/me HTTP/1.1" 304 - "http://localhost:3000/login" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:19:29 +0000] "GET /auth/me HTTP/1.1" 304 - "http://localhost:3000/my-tickets" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:19:29 +0000] "GET /auth/me HTTP/1.1" 304 - "http://localhost:3000/my-tickets" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:22:14 +0000] "GET /auth/me HTTP/1.1" 304 - "http://localhost:3000/booking/confirmation/98b102ed-25b8-45af-aa82-62f4a68133ea" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:22:14 +0000] "GET /auth/me HTTP/1.1" 304 - "http://localhost:3000/booking/confirmation/98b102ed-25b8-45af-aa82-62f4a68133ea" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:22:40 +0000] "GET /auth/me HTTP/1.1" 304 - "http://localhost:3000/login" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:22:42 +0000] "GET /auth/me HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:23:07 +0000] "GET /auth/me HTTP/1.1" 304 - "http://localhost:3000/login" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:23:32 +0000] "GET /auth/me HTTP/1.1" 304 - "http://localhost:3000/booking/2aa8e004-7cd4-418d-8d20-f55cab3ef3f4?fromStationId=a24acffe-c6f8-4540-8945-47a57a232876&toStationId=e99de573-784b-463f-b9ed-53815016b105" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:31:03 +0000] "POST /auth/refresh-token HTTP/1.1" 200 42 "http://localhost:3000/my-tickets" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:07:46:03 +0000] "POST /auth/refresh-token HTTP/1.1" 200 42 "http://localhost:3000/my-tickets" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:08:01:04 +0000] "POST /auth/refresh-token HTTP/1.1" 200 42 "http://localhost:3000/my-tickets" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+::ffff:127.0.0.1 - - [06/Jan/2026:09:54:26 +0000] "POST /auth/refresh-token HTTP/1.1" 200 42 "http://localhost:3000/booking/confirmation/98b102ed-25b8-45af-aa82-62f4a68133ea" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"

@@ -1,7 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import apiClient from "@/lib/axios-client";
+import { API_ENDPOINTS } from "@/lib/constants";
+import { toast } from "sonner";
 import {
   CheckCircle2,
   Download,
@@ -14,87 +19,201 @@ import {
   User,
   CreditCard,
   CheckCircle,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-// Mock booking data (would come from API based on bookingId)
-const mockBookingData = {
-  bookingId: "BK20251231001",
-  status: "CONFIRMED",
-  train: {
-    name: "Suborno Express",
-    number: "701",
-    type: "Intercity",
-  },
-  route: {
-    from: "Dhaka",
-    to: "Chittagong",
-    distance: "232 km",
-  },
-  schedule: {
-    date: "Jan 15, 2025",
-    departure: "10:00 AM",
-    arrival: "2:30 PM",
-    duration: "4h 30m",
-  },
-  passengers: [
-    {
-      name: "John Doe",
-      age: 30,
-      gender: "MALE",
-      seat: "A3",
-      fare: 650,
-      ticketId: "TKT20251231001",
-    },
-    {
-      name: "Jane Smith",
-      age: 28,
-      gender: "FEMALE",
-      seat: "A4",
-      fare: 650,
-      ticketId: "TKT20251231002",
-    },
-    {
-      name: "Bob Johnson",
-      age: 35,
-      gender: "MALE",
-      seat: "B1",
-      fare: 650,
-      ticketId: "TKT20251231003",
-    },
-  ],
-  payment: {
-    method: "BKASH",
-    amount: 1950,
-    transactionId: "TXN20251231001",
-    status: "COMPLETED",
-  },
-};
+// Define interfaces for API response
+interface Station {
+  id: string;
+  name: string;
+  code: string;
+}
+
+interface Seat {
+  id: string;
+  seatNumber: string;
+  coachId: string;
+  coach: {
+    coachCode: string;
+    coachType: string;
+  };
+}
+
+interface BookingSeat {
+  seat: Seat;
+}
+
+interface BookingPassenger {
+  id: string;
+  passengerName: string;
+  passengerAge: number | string;
+  passengerGender: string;
+  seatNumber?: string;
+  fare?: number;
+}
+
+interface BookingResponse {
+  id: string;
+  status: string;
+  totalAmount: number;
+  reservation: {
+    lockId: string; // Used as Booking ID display
+    fromStation: Station;
+    toStation: Station;
+  };
+  journey: {
+    departureTime: string;
+    arrivalTime: string;
+    train: {
+      name: string;
+      trainNumber: string;
+      totalSeats: number;
+    };
+    route: {
+      distance?: number;
+      // Derived duration if not present
+    };
+  };
+  payment?: {
+    status: string;
+    amount: number;
+    paymentMethod: string;
+    transactionId: string;
+  };
+  seats: BookingSeat[];
+  passengers?: BookingPassenger[];
+  ticket?: {
+    ticketNumber: string;
+    pdfUrl?: string; // Generated on demand usually
+  };
+  createdAt: string;
+}
+
+import { downloadTicketPDF } from "@/lib/download-ticket";
 
 export default function BookingConfirmationPage() {
   const params = useParams();
   const bookingId = params.bookingId as string;
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
 
-  // In real app, fetch booking data based on bookingId
-  const booking = mockBookingData;
+  const { data: booking, isLoading, error } = useQuery<BookingResponse>({
+    queryKey: ["booking", bookingId],
+    queryFn: async () => {
+      const response = await apiClient.get(API_ENDPOINTS.BOOKING.DETAILS(bookingId));
+      return response.data;
+    },
+    enabled: !!bookingId,
+  });
 
-  const handleDownloadTickets = () => {
-    console.log("[v0] Downloading tickets for booking:", bookingId);
-    // Implement PDF download logic
+  const handleDownloadTickets = async () => {
+    if (!booking) return;
+    await downloadTicketPDF(bookingId, booking.status);
   };
 
-  const handleEmailTickets = () => {
-    console.log("[v0] Emailing tickets for booking:", bookingId);
-    // Implement email sending logic
+  const handleEmailTickets = async () => {
+    if (!booking) return;
+    
+    try {
+      setIsEmailLoading(true);
+      
+      // Get ticket ID first
+      const ticketResponse = await apiClient.get(`/tickets/booking/${bookingId}`);
+      
+      if (ticketResponse.data) {
+        const ticketData = ticketResponse.data;
+        
+        if (ticketData && ticketData.id) {
+          // Send email request
+          const emailResponse = await apiClient.post(`/tickets/${ticketData.id}/email`);
+          
+          if (emailResponse.data) {
+            toast.success("Ticket sent to your email successfully!");
+          }
+        } else {
+          toast.error("Ticket not found. Please ensure your booking is confirmed.");
+        }
+      } else {
+        toast.error("Ticket not found. Please ensure your booking is confirmed.");
+      }
+    } catch (error: any) {
+      console.error("Failed to email ticket:", error);
+      toast.error("Failed to send email. Please try again.");
+    } finally {
+      setIsEmailLoading(false);
+    }
   };
 
   const handleShareBooking = () => {
-    console.log("[v0] Sharing booking:", bookingId);
-    // Implement share functionality
+    if (navigator.share) {
+      navigator.share({
+        title: 'Jatra Railway Ticket',
+        text: `Check out my trip to ${booking?.reservation.toStation.name}!`,
+        url: window.location.href,
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard");
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <div className="text-center">
+            <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading booking details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !booking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <div className="text-center max-w-md p-6 bg-white rounded-lg shadow-sm">
+            <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2">Booking Not Found</h2>
+            <p className="text-muted-foreground mb-6">
+                We couldn't retrieve the booking details. Please check the ID or try again.
+            </p>
+            <Link href="/my-bookings">
+                <Button>Go to My Bookings</Button>
+            </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Derive duration/dates from journey times
+  const departureDate = new Date(booking.journey.departureTime);
+  const arrivalDate = new Date(booking.journey.arrivalTime);
+  
+  const formattedDate = departureDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+  const formattedTime = departureDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const formattedArrivalTime = arrivalDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  // Calculate duration
+  const diffMs = arrivalDate.getTime() - departureDate.getTime();
+  const diffHrs = Math.floor(diffMs / 3600000);
+  const diffMins = Math.round(((diffMs % 3600000) / 60000));
+  const duration = `${diffHrs}h ${diffMins}m`;
+
+  // Use actual passengers if available, otherwise create fallback from seats
+  const displayPassengers = booking.passengers && booking.passengers.length > 0 
+    ? booking.passengers 
+    : booking.seats.map((s, i) => ({
+        id: s.seat.id,
+        passengerName: `Passenger ${i + 1}`,
+        passengerAge: "-",
+        passengerGender: "N/A",
+        seatNumber: s.seat.seatNumber,
+        fare: 650 // Assuming base fare if not present
+      }));
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -112,7 +231,7 @@ export default function BookingConfirmationPage() {
               <div className="flex items-center gap-2">
                 <span className="text-xs text-green-100">Booking ID:</span>
                 <code className="px-2 py-1 bg-white/10 rounded text-sm font-mono">
-                  {booking.bookingId}
+                  {booking.reservation.lockId || booking.id.slice(0, 8).toUpperCase()}
                 </code>
               </div>
             </div>
@@ -161,10 +280,10 @@ export default function BookingConfirmationPage() {
                   </div>
                   <div>
                     <CardTitle className="text-lg">
-                      {booking.train.name}
+                      {booking.journey.train.name}
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Train {booking.train.number} · {booking.train.type}
+                      Train {booking.journey.train.trainNumber} · Intercity
                     </p>
                   </div>
                 </div>
@@ -178,14 +297,14 @@ export default function BookingConfirmationPage() {
                       <span className="text-sm font-medium">Departure</span>
                     </div>
                     <p className="text-3xl font-bold mb-1">
-                      {booking.schedule.departure}
+                      {formattedTime}
                     </p>
                     <p className="font-semibold text-lg mb-1">
-                      {booking.route.from}
+                      {booking.reservation.fromStation.name}
                     </p>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="h-3.5 w-3.5" />
-                      <span>{booking.schedule.date}</span>
+                      <span>{formattedDate}</span>
                     </div>
                   </div>
 
@@ -194,7 +313,7 @@ export default function BookingConfirmationPage() {
                     <div className="flex items-center gap-1.5 px-3 py-1 bg-muted rounded-full">
                       <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                       <span className="text-xs font-medium">
-                        {booking.schedule.duration}
+                        {duration}
                       </span>
                     </div>
                     <div className="w-full h-px bg-border mt-2" />
@@ -206,14 +325,16 @@ export default function BookingConfirmationPage() {
                       <span className="text-sm font-medium">Arrival</span>
                     </div>
                     <p className="text-3xl font-bold mb-1">
-                      {booking.schedule.arrival}
+                      {formattedArrivalTime}
                     </p>
                     <p className="font-semibold text-lg mb-1">
-                      {booking.route.to}
+                      {booking.reservation.toStation.name}
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      {booking.route.distance}
-                    </p>
+                    {booking.journey.route.distance && (
+                        <p className="text-sm text-muted-foreground">
+                        {booking.journey.route.distance} km
+                        </p>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -229,9 +350,9 @@ export default function BookingConfirmationPage() {
               <Separator />
               <CardContent className="p-0">
                 <div className="divide-y">
-                  {booking.passengers.map((passenger, index) => (
+                  {displayPassengers.map((passenger, index) => (
                     <div
-                      key={passenger.ticketId}
+                      key={index}
                       className="p-4 hover:bg-muted/30 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
@@ -242,28 +363,28 @@ export default function BookingConfirmationPage() {
                             </span>
                           </div>
                           <div>
-                            <p className="font-semibold">{passenger.name}</p>
+                            <p className="font-semibold">{passenger.passengerName}</p>
                             <p className="text-sm text-muted-foreground">
-                              {passenger.age} yrs ·{" "}
-                              {passenger.gender.charAt(0) +
-                                passenger.gender.slice(1).toLowerCase()}
+                              {passenger.passengerAge} yrs ·{" "}
+                              {passenger.passengerGender !== "N/A" && passenger.passengerGender ? passenger.passengerGender.charAt(0) +
+                                passenger.passengerGender.slice(1).toLowerCase() : ""}
                             </p>
                           </div>
                         </div>
                         <div className="text-right">
                           <Badge variant="secondary" className="font-mono">
-                            Seat {passenger.seat}
+                            Seat {passenger.seatNumber || (booking.seats[index]?.seat?.seatNumber)}
                           </Badge>
                           <p className="text-sm text-muted-foreground mt-1">
-                            ৳{passenger.fare}
+                            ৳{passenger.fare || 650}
                           </p>
                         </div>
                       </div>
-                      <div className="pl-12">
+                      {/* <div className="pl-12">
                         <p className="text-xs text-muted-foreground font-mono">
-                          {passenger.ticketId}
+                          Ticket ID: {booking.ticket?.ticketNumber}
                         </p>
-                      </div>
+                      </div> */}
                     </div>
                   ))}
                 </div>
@@ -315,10 +436,10 @@ export default function BookingConfirmationPage() {
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">
-                      Tickets × {booking.passengers.length}
+                      Tickets × {displayPassengers.length}
                     </span>
                     <span className="font-medium">
-                      ৳{booking.payment.amount}
+                      ৳{booking.totalAmount}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -331,7 +452,7 @@ export default function BookingConfirmationPage() {
                   <div className="flex justify-between items-baseline">
                     <span className="font-semibold">Total Paid</span>
                     <span className="text-2xl font-bold">
-                      ৳{booking.payment.amount}
+                      ৳{booking.totalAmount}
                     </span>
                   </div>
 
@@ -342,23 +463,25 @@ export default function BookingConfirmationPage() {
                       <span className="text-muted-foreground">
                         Payment method
                       </span>
-                      <Badge variant="outline">{booking.payment.method}</Badge>
+                      <Badge variant="outline">{booking.payment?.paymentMethod || 'N/A'}</Badge>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        Transaction ID
-                      </span>
-                      <code className="text-xs font-mono bg-muted px-2 py-1 rounded">
-                        {booking.payment.transactionId}
-                      </code>
-                    </div>
+                    {booking.payment?.transactionId && (
+                        <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                            Transaction ID
+                        </span>
+                        <code className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                            {booking.payment.transactionId}
+                        </code>
+                        </div>
+                    )}
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">
                         Payment status
                       </span>
                       <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
                         <CheckCircle className="h-3 w-3 mr-1" />
-                        {booking.payment.status}
+                        {booking.payment?.status || booking.status}
                       </Badge>
                     </div>
                   </div>
@@ -395,48 +518,48 @@ export default function BookingConfirmationPage() {
         </div>
 
         <div className="xl:hidden mt-6 space-y-3">
-          <Card className="shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  onClick={handleDownloadTickets}
-                  className="flex-1 min-w-35"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download PDF
-                </Button>
-                <Button
-                  onClick={handleEmailTickets}
-                  variant="outline"
-                  className="flex-1 min-w-35 bg-transparent"
-                >
-                  <Mail className="h-4 w-4 mr-2" />
-                  Email
-                </Button>
-                <Button
-                  onClick={handleShareBooking}
-                  variant="outline"
-                  className="flex-1 min-w-35 bg-transparent"
-                >
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+             <Card className="shadow-sm">
+             <CardContent className="p-4">
+               <div className="flex flex-wrap gap-2">
+                 <Button
+                   onClick={handleDownloadTickets}
+                   className="flex-1 min-w-35"
+                 >
+                   <Download className="h-4 w-4 mr-2" />
+                   Download PDF
+                 </Button>
+                 <Button
+                   onClick={handleEmailTickets}
+                   variant="outline"
+                   className="flex-1 min-w-35 bg-transparent"
+                 >
+                   <Mail className="h-4 w-4 mr-2" />
+                   Email
+                 </Button>
+                 <Button
+                   onClick={handleShareBooking}
+                   variant="outline"
+                   className="flex-1 min-w-35 bg-transparent"
+                 >
+                   <Share2 className="h-4 w-4 mr-2" />
+                   Share
+                 </Button>
+               </div>
+             </CardContent>
+           </Card>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Link href="/my-bookings" className="block">
-              <Button variant="outline" className="w-full bg-transparent">
-                View all bookings
-              </Button>
-            </Link>
-            <Link href="/search-trains" className="block">
-              <Button variant="outline" className="w-full bg-transparent">
-                Book another trip
-              </Button>
-            </Link>
-          </div>
+           <div className="grid grid-cols-2 gap-3">
+             <Link href="/my-bookings" className="block">
+               <Button variant="outline" className="w-full bg-transparent">
+                 View all bookings
+               </Button>
+             </Link>
+             <Link href="/search-trains" className="block">
+               <Button variant="outline" className="w-full bg-transparent">
+                 Book another trip
+               </Button>
+             </Link>
+           </div>
         </div>
       </div>
     </div>

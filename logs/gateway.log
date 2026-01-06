@@ -1,0 +1,158 @@
+2026/01/06 13:15:44 ✅ Configuration loaded successfully
+2026/01/06 13:15:44 🌐 API Gateway will run on port: 30000
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /health                   --> github.com/BayajidAlam/jatra/api-gateway/routes.SetupRoutes.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/auth/register     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/auth/login        --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/auth/refresh-token --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/auth/logout       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/auth/me           --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/users/me          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/users/me          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/trains            --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/trains/:id        --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/trains/number/:trainNumber --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/trains            --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/stations          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/stations/:id      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/stations/code/:code --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/stations          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/routes            --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/routes/:id        --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/routes            --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/journeys/search   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/journeys/:id      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/journeys/train/:trainId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/journeys          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/locks/acquire     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/locks/availability/:journeyId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/locks/check/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/locks/extend/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/locks/release/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/locks/user/me     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/bookings/create   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/bookings          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/bookings/:id      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/bookings/user/:userId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/bookings/:id/confirm --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/bookings/:id/cancel --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/:id/pdf   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/tickets/generate  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/:id       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/tickets/:id/email --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/booking/:bookingId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/user/:userId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/:id/qr    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/tickets/validate  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/notifications/user/:userId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/notifications/:id/read --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/notifications/user/:userId/read-all --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/payments/initiate --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/payments/confirm  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/payments/:id      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/payments/reservation/:reservationId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/payments/user/:userId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/payments/:id/refund --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/payments/:id/cancel --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/gateway/webhook/sslcommerz/ipn --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/gateway/webhook   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/gateway/status/:transactionId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/user/profile      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/user/profile      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/user/change-password --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/user/passengers   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/user/passengers   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/user/passengers/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] DELETE /api/v1/user/passengers/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/user/preferences  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/user/preferences  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/search/journeys   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/search/autocomplete --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/search/suggestions --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/search/cache/invalidate --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/search/cache/stats --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/users       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/users/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/users/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/trains      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/trains/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/trains      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/trains/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/trains/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/stations    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/stations/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/stations    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/stations/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/stations/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/routes      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/routes      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/routes/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/routes/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/journeys    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/journeys/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/journeys    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/journeys/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/journeys/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/bookings    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/bookings/:id/status --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/coaches     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/coaches/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/coaches     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/coaches/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/coaches/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/seats       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/seats/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/seats       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/seats/bulk  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/seats/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/seats/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/settings    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/settings/:key --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/settings    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/settings/:key --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/settings/:key --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/payments    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/payments/stats --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/payments/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/stats/dashboard --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/bookings  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/bookings/export --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/revenue   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/revenue/export --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/trains    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/trains/export --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/users     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/users/export --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/daily     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/weekly    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/monthly   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/dashboard --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+2026/01/06 13:15:44 🚀 API Gateway starting on port 30000
+2026/01/06 13:15:44 📚 Health check available at: http://localhost:30000/health
+2026/01/06 13:15:44 🔐 JWT authentication enabled
+2026/01/06 13:15:44 ⚡ Rate limiting enabled
+2026/01/06 13:15:44 🌐 CORS enabled
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :30000
+2026/01/06 13:16:00 [POST] /api/v1/auth/login HTTP/1.1 | Status: 200 | Latency: 88.016803ms | IP: 127.0.0.1
+2026/01/06 13:16:00 [GET] /api/v1/auth/me HTTP/1.1 | Status: 304 | Latency: 9.982982ms | IP: 127.0.0.1
+2026/01/06 13:16:00 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 200 | Latency: 30.761647ms | IP: 127.0.0.1
+2026/01/06 13:16:00 [GET] /api/v1/stations HTTP/1.1 | Status: 304 | Latency: 20.055944ms | IP: 127.0.0.1
+2026/01/06 13:16:03 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 66.774045ms | IP: 127.0.0.1
+2026/01/06 13:16:04 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 28.94046ms | IP: 127.0.0.1
+2026/01/06 13:16:04 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.531361ms | IP: 127.0.0.1
+2026/01/06 13:16:06 [POST] /api/v1/bookings/98b102ed-25b8-45af-aa82-62f4a68133ea/email HTTP/1.1 | Status: 404 | Latency: 62.364µs | IP: 127.0.0.1
+2026/01/06 13:16:30 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 3.416526ms | IP: 127.0.0.1
+2026/01/06 13:19:29 [GET] /api/v1/auth/me HTTP/1.1 | Status: 304 | Latency: 10.008894ms | IP: 127.0.0.1
+2026/01/06 13:19:29 [GET] /api/v1/auth/me HTTP/1.1 | Status: 304 | Latency: 10.502285ms | IP: 127.0.0.1
+2026/01/06 13:19:29 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 6.383833ms | IP: 127.0.0.1
+2026/01/06 13:19:29 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.410866ms | IP: 127.0.0.1
+2026/01/06 13:19:29 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 19.510274ms | IP: 127.0.0.1
+2026/01/06 13:19:59 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 13.054845ms | IP: 127.0.0.1
+2026/01/06 13:19:59 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.405325ms | IP: 127.0.0.1
+2026/01/06 13:19:59 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.35197ms | IP: 127.0.0.1
+signal: killed

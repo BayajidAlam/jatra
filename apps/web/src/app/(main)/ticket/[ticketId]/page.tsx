@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import axios from "axios";
+import { useAuth } from "@/hooks/use-auth";
 import {
   ArrowLeft,
   Train,
@@ -23,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 
 // Mock ticket data matching backend contract
@@ -66,33 +69,131 @@ const mockTicketData = {
 };
 
 export default function TicketDetailPage() {
+  const router = useRouter();
   const params = useParams();
   const ticketId = params.ticketId as string;
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  
   const [showQR, setShowQR] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
-  const [isLoading, setIsLoading] = useState<{ [key: string]: boolean }>({});
+  const [isLoading, setIsLoading] = useState<{ [key: string]: boolean }>({ page: true });
   const [copied, setCopied] = useState(false);
+  const [ticket, setTicket] = useState<any>(null);
+  const [error, setError] = useState("");
 
-  // In real app, fetch ticket data based on ticketId
-  const ticket = mockTicketData;
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push(`/login?redirect=/ticket/${ticketId}`);
+    }
+  }, [authLoading, isAuthenticated, router, ticketId]);
 
-  const handleDownloadPDF = () => {
+  useEffect(() => {
+    const fetchTicketData = async () => {
+        try {
+            // Try fetching by ticket number first
+            let response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1"}/bookings/ticket/${ticketId}`)
+                                    .catch(() => null);
+            
+            // If failed, try fetching by booking ID (legacy link support)
+            if (!response) {
+                 response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1"}/bookings/${ticketId}`);
+            }
+
+            if (response && response.data) {
+                const booking = response.data;
+                // Map booking to ticket view model
+                const ticketData = {
+                    ticketId: booking.ticket?.ticketNumber || "PENDING",
+                    bookingId: booking.id,
+                    passengerName: booking.user.name || booking.passengers?.[0]?.passengerName || "Passenger",
+                    passengerType: "ADULT", // TODO: Get from passenger
+                    train: booking.journey.train,
+                    route: { 
+                        from: booking.reservation.fromStation.name, 
+                        to: booking.reservation.toStation.name 
+                    },
+                    date: booking.journey.journeyDate,
+                    departureAt: booking.journey.departureTime,
+                    arrivalAt: booking.journey.arrivalTime,
+                    seat: booking.seats.map((s: any) => s.seat.seatNumber).join(", "),
+                    coach: booking.seats[0]?.seat?.coach?.coachCode || "Coach",
+                    platform: booking.journey.route?.stops?.[0]?.fromStation?.platform || "1", // Mock platform if missing
+                    fare: booking.totalAmount,
+                    currency: "BDT",
+                    status: booking.status === "CONFIRMED" ? (new Date(booking.journey.arrivalTime) < new Date() ? "USED" : "VALID") : booking.status,
+                    issuedAt: booking.createdAt,
+                    expiresAt: booking.journey.departureTime,
+                    qr: booking.ticket?.qrCode || "/placeholder.svg",
+                    qrType: "BASE64",
+                    ticketPdfUrl: booking.ticket?.pdfUrl,
+                    payment: booking.payment,
+                    contact: { email: booking.user.email, phone: booking.user.phone },
+                    validationHistory: []
+                };
+                setTicket(ticketData);
+            } else {
+                setError("Ticket not found");
+            }
+        } catch (err) {
+            console.error("Failed to fetch ticket:", err);
+            setError("Failed to load ticket details");
+        } finally {
+            setIsLoading(prev => ({ ...prev, page: false }));
+        }
+    };
+
+    if (ticketId) {
+        fetchTicketData();
+    }
+  }, [ticketId]);
+
+  const handleDownloadPDF = async () => {
+    if (!ticket?.booking?.id) return;
     setIsLoading((prev) => ({ ...prev, pdf: true }));
-    setTimeout(() => setIsLoading((prev) => ({ ...prev, pdf: false })), 1500);
+    const { downloadTicketPDF } = await import("@/lib/download-ticket");
+    await downloadTicketPDF(ticket.booking.id);
+    setIsLoading((prev) => ({ ...prev, pdf: false }));
   };
 
-  const handleEmailTicket = () => {
+  const handleEmailTicket = async () => {
+    if (!ticket?.id) return;
+    
     setIsLoading((prev) => ({ ...prev, email: true }));
-    setTimeout(() => setIsLoading((prev) => ({ ...prev, email: false })), 1500);
+    
+    try {
+      const response = await apiClient.post(`/tickets/${ticket.id}/email`);
+      
+      if (response.data) {
+        toast.success("Ticket sent to your email successfully!");
+      }
+    } catch (error: any) {
+      console.error("Failed to email ticket:", error);
+      toast.error("Failed to send email. Please try again.");
+    } finally {
+      setIsLoading((prev) => ({ ...prev, email: false }));
+    }
   };
 
-  const handleShareTicket = () => {
+  const handleShareTicket = async () => {
+    const shareData = {
+      title: `My Train Ticket - ${ticket.train.name}`,
+      text: `Train: ${ticket.train.name} from ${ticket.route.from} to ${ticket.route.to}`,
+      url: window.location.href,
+    };
+
     if (navigator.share) {
-      navigator.share({
-        title: `My Train Ticket - ${ticket.train.name}`,
-        text: `Train: ${ticket.train.name} from ${ticket.route.from} to ${ticket.route.to}`,
-        url: window.location.href,
-      });
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Link copied to clipboard!");
+      } catch (err) {
+        toast.error("Failed to copy link");
+      }
     }
   };
 
@@ -107,6 +208,7 @@ export default function TicketDetailPage() {
   };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("en-US", {
       weekday: "short",
       year: "numeric",
@@ -116,6 +218,7 @@ export default function TicketDetailPage() {
   };
 
   const formatTime = (dateString: string) => {
+    if (!dateString) return "";
     return new Date(dateString).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
@@ -124,6 +227,7 @@ export default function TicketDetailPage() {
   };
 
   const formatRelativeTime = (dateString: string) => {
+    if (!dateString) return "";
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -139,8 +243,10 @@ export default function TicketDetailPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "VALID":
+      case "CONFIRMED":
         return "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300";
       case "USED":
+      case "COMPLETED":
         return "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300";
       case "EXPIRED":
         return "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300";
@@ -150,6 +256,24 @@ export default function TicketDetailPage() {
         return "bg-gray-100 text-gray-700";
     }
   };
+
+  if (authLoading || isLoading.page) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error || !ticket) {
+      return (
+          <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+              <h1 className="text-xl font-bold text-red-600">Error Loading Ticket</h1>
+              <p>{error || "Ticket not found"}</p>
+              <Link href="/my-bookings"><Button>Go Back</Button></Link>
+          </div>
+      )
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -352,7 +476,7 @@ export default function TicketDetailPage() {
                       <Separator />
                       <CardContent className="pt-4">
                         <div className="space-y-3">
-                          {ticket.validationHistory.map((validation, idx) => (
+                          {ticket.validationHistory.map((validation: any, idx: number) => (
                             <div
                               key={idx}
                               className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded p-3"
@@ -469,7 +593,7 @@ export default function TicketDetailPage() {
                     Booking ID
                   </p>
                   <Link
-                    href={`/bookings/${ticket.bookingId}`}
+                    href={`/my-bookings/${ticket.bookingId}`}
                     className="text-sm font-semibold text-primary hover:underline"
                   >
                     {ticket.bookingId}
@@ -500,7 +624,7 @@ export default function TicketDetailPage() {
                     Payment Method
                   </p>
                   <p className="text-sm font-semibold">
-                    {ticket.payment?.method}
+                    {ticket.payment?.paymentMethod}
                   </p>
                 </div>
                 <Separator />

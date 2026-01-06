@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Calendar,
   MapPin,
@@ -17,17 +18,33 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { StationSelect } from "@/components/station-select";
+import { useTrainSearch } from "@/hooks/use-train-search";
 
 export default function HomePage() {
+  const router = useRouter();
+  const { useStations } = useTrainSearch();
+  const { data: stations, isLoading: isLoadingStations } = useStations();
+
   const [fromStation, setFromStation] = useState("");
   const [toStation, setToStation] = useState("");
   const [date, setDate] = useState("");
   const [passengers, setPassengers] = useState("1");
 
+  const handleSearch = () => {
+    if (fromStation && toStation && date) {
+      router.push(
+        `/search-trains?from=${fromStation}&to=${toStation}&date=${date}`
+      );
+    } else {
+      router.push("/search-trains");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section with Booking Form */}
-      <section className="relative pt-20 pb-32 overflow-hidden">
+      <section className="relative pt-20 pb-32">
         <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-background to-background" />
 
         <div className="container mx-auto px-4 lg:px-8 relative">
@@ -54,34 +71,38 @@ export default function HomePage() {
           {/* Booking Card */}
           <Card className="max-w-5xl mx-auto shadow-2xl border-border bg-card/50 backdrop-blur-lg">
             <CardContent className="p-6 md:p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div className="lg:col-span-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-row lg:items-end gap-4">
+                <div className="lg:w-[28%] lg:shrink-0 min-w-0">
                   <label className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-primary" />
                     From
                   </label>
-                  <Input
-                    placeholder="Dhaka"
+                  <StationSelect
                     value={fromStation}
-                    onChange={(e) => setFromStation(e.target.value)}
+                    onChange={setFromStation}
+                    stations={stations}
+                    placeholder="From Station"
+                    disabled={isLoadingStations}
                     className="h-12"
                   />
                 </div>
 
-                <div className="lg:col-span-1">
+                <div className="lg:w-[28%] lg:shrink-0 min-w-0">
                   <label className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-primary" />
                     To
                   </label>
-                  <Input
-                    placeholder="Chittagong"
+                  <StationSelect
                     value={toStation}
-                    onChange={(e) => setToStation(e.target.value)}
+                    onChange={setToStation}
+                    stations={stations}
+                    placeholder="To Station"
+                    disabled={isLoadingStations}
                     className="h-12"
                   />
                 </div>
 
-                <div className="lg:col-span-1">
+                <div className="lg:w-[28%] lg:shrink-0">
                   <label className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-primary" />
                     Date
@@ -91,30 +112,18 @@ export default function HomePage() {
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     className="h-12"
+                    min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
 
-                <div className="lg:col-span-1">
-                  <label className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                    <Users className="h-4 w-4 text-primary" />
-                    Passengers
-                  </label>
-                  <Input
-                    type="number"
-                    min="1"
-                    value={passengers}
-                    onChange={(e) => setPassengers(e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="lg:col-span-1 flex items-end">
-                  <Link href="/search-trains" className="w-full">
-                    <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
-                      Search Trains
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
+                <div className="lg:flex-1 w-full min-w-0">
+                  <Button 
+                    onClick={handleSearch}
+                    className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+                  >
+                    Search Trains
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </CardContent>

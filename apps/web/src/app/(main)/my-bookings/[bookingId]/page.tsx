@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import axios from "axios";
 import {
   ArrowLeft,
   Download,
@@ -15,71 +16,40 @@ import {
   CheckCircle2,
   XCircle,
   FileText,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-// Mock booking data matching backend contract
-const mockBookingData = {
-  bookingId: "BK20251231001",
-  status: "CONFIRMED",
-  createdAt: "2025-12-31T10:30:00Z",
-  train: { id: "train_701", name: "Suborno Express", number: "701" },
-  route: { from: "Dhaka", to: "Chittagong", distanceKm: 232 },
-  schedule: {
-    departureAt: "2025-01-15T10:00:00Z",
-    arrivalAt: "2025-01-15T14:30:00Z",
-    platform: "3",
-  },
-  passengers: [
-    {
-      passengerId: "p1",
-      name: "John Doe",
-      seat: "A3",
-      fare: 650,
-      ticketId: "TKT1",
-    },
-    {
-      passengerId: "p2",
-      name: "Jane Smith",
-      seat: "A4",
-      fare: 650,
-      ticketId: "TKT2",
-    },
-  ],
-  tickets: [
-    {
-      ticketId: "TKT1",
-      qr: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23ffffff' width='100' height='100'/%3E%3C/svg%3E",
-      qrType: "BASE64",
-      status: "ACTIVE",
-    },
-  ],
-  payment: {
-    method: "BKASH",
-    amount: 1950,
-    transactionId: "TXN1",
-    status: "COMPLETED",
-    paidAt: "2025-12-31T10:35:00Z",
-  },
-  cancellation: {
-    canCancel: true,
-    deadlineAt: "2025-01-15T08:00:00Z",
-    feeAmount: 390,
-  },
-  contact: { phone: "+8801700000000", email: "user@example.com" },
-};
-
 export default function BookingDetailsPage() {
   const params = useParams();
   const bookingId = params.bookingId as string;
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [booking, setBooking] = useState<any>(null);
   const [expandedTickets, setExpandedTickets] = useState<string[]>([]);
+  const [error, setError] = useState("");
 
-  // In real app, fetch booking data based on bookingId
-  const booking = mockBookingData;
+  useEffect(() => {
+    const fetchBooking = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1"}/bookings/${bookingId}`
+        );
+        setBooking(response.data);
+      } catch (err) {
+        console.error("Failed to fetch booking details:", err);
+        setError("Failed to load booking details");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (bookingId) {
+      fetchBooking();
+    }
+  }, [bookingId]);
 
   const toggleTicket = (ticketId: string) => {
     setExpandedTickets((prev) =>
@@ -89,30 +59,42 @@ export default function BookingDetailsPage() {
     );
   };
 
-  const handleDownloadPDF = () => {
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1500);
+  const handleDownloadPDF = async () => {
+    if (!booking) return;
+    const { downloadTicketPDF } = await import("@/lib/download-ticket");
+    await downloadTicketPDF(booking.id, booking.status);
   };
 
   const handleEmailTickets = () => {
-    console.log("[v0] Sending tickets via email to:", booking.contact.email);
+    alert(`Emailing tickets to ${booking.customerEmail || "registered email"}`);
   };
 
   const handleShareBooking = () => {
     if (navigator.share) {
       navigator.share({
-        title: `Jatra Railway Booking ${booking.bookingId}`,
+        title: `Jatra Railway Booking ${booking.id}`,
         text: `Check out my train booking`,
       });
     }
   };
 
-  const handleCancelBooking = () => {
-    console.log("[v0] Initiating cancellation for booking:", bookingId);
+  const handleCancelBooking = async () => {
+     if (confirm("Are you sure you want to cancel this booking?")) {
+        try {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1"}/bookings/${bookingId}/cancel`, {
+                reason: "User requested cancellation"
+            });
+            alert("Booking cancelled successfully");
+            window.location.reload();
+        } catch (error) {
+            alert("Failed to cancel booking");
+        }
+     }
   };
 
   // Format dates
   const formatDate = (dateString: string) => {
+    if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("en-US", {
       weekday: "short",
       year: "numeric",
@@ -122,6 +104,7 @@ export default function BookingDetailsPage() {
   };
 
   const formatTime = (dateString: string) => {
+      if (!dateString) return "";
     return new Date(dateString).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
@@ -142,8 +125,47 @@ export default function BookingDetailsPage() {
     }
   };
 
-  const isCancellationDeadlinePassed =
-    new Date(booking.cancellation.deadlineAt) < new Date();
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error || !booking) {
+      return (
+          <div className="min-h-screen bg-muted/30 flex flex-col items-center justify-center gap-4">
+              <h1 className="text-xl font-bold text-red-600">Error Loading Booking</h1>
+              <p>{error || "Booking not found"}</p>
+              <Link href="/my-bookings"><Button>Go Back</Button></Link>
+          </div>
+      )
+  }
+
+  // Derive display values from real data
+  const trainName = booking.journey?.train?.name || "Train";
+  const trainNumber = booking.journey?.train?.trainNumber || "";
+  const fromStation = booking.reservation?.fromStation?.name || booking.journey?.route?.stops?.[0]?.fromStation?.name || "Start";
+  const toStation = booking.reservation?.toStation?.name || booking.journey?.route?.stops?.[booking.journey?.route?.stops?.length - 1]?.toStation?.name || "End";
+  const departureTime = booking.journey?.departureTime;
+  const arrivalTime = booking.journey?.arrivalTime; // Check if this exists in model, else calculate
+  // Prioritize actual passenger data if available
+  const passengers = (booking.passengers && booking.passengers.length > 0)
+    ? booking.passengers.map((p: any) => ({
+        passengerId: p.id,
+        name: p.passengerName || p.name || "Passenger",
+        seat: `${p.seatNumber} (${p.coachId ? 'Coach ' + p.coachId : 'Seat'})`,
+        fare: p.fare || (booking.totalAmount / booking.passengers.length),
+        ticketId: booking.ticket?.ticketNumber || "Pending"
+      }))
+    : booking.seats?.map((s: any, idx: number) => ({
+        passengerId: s.id,
+        name: idx === 0 ? (booking.customerName || booking.user?.name || "Passenger") : "Passenger",
+        seat: `${s.seat?.seatNumber} (${s.seat?.coach?.coachCode || 'Seat'})`,
+        fare: s.seat?.baseFare || (booking.totalAmount / booking.seats.length),
+        ticketId: booking.ticket?.ticketNumber || "Pending"
+    })) || [];
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -159,7 +181,7 @@ export default function BookingDetailsPage() {
             <div className="flex-1">
               <h1 className="text-xl font-bold">Booking Details</h1>
               <p className="text-sm text-muted-foreground">
-                {booking.bookingId}
+                {booking.id}
               </p>
             </div>
             <Badge className={getStatusColor(booking.status)}>
@@ -177,13 +199,13 @@ export default function BookingDetailsPage() {
               <div>
                 <p className="text-sm text-muted-foreground mb-2">Departure</p>
                 <p className="text-3xl font-bold mb-1">
-                  {formatTime(booking.schedule.departureAt)}
+                  {formatTime(departureTime)}
                 </p>
                 <p className="font-semibold text-base mb-2">
-                  {booking.route.from}
+                  {fromStation}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {formatDate(booking.schedule.departureAt)}
+                  {formatDate(departureTime)}
                 </p>
               </div>
 
@@ -192,20 +214,17 @@ export default function BookingDetailsPage() {
                 <Train className="h-5 w-5 text-muted-foreground mb-3" />
                 <div className="h-px w-12 bg-border sm:w-20" />
                 <p className="text-xs text-muted-foreground text-center mt-2">
-                  {booking.train.number}
+                  {trainNumber}
                 </p>
               </div>
 
               <div className="text-right">
-                <p className="text-sm text-muted-foreground mb-2">Arrival</p>
+                <p className="text-sm text-muted-foreground mb-2">Arrival (Est)</p>
                 <p className="text-3xl font-bold mb-1">
-                  {formatTime(booking.schedule.arrivalAt)}
+                  {arrivalTime ? formatTime(arrivalTime) : "--:--"}
                 </p>
                 <p className="font-semibold text-base mb-2">
-                  {booking.route.to}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {booking.route.distanceKm} km
+                  {toStation}
                 </p>
               </div>
             </div>
@@ -222,29 +241,54 @@ export default function BookingDetailsPage() {
                 </div>
                 <div>
                   <CardTitle className="text-base">
-                    {booking.train.name}
+                    {trainName}
                   </CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    Train {booking.train.number}
+                    Train {trainNumber}
                   </p>
                 </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground">Platform</p>
-                <p className="text-lg font-bold">{booking.schedule.platform}</p>
               </div>
             </div>
           </CardHeader>
         </Card>
 
+        {/* Contact Details */}
+        {booking.user && (
+          <Card className="mb-6 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <User className="h-5 w-5 text-muted-foreground" />
+                Contact Details
+              </CardTitle>
+            </CardHeader>
+            <Separator />
+            <CardContent className="pt-4">
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Name</p>
+                  <p className="font-medium">{booking.user.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Email</p>
+                  <p className="font-medium">{booking.user.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Phone</p>
+                  <p className="font-medium">{booking.user.phone}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Passengers Section */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <User className="h-5 w-5 text-muted-foreground" />
-            Passengers ({booking.passengers.length})
+            Passengers ({passengers.length})
           </h2>
           <div className="space-y-3">
-            {booking.passengers.map((passenger) => (
+            {passengers.map((passenger: any) => (
               <Card key={passenger.passengerId} className="shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
@@ -256,17 +300,14 @@ export default function BookingDetailsPage() {
                         <p className="font-semibold text-sm">
                           {passenger.name}
                         </p>
-                        <Link
-                          href={`/ticket/${passenger.ticketId}`}
-                          className="text-xs text-muted-foreground font-mono hover:underline"
-                        >
-                          {passenger.ticketId}
-                        </Link>
+                        <span className="text-xs text-muted-foreground font-mono">
+                          TKT: {passenger.ticketId}
+                        </span>
                       </div>
                     </div>
                     <div className="text-right">
                       <Badge variant="secondary" className="font-mono mb-1">
-                        Seat {passenger.seat}
+                        {passenger.seat}
                       </Badge>
                       <p className="text-sm font-semibold">৳{passenger.fare}</p>
                     </div>
@@ -276,119 +317,7 @@ export default function BookingDetailsPage() {
             ))}
           </div>
         </div>
-
-        {/* Tickets Section */}
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <FileText className="h-5 w-5 text-muted-foreground" />
-            Digital Tickets
-          </h2>
-          <div className="space-y-3">
-            {booking.tickets.map((ticket) => (
-              <Card key={ticket.ticketId} className="shadow-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <FileText className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-sm">
-                          {ticket.ticketId}
-                        </p>
-                        <Badge variant="outline" className="text-xs mt-1">
-                          {ticket.status}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Link href={`/ticket/${ticket.ticketId}`}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="bg-transparent border-2"
-                        >
-                          View Ticket
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleTicket(ticket.ticketId)}
-                        className="text-primary"
-                      >
-                        {expandedTickets.includes(ticket.ticketId)
-                          ? "Hide"
-                          : "View"}{" "}
-                        QR
-                      </Button>
-                    </div>
-                  </div>
-                  {expandedTickets.includes(ticket.ticketId) && (
-                    <div className="mt-4 pt-4 border-t border-border">
-                      <p className="text-xs text-muted-foreground mb-3">
-                        This QR code will be included in your PDF ticket
-                      </p>
-                      <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center">
-                        <img src={ticket.qr} alt="QR" className="w-28 h-28" />
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Cancellation Info */}
-        {booking.cancellation.canCancel && !isCancellationDeadlinePassed && (
-          <Card className="mb-6 border-orange-200 bg-orange-50/50 shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex gap-3">
-                <AlertCircle className="h-5 w-5 text-orange-600 shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="font-semibold text-sm text-orange-900 mb-1">
-                    Cancellation Available
-                  </p>
-                  <p className="text-sm text-orange-800 mb-2">
-                    You can cancel this booking until{" "}
-                    {formatDate(booking.cancellation.deadlineAt)} at{" "}
-                    {formatTime(booking.cancellation.deadlineAt)}
-                  </p>
-                  <p className="text-xs text-orange-700">
-                    Cancellation fee: ৳{booking.cancellation.feeAmount} (
-                    {Math.round(
-                      (booking.cancellation.feeAmount /
-                        booking.payment.amount) *
-                        100
-                    )}
-                    %)
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {isCancellationDeadlinePassed && booking.cancellation.canCancel && (
-          <Card className="mb-6 border-red-200 bg-red-50/50 shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex gap-3">
-                <XCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="font-semibold text-sm text-red-900">
-                    Cancellation Deadline Passed
-                  </p>
-                  <p className="text-xs text-red-700 mt-1">
-                    You can no longer cancel this booking. Please contact
-                    support if you need assistance.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
+        
         {/* Payment Summary */}
         <Card className="mb-6 shadow-sm">
           <CardHeader>
@@ -402,34 +331,37 @@ export default function BookingDetailsPage() {
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">
-                  Fare × {booking.passengers.length} passengers
+                  Fare × {passengers.length} passengers
                 </span>
-                <span className="font-medium">৳{booking.payment.amount}</span>
+                <span className="font-medium">৳{booking.totalAmount}</span>
               </div>
               <Separator />
               <div className="flex justify-between items-baseline">
                 <span className="font-semibold">Total Paid</span>
                 <span className="text-2xl font-bold">
-                  ৳{booking.payment.amount}
+                  ৳{booking.totalAmount}
                 </span>
               </div>
               <Separator />
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Payment method</span>
-                  <Badge variant="outline">{booking.payment.method}</Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Transaction ID</span>
-                  <code className="text-xs font-mono bg-muted px-2 py-1 rounded">
-                    {booking.payment.transactionId}
-                  </code>
-                </div>
+                {booking.payment && (
+                    <>
+                    <div className="flex justify-between">
+                    <span className="text-muted-foreground">Payment method</span>
+                    <Badge variant="outline">{booking.payment.paymentMethod || "N/A"}</Badge>
+                    </div>
+                    <div className="flex justify-between">
+                    <span className="text-muted-foreground">Transaction ID</span>
+                    <code className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                        {booking.payment.transactionId || "N/A"}
+                    </code>
+                    </div>
+                    </>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Status</span>
-                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                    <CheckCircle2 className="h-3 w-3 mr-1" />
-                    {booking.payment.status}
+                  <Badge className={getStatusColor(booking.status)}>
+                    {booking.status}
                   </Badge>
                 </div>
               </div>
@@ -441,11 +373,10 @@ export default function BookingDetailsPage() {
         <div className="grid sm:grid-cols-3 gap-3 mb-6">
           <Button
             onClick={handleDownloadPDF}
-            disabled={isLoading}
             className="w-full"
           >
             <Download className="h-4 w-4 mr-2" />
-            {isLoading ? "Preparing..." : "Download PDF"}
+            Download PDF
           </Button>
           <Button
             onClick={handleEmailTickets}
@@ -465,8 +396,18 @@ export default function BookingDetailsPage() {
           </Button>
         </div>
 
+        {/* Payment Action Button */}
+        {booking.status === 'PAYMENT_PENDING' && (
+             <Link href={`/booking/payment?bookingId=${booking.id}&amount=${booking.totalAmount}&seatIds=${booking.seats?.map((s:any)=>s.seatId).join(',')}&seatNumbers=${booking.seats?.map((s:any)=>s.seat?.seatNumber).join(',')}`} className="w-full mb-3 block">
+               <Button className="w-full bg-green-600 hover:bg-green-700 text-white shadow-md">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Pay Now (৳{booking.totalAmount})
+               </Button>
+             </Link>
+        )}
+
         {/* Cancel Booking Button */}
-        {booking.cancellation.canCancel && !isCancellationDeadlinePassed && (
+        {booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED' && (
           <Button
             onClick={handleCancelBooking}
             variant="outline"

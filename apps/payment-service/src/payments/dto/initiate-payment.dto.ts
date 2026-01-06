@@ -45,6 +45,11 @@ export class InitiatePaymentDto {
   @IsUUID()
   reservationId: string;
 
+  @ApiPropertyOptional({ description: 'Booking ID' })
+  @IsOptional()
+  @IsString()
+  bookingId?: string;
+
   @ApiProperty({
     description: "User ID making the payment",
     example: "660e8400-e29b-41d4-a716-446655440000",
@@ -69,6 +74,14 @@ export class InitiatePaymentDto {
   })
   @IsEnum(PaymentMethod)
   paymentMethod: PaymentMethod;
+
+  @ApiPropertyOptional({
+    description: "Payment currency",
+    example: "BDT",
+  })
+  @IsOptional()
+  @IsString()
+  currency?: string;
 
   @ApiPropertyOptional({
     description: "Card details (required for card payments)",
@@ -102,4 +115,12 @@ export class InitiatePaymentDto {
   @IsOptional()
   @IsString()
   customerEmail?: string;
+
+  @ApiPropertyOptional({
+    description: "Customer phone",
+    example: "01700000000",
+  })
+  @IsOptional()
+  @IsString()
+  customerPhone?: string;
 }

@@ -1,10 +1,12 @@
-import { Injectable, OnModuleInit, Logger } from "@nestjs/common";
+import { Injectable, OnModuleInit, Logger, Inject, forwardRef } from "@nestjs/common";
 import * as amqp from "amqplib";
+import { randomUUID } from "crypto";
 import { TicketsService } from "../tickets/tickets.service";
 import {
   BookingConfirmedEvent,
   Exchanges,
   EventRoutingKeys,
+  SendEmailEvent,
 } from "@jatra/common/interfaces";
 
 @Injectable()
@@ -13,7 +15,7 @@ export class RabbitMQConsumerService implements OnModuleInit {
   private connection: amqp.Connection;
   private channel: amqp.Channel;
 
-  constructor(private readonly ticketsService: TicketsService) {}
+  constructor(@Inject(forwardRef(() => TicketsService)) private readonly ticketsService: TicketsService) {}
 
   async onModuleInit() {
     await this.connect();
@@ -30,6 +32,9 @@ export class RabbitMQConsumerService implements OnModuleInit {
 
       // Assert exchange
       await this.channel.assertExchange(bookingExchange, "topic", {
+        durable: true,
+      });
+      await this.channel.assertExchange(Exchanges.NOTIFICATION, "topic", {
         durable: true,
       });
 
@@ -120,6 +125,48 @@ export class RabbitMQConsumerService implements OnModuleInit {
       );
       throw error;
     }
+  }
+
+  private generateEventId(): string {
+    return randomUUID();
+  }
+
+  async publishEvent(event: any, exchange: string): Promise<void> {
+    if (!this.channel) {
+      this.logger.warn(
+        "RabbitMQ channel not available, skipping event publish"
+      );
+      return;
+    }
+
+    try {
+      const message = JSON.stringify(event);
+
+      this.channel.publish(exchange, event.eventType, Buffer.from(message), {
+        persistent: true,
+        contentType: "application/json",
+        messageId: event.eventId,
+      });
+
+      this.logger.log(
+        `📤 Published event: ${event.eventType} (ID: ${event.eventId})`
+      );
+    } catch (error) {
+      this.logger.error(`Failed to publish event: ${event.eventType}`, error);
+      throw error;
+    }
+  }
+
+  async publishSendEmail(data: SendEmailEvent["data"]): Promise<void> {
+    const event: SendEmailEvent = {
+      eventId: this.generateEventId(),
+      eventType: EventRoutingKeys.SEND_EMAIL,
+      timestamp: new Date(),
+      source: "ticket-service",
+      data,
+    };
+
+    await this.publishEvent(event, Exchanges.NOTIFICATION);
   }
 
   async onModuleDestroy() {

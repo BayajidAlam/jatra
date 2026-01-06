@@ -1,0 +1,45 @@
+# Production values for jatra
+# This file overrides the default values.yaml for PRODUCTION environment
+
+global:
+  environment: production
+  imagePullPolicy: Always
+
+# Disable in-cluster databases (Use AWS RDS & ElastiCache instead)
+postgresql:
+  enabled: false
+
+redis:
+  enabled: false
+
+rabbitmq:
+  enabled: true # Keep RabbitMQ unless using Amazon MQ
+  persistence:
+    enabled: true
+    size: 20Gi # Increased for production
+
+# Ingress configuration for AWS ALB
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:region:account:certificate/certificate-id" # user needs to fill this
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+  hosts:
+    - host: api.jatra.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: api-gateway
+  tls: [] # TLS handled by ALB via Certificate Manager (ACM)
+
+# Monitoring - Use CloudWatch Container Insights instead of self-hosted Prometheus/Grafana stack
+monitoring:
+  enabled: false # We will rely on AWS CloudWatch
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false

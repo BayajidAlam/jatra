@@ -31,9 +31,15 @@
 
       <div class="booking-details">
         <div class="detail-row">
-          <span class="detail-label">Booking Number:</span>
-          <span class="detail-value"><strong>{{bookingNumber}}</strong></span>
+          <span class="detail-label">Booking ID:</span>
+          <span class="detail-value"><strong>{{bookingId}}</strong></span>
         </div>
+        {{#if ticketNumber}}
+        <div class="detail-row">
+          <span class="detail-label">Ticket Number:</span>
+          <span class="detail-value"><strong>{{ticketNumber}}</strong></span>
+        </div>
+        {{/if}}
         <div class="detail-row">
           <span class="detail-label">Train:</span>
           <span class="detail-value">{{trainName}}</span>
@@ -57,6 +63,12 @@
           <span class="detail-value"><strong>৳{{totalAmount}}</strong></span>
         </div>
       </div>
+
+      {{#if pdfUrl}}
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="{{pdfUrl}}" style="background-color: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Download Ticket PDF</a>
+      </div>
+      {{/if}}
 
       <p><strong>What's Next?</strong></p>
       <ul>

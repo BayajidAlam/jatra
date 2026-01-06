@@ -18,6 +18,8 @@ export interface PaymentGatewayRequest {
   ipnUrl: string;
   cardDetails?: any;
   mobileNumber?: string;
+  bookingId?: string;
+  transactionId?: string;
 }
 
 export interface PaymentGatewayResponse {
@@ -74,7 +76,7 @@ export class GatewayService {
     request: PaymentGatewayRequest
   ): Promise<PaymentGatewayResponse> {
     try {
-      const transactionId = this.generateTransactionId();
+      const transactionId = request.transactionId || this.generateTransactionId();
 
       const initResponse = await this.sslCommerzService.initiatePayment({
         amount: request.amount,
@@ -130,7 +132,7 @@ export class GatewayService {
   private async processMockPayment(
     request: PaymentGatewayRequest
   ): Promise<PaymentGatewayResponse> {
-    const transactionId = this.generateTransactionId();
+    const transactionId = request.transactionId || this.generateTransactionId();
 
     this.logger.log(
       `Processing mock payment: ${transactionId}, Amount: ${request.amount} ${request.currency}`
@@ -146,7 +148,8 @@ export class GatewayService {
       return {
         success: true,
         transactionId,
-        status: "COMPLETED",
+        status: "PENDING",
+        gatewayPageURL: `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/ssl-mock?trx=${transactionId}&amount=${request.amount}&bookingId=${request.bookingId}`,
         authCode: this.generateAuthCode(),
         bankReference: `BANK_${Date.now()}`,
         timestamp: new Date(),
@@ -316,7 +319,9 @@ export class GatewayService {
 
   // Helper methods
   private generateTransactionId(): string {
-    return `TXN_${Date.now()}_${uuidv4().substring(0, 8)}`;
+    // Format: TXN_TIMESTAMP_RANDOM
+    // Length should be <= 30 chars for SSLCommerz
+    return `TXN_${Date.now()}_${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
   }
 
   private generateAuthCode(): string {

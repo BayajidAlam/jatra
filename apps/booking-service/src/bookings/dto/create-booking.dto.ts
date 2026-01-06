@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNumber, IsArray, IsNotEmpty, Min, Max, ArrayMinSize, ArrayMaxSize } from 'class-validator';
+import { IsString, IsNumber, IsArray, IsNotEmpty, Min, Max, ArrayMinSize, ArrayMaxSize, IsOptional, IsObject } from 'class-validator';
 
 export class CreateBookingDto {
   @ApiProperty({ example: 'user-uuid-here', description: 'User ID' })
@@ -36,7 +36,7 @@ export class CreateBookingDto {
 
   @ApiProperty({ example: 1500.00, description: 'Total booking amount' })
   @IsNumber()
-  @Min(0)
+  @Min(10)
   totalAmount: number;
 
   @ApiPropertyOptional({ 
@@ -47,6 +47,42 @@ export class CreateBookingDto {
   @IsString()
   paymentMethod: string;
 
+  @ApiPropertyOptional({ description: 'Customer Name' })
+  @IsString()
+  customerName?: string;
+
+  @ApiPropertyOptional({ description: 'Customer Email' })
+  @IsString()
+  customerEmail?: string;
+
+  @ApiPropertyOptional({ description: 'Customer Phone' })
+  @IsString()
+  customerPhone?: string;
+
   @ApiPropertyOptional({ description: 'Card or mobile banking details' })
+  @IsOptional()
+  @IsObject()
   paymentDetails?: any;
+
+  @ApiProperty({ 
+    description: 'List of passengers',
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        age: { type: 'number' },
+        gender: { type: 'string' },
+        seatId: { type: 'string' }
+      }
+    }
+  })
+  @IsArray()
+  @IsOptional() 
+  passengers?: {
+    name: string;
+    age: number;
+    gender: string;
+    seatId: string;
+  }[];
 }

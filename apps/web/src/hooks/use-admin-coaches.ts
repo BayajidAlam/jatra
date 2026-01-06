@@ -31,19 +31,20 @@ interface CoachesResponse {
   };
 }
 
-export function useAdminCoaches(params?: { page?: number; limit?: number; search?: string }) {
+export function useAdminCoaches(params?: { page?: number; limit?: number; search?: string; trainId?: string }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const page = params?.page || 1;
   const limit = params?.limit || 10;
   const search = params?.search || "";
+  const trainId = params?.trainId;
 
   const coachesQuery = useQuery({
-    queryKey: ["admin", "coaches", page, limit, search],
+    queryKey: ["admin", "coaches", page, limit, search, trainId],
     queryFn: async (): Promise<{ data: Coach[]; meta: any }> => {
       const { data } = await apiClient.get<{ data: Coach[]; meta: any }>(
         API_ENDPOINTS.ADMIN.COACHES,
-        { params: { page, limit, search } }
+        { params: { page, limit, search, trainId } }
       );
       return data;
     },

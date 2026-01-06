@@ -3,12 +3,16 @@ import {
   Logger,
   NotFoundException,
   BadRequestException,
+  Inject,
+  forwardRef,
 } from "@nestjs/common";
 import { PrismaService } from "../common/prisma.service";
 import { QRCodeService } from "./qrcode.service";
 import { PDFService } from "./pdf.service";
 import { GenerateTicketDto } from "./dto/generate-ticket.dto";
 import { ValidateTicketDto } from "./dto/validate-ticket.dto";
+
+import { RabbitMQConsumerService } from "../common/rabbitmq-consumer.service";
 
 @Injectable()
 export class TicketsService {
@@ -17,7 +21,9 @@ export class TicketsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly qrCodeService: QRCodeService,
-    private readonly pdfService: PDFService
+    private readonly pdfService: PDFService,
+    @Inject(forwardRef(() => RabbitMQConsumerService))
+    private readonly rabbitmqService: RabbitMQConsumerService
   ) {}
 
   /**
@@ -396,6 +402,51 @@ export class TicketsService {
     }
 
     return pdfPath;
+  }
+
+  /**
+   * Send ticket via email
+   */
+  async emailTicket(ticketId: string) {
+    const ticket = await this.getTicket(ticketId);
+
+    if (!ticket) {
+      throw new NotFoundException("Ticket not found");
+    }
+
+    const { booking } = ticket;
+    const { user, journey } = booking;
+    const stops = journey.route.stops.sort(
+      (a: any, b: any) => a.stopOrder - b.stopOrder
+    );
+    const fromStation = stops[0]?.fromStation?.name || "Unknown";
+    const toStation = stops[stops.length - 1]?.toStation?.name || "Unknown";
+
+    // Ensure PDF exists or generate path
+    const pdfUrl = ticket.pdfUrl || (await this.getPDFPath(ticketId));
+
+    await this.rabbitmqService.publishSendEmail({
+      to: user.email,
+      subject: `Your Ticket - ${journey.train.name}`,
+      template: "ticket-email", // Ensure this template exists in notification service
+      context: {
+        ticketNumber: ticket.ticketNumber,
+        bookingId: booking.id,
+        passengerName: user.name,
+        trainName: journey.train.name,
+        trainNumber: journey.train.trainNumber,
+        fromStation,
+        toStation,
+        departureTime: journey.departureTime,
+        message: `Here is your ticket for ${journey.train.name}. Safe travels!`,
+        pdfUrl: pdfUrl,
+      },
+      userId: user.id, // Pass userId for notification tracking
+    });
+
+    this.logger.log(`📧 Ticket email request sent for ${ticket.ticketNumber}`);
+
+    return { message: "Ticket email request sent successfully" };
   }
 
   /**

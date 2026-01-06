@@ -70,10 +70,36 @@ export class AuthService {
     // Generate tokens
     const tokens = await this.generateTokens(user.id, user.role, user.email);
 
+    // Send welcome notification (fire and forget - don't block registration)
+    this.sendWelcomeNotification(user.id, user.name, user.email).catch((error) => {
+      console.error('Failed to send welcome notification:', error.message);
+    });
+
     return {
       user,
       ...tokens,
     };
+  }
+
+  private async sendWelcomeNotification(userId: string, name: string, email: string) {
+    try {
+      const notificationServiceUrl = process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3007';
+      const axios = require('axios');
+      
+      await axios.post(`${notificationServiceUrl}/notifications`, {
+        userId,
+        type: 'PROMO',
+        subject: `Welcome to Jatra Railway, ${name}!`,
+        content: `Thank you for joining Jatra Railway. We're excited to have you on board! Start exploring train schedules and book your first journey today.`,
+        metadata: {
+          email,
+          registrationDate: new Date().toISOString(),
+        },
+      });
+    } catch (error) {
+      // Log but don't throw - notification failure shouldn't block registration
+      console.error('Welcome notification failed:', error.message);
+    }
   }
 
   async login(loginDto: LoginDto) {

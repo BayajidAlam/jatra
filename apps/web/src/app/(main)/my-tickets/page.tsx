@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
+import axios from "axios";
 import {
   Train,
   MapPin,
@@ -22,139 +25,105 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-
+import { toast } from "sonner";
 
 export function Loading() {
   return null;
 }
 
-// Mock ticket data matching backend contract
-const mockTickets = [
-  {
-    ticketId: "TKT20251231001",
-    bookingId: "BK20251231001",
-    passengerName: "John Doe",
-    train: { id: "train_701", name: "Suborno Express", number: "701" },
-    route: { from: "Dhaka", to: "Chittagong" },
-    date: "2025-01-15",
-    departureAt: "2025-01-15T10:00:00Z",
-    seat: "A3",
-    coach: "AC_CHAIR",
-    fare: 650,
-    currency: "BDT",
-    status: "VALID",
-    issuedAt: "2025-12-31T10:40:00Z",
-    expiresAt: "2025-01-15T12:00:00Z",
-    qr: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ffffff' width='200' height='200'/%3E%3Crect fill='%23000000' x='10' y='10' width='30' height='30'/%3E%3Crect fill='%23000000' x='160' y='10' width='30' height='30'/%3E%3Crect fill='%23000000' x='10' y='160' width='30' height='30'/%3E%3C/svg%3E",
-    qrType: "BASE64",
-    validation: null,
-    payment: { method: "BKASH", amount: 650, status: "PAID" },
-  },
-  {
-    ticketId: "TKT20251231002",
-    bookingId: "BK20251231001",
-    passengerName: "Jane Smith",
-    train: { id: "train_701", name: "Suborno Express", number: "701" },
-    route: { from: "Dhaka", to: "Chittagong" },
-    date: "2025-01-15",
-    departureAt: "2025-01-15T10:00:00Z",
-    seat: "A4",
-    coach: "AC_CHAIR",
-    fare: 650,
-    currency: "BDT",
-    status: "VALID",
-    issuedAt: "2025-12-31T10:40:00Z",
-    expiresAt: "2025-01-15T12:00:00Z",
-    qr: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ffffff' width='200' height='200'/%3E%3Crect fill='%23000000' x='10' y='10' width='30' height='30'/%3E%3Crect fill='%23000000' x='160' y='10' width='30' height='30'/%3E%3Crect fill='%23000000' x='10' y='160' width='30' height='30'/%3E%3C/svg%3E",
-    qrType: "BASE64",
-    validation: null,
-    payment: { method: "BKASH", amount: 650, status: "PAID" },
-  },
-  {
-    ticketId: "TKT20251231003",
-    bookingId: "BK20251230002",
-    passengerName: "Ahmed Hassan",
-    train: { id: "train_727", name: "Turna Nishitha", number: "727" },
-    route: { from: "Dhaka", to: "Sylhet" },
-    date: "2025-01-08",
-    departureAt: "2025-01-08T08:00:00Z",
-    seat: "B5",
-    coach: "AC_FIRST",
-    fare: 850,
-    currency: "BDT",
-    status: "USED",
-    issuedAt: "2025-01-05T10:40:00Z",
-    usedAt: "2025-01-08T08:15:00Z",
-    qr: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ffffff' width='200' height='200'/%3E%3Crect fill='%23000000' x='10' y='10' width='30' height='30'/%3E%3Crect fill='%23000000' x='160' y='10' width='30' height='30'/%3E%3Crect fill='%23000000' x='10' y='160' width='30' height='30'/%3E%3C/svg%3E",
-    qrType: "BASE64",
-    validation: {
-      validatedBy: "inspector_33",
-      validatedAt: "2025-01-08T08:15:00Z",
-      location: "Dhaka Station",
-    },
-    payment: { method: "BKASH", amount: 850, status: "PAID" },
-  },
-  {
-    ticketId: "TKT20251231004",
-    bookingId: "BK20251220003",
-    passengerName: "Fatima Ali",
-    train: { id: "train_711", name: "Mohanagar Godhuli", number: "711" },
-    route: { from: "Dhaka", to: "Chittagong" },
-    date: "2024-12-28",
-    departureAt: "2024-12-28T15:30:00Z",
-    seat: "C2",
-    coach: "AC_CHAIR",
-    fare: 550,
-    currency: "BDT",
-    status: "EXPIRED",
-    issuedAt: "2024-12-25T10:40:00Z",
-    expiresAt: "2024-12-28T17:30:00Z",
-    qr: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ffffff' width='200' height='200'/%3E%3Crect fill='%23000000' x='10' y='10' width='30' height='30'/%3E%3Crect fill='%23000000' x='160' y='10' width='30' height='30'/%3E%3Crect fill='%23000000' x='10' y='160' width='30' height='30'/%3E%3C/svg%3E",
-    qrType: "BASE64",
-    validation: null,
-    payment: { method: "BKASH", amount: 550, status: "PAID" },
-  },
-];
-
-interface Ticket {
-  ticketId: string;
-  bookingId: string;
-  passengerName: string;
-  train: { id: string; name: string; number: string };
-  route: { from: string; to: string };
-  date: string;
-  departureAt: string;
-  seat: string;
-  coach: string;
-  fare: number;
-  currency: string;
-  status: "VALID" | "USED" | "EXPIRED" | "CANCELLED";
-  issuedAt: string;
-  expiresAt?: string;
-  usedAt?: string;
-  qr: string;
-  qrType: string;
-  validation?: {
-    validatedBy?: string;
-    validatedAt?: string;
-    location?: string;
-  } | null;
-  payment?: {
-    method: string;
-    amount: number;
-    status: "PAID" | "COMPLETED" | "PENDING" | "FAILED";
-  };
-}
-
 export default function MyTicketsPage() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<
     "VALID" | "USED" | "EXPIRED" | "CANCELLED"
   >("VALID");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedQRs, setExpandedQRs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<{ [key: string]: boolean }>({});
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
 
-  const filteredTickets = mockTickets.filter((ticket) => {
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push("/login?redirect=/my-tickets");
+    }
+  }, [authLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+        if (!user) {
+            setIsFetching(false);
+            return;
+        };
+        setIsFetching(true);
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1"}/bookings/user/${user.id}?limit=50`);
+            const bookings = response.data.data || [];
+            console.log("DEBUG: My Tickets API Response:", bookings);
+            
+            // Map bookings to tickets
+            // Note: Each booking maps to ONE ticket currently in this UI logic, 
+            // but effectively represents the group ticket.
+            const mappedTickets = bookings.map((booking: any) => {
+                const isPast = new Date(booking.journey.arrivalTime) < new Date();
+                let status = "VALID";
+                if (booking.status === "CANCELLED") status = "CANCELLED";
+                else if (booking.status === "CONFIRMED") {
+                    if (isPast) status = "USED";
+                    else status = "VALID";
+                } else if (booking.status === "EXPIRED") status = "EXPIRED";
+                
+                // If not confirmed/cancelled, we might filter it out or show as pending? 
+                // "My Tickets" usually implies confirmed tickets.
+                if (booking.status !== "CONFIRMED" && booking.status !== "CANCELLED" && booking.status !== "COMPLETED") {
+                    return null; 
+                }
+
+                if (!booking.journey || !booking.journey.train || !booking.reservation) {
+                    console.warn("Skipping invalid booking:", booking.id);
+                    return null;
+                }
+
+                return {
+                    ticketId: booking.ticket?.ticketNumber || booking.id, // Fallback to booking ID if no ticket number yet
+                    bookingId: booking.id,
+                    passengerName: booking.user?.name || "Passenger",
+                    train: booking.journey.train,
+                    route: { 
+                        from: booking.reservation.fromStation?.name || "Origin", 
+                        to: booking.reservation.toStation?.name || "Destination" 
+                    },
+                    date: booking.journey.journeyDate,
+                    departureAt: booking.journey.departureTime,
+                    seat: booking.seats?.map((s: any) => s.seat?.seatNumber).join(", ") || "N/A",
+                    coach: booking.seats?.[0]?.seat?.coach?.coachCode || "Coach",
+                    fare: booking.totalAmount,
+                    currency: "BDT",
+                    status: status,
+                    issuedAt: booking.createdAt,
+                    expiresAt: booking.journey.departureTime,
+                    qr: booking.ticket?.qrCode || "/placeholder.svg",
+                    validation: booking.ticket?.isValidated ? {
+                        validatedAt: booking.ticket.validatedAt,
+                        validatedBy: booking.ticket.validatedBy,
+                        location: "Station" 
+                    } : null,
+                    pdfUrl: booking.ticket?.pdfUrl
+                };
+
+            }).filter(Boolean);
+            
+            setTickets(mappedTickets);
+        } catch (error) {
+            console.error("Failed to fetch tickets", error);
+        } finally {
+            setIsFetching(false);
+        }
+    };
+    if (user) fetchTickets();
+  }, [user]);
+
+  const filteredTickets = tickets.filter((ticket) => {
     const matchesTab = ticket.status === activeTab;
     const matchesSearch =
       searchQuery === "" ||
@@ -173,15 +142,20 @@ export default function MyTicketsPage() {
     );
   };
 
-  const handleDownloadPDF = (ticket: any) => {
-    setIsLoading((prev) => ({ ...prev, [ticket.ticketId]: true }));
-    setTimeout(() => {
-      setIsLoading((prev) => ({ ...prev, [ticket.ticketId]: false }));
-    }, 1500);
+  const handleDownloadPDF = async (ticket: any) => {
+    if (!ticket?.bookingId) return;
+    const { downloadTicketPDF } = await import("@/lib/download-ticket");
+    await downloadTicketPDF(ticket.bookingId);
   };
 
-  const handleEmailTicket = (ticket: any) => {
-    console.log("[v0] Emailing ticket:", ticket.ticketId);
+  const handleEmailTicket = async (ticket: any) => {
+    try {
+        await axios.post(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1"}/bookings/${ticket.bookingId}/email`);
+        toast.success("Ticket emailed successfully!");
+    } catch (error) {
+        toast.error("Failed to email ticket.");
+        console.error("Email error:", error);
+    }
   };
 
   const handleShareTicket = (ticket: any) => {
@@ -239,6 +213,14 @@ export default function MyTicketsPage() {
     });
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
 
@@ -258,22 +240,22 @@ export default function MyTicketsPage() {
             {
               id: "VALID",
               label: "Valid",
-              count: mockTickets.filter((t) => t.status === "VALID").length,
+              count: tickets.filter((t) => t.status === "VALID").length,
             },
             {
               id: "USED",
               label: "Used",
-              count: mockTickets.filter((t) => t.status === "USED").length,
+              count: tickets.filter((t) => t.status === "USED").length,
             },
             {
               id: "EXPIRED",
               label: "Expired",
-              count: mockTickets.filter((t) => t.status === "EXPIRED").length,
+              count: tickets.filter((t) => t.status === "EXPIRED").length,
             },
             {
               id: "CANCELLED",
               label: "Cancelled",
-              count: mockTickets.filter((t) => t.status === "CANCELLED").length,
+              count: tickets.filter((t) => t.status === "CANCELLED").length,
             },
           ].map((tab) => (
             <button

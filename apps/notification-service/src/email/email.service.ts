@@ -9,6 +9,7 @@ import {
   EmailProvider,
   MailgunEmailProvider,
   MockEmailProvider,
+  ResendEmailProvider,
 } from "./providers";
 
 @Injectable()
@@ -31,6 +32,9 @@ export class EmailService {
 
     // Create provider instance
     switch (providerType) {
+      case EmailProvider.RESEND:
+        this.emailProvider = new ResendEmailProvider();
+        break;
       case EmailProvider.MAILGUN:
         this.emailProvider = new MailgunEmailProvider();
         break;
@@ -46,8 +50,9 @@ export class EmailService {
       port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : undefined,
       secure: process.env.SMTP_SECURE === "true",
       user: process.env.SMTP_USER,
-      password: process.env.SMTP_PASS,
-      from: process.env.SMTP_FROM,
+      password: process.env.SMTP_PASS || process.env.RESEND_API_KEY, // Support both SMTP and Resend
+      apiKey: process.env.RESEND_API_KEY,
+      from: process.env.SMTP_FROM || process.env.RESEND_FROM_EMAIL,
     });
 
     if (!this.emailProvider.isConfigured()) {

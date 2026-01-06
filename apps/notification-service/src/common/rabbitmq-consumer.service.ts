@@ -175,6 +175,8 @@ export class RabbitMQConsumerService implements OnModuleInit {
           toStation: data.journey.toStation,
           seats: data.seats,
           totalAmount: data.totalAmount,
+          ticketNumber: data.ticketNumber,
+          pdfUrl: data.pdfUrl,
         },
         notification.id
       );

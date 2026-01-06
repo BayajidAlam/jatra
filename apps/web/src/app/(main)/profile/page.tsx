@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   Card,
@@ -22,30 +23,48 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit2, User, Shield, CreditCard } from "lucide-react";
-
-// Mock user
-const mockUser = {
-  id: "user_123",
-  name: "John Doe",
-  email: "john.doe@example.com",
-  phone: "+8801700000000",
-  memberSince: "2024-05-12",
-  savedPaymentMethods: [
-    { id: "pm_1", method: "bKash", last4: "1234" },
-    { id: "pm_2", method: "Card", last4: "4242" },
-  ],
-};
+import { Edit2, User, Shield, CreditCard, Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { format } from "date-fns";
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState(mockUser);
-  const [formData, setFormData] = useState(mockUser);
+  const { user, isLoading, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+        // Redirect if not logged in
+        router.push("/login"); // or open login modal
+    }
+    if (user) {
+        setFormData({
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+        });
+    }
+  }, [user, isLoading, isAuthenticated, router]);
 
   const handleSave = () => {
-    setUser(formData);
+    // TODO: Implement profile update API
+    console.log("Updating profile", formData);
     setIsEditing(false);
   };
+
+  if (isLoading || !user) {
+    return (
+        <div className="min-h-screen bg-background flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,10 +113,8 @@ export default function ProfilePage() {
                   <Input
                     id="email"
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    className="col-span-3"
+                    disabled
+                    className="col-span-3 bg-muted"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -158,7 +175,14 @@ export default function ProfilePage() {
                   <p className="text-sm font-medium text-muted-foreground mb-1">
                     National ID (NID)
                   </p>
-                  <p className="text-lg font-mono">8293482394</p>
+                  <p className="text-lg font-mono">{user.nid || "N/A"}</p>
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">
+                    Member Since
+                  </p>
+                  <p className="text-lg font-mono">{user.createdAt ? format(new Date(user.createdAt), "MMM dd, yyyy") : "N/A"}</p>
                 </div>
               </div>
 
@@ -237,27 +261,11 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  {user.savedPaymentMethods.map((pm) => (
-                    <div
-                      key={pm.id}
-                      className="flex items-center justify-between p-3 border border-border rounded-lg bg-card/50"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded bg-muted flex items-center justify-center">
-                          <CreditCard className="h-5 w-5 text-muted-foreground" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-sm">{pm.method}</p>
-                          <p className="text-xs text-muted-foreground">
-                            •••• {pm.last4}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge variant="secondary" className="text-[10px]">
-                        Default
-                      </Badge>
+                    {/* Placeholder for payment methods */}
+                    <div className="text-sm text-center text-muted-foreground py-4">
+                        No saved payment methods.
                     </div>
-                  ))}
+                  
                   <Button variant="outline" className="w-full border-dashed">
                     + Add New Method
                   </Button>

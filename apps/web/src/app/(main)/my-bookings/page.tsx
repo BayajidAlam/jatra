@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Train,
   Calendar,
@@ -10,74 +11,89 @@ import {
   Clock,
   CreditCard,
   ArrowRight,
+  Loader2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-
-// Mock data
-const mockBookings = [
-  {
-    bookingId: "BK001",
-    trainNumber: "SUBORNO-EXPRESS-701",
-    trainName: "Suborno Express",
-    journeyDate: "2025-01-15",
-    departureTime: "06:30",
-    arrivalTime: "12:45",
-    fromStation: "Dhaka",
-    toStation: "Chittagong",
-    status: "CONFIRMED",
-    totalAmount: 1300,
-    passengersCount: 2,
-    bookingDate: "2025-01-10",
-    canCancel: true,
-  },
-  {
-    bookingId: "BK002",
-    trainNumber: "TURNA-NISHITHA-727",
-    trainName: "Turna Nishitha",
-    journeyDate: "2025-01-08",
-    departureTime: "08:00",
-    arrivalTime: "14:20",
-    fromStation: "Dhaka",
-    toStation: "Sylhet",
-    status: "COMPLETED",
-    totalAmount: 1100,
-    passengersCount: 1,
-    bookingDate: "2025-01-05",
-    canCancel: false,
-  },
-  {
-    bookingId: "BK003",
-    trainNumber: "MOHANAGAR-711",
-    trainName: "Mohanagar Godhuli",
-    journeyDate: "2024-12-28",
-    departureTime: "15:30",
-    arrivalTime: "21:45",
-    fromStation: "Dhaka",
-    toStation: "Chittagong",
-    status: "CANCELLED",
-    totalAmount: 900,
-    passengersCount: 1,
-    bookingDate: "2024-12-25",
-    canCancel: false,
-  },
-];
+import { useAuth } from "@/hooks/use-auth";
+import { useBookings } from "@/hooks/use-bookings";
+import { format } from "date-fns";
+import { toast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function MyBookingsPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"UPCOMING" | "PAST" | "CANCELLED">(
     "UPCOMING"
   );
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { useUserBookings, cancelBooking } = useBookings(user?.id);
+  const { data: bookingsData, isLoading: bookingsLoading } = useUserBookings();
 
-  const filteredBookings = mockBookings.filter((booking) => {
-    if (activeTab === "UPCOMING") return booking.status === "CONFIRMED";
-    if (activeTab === "PAST") return booking.status === "COMPLETED";
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push("/login?redirect=/my-bookings");
+    }
+  }, [authLoading, isAuthenticated, router]);
+
+  const bookings = bookingsData?.data || [];
+
+  const handleCancelBooking = async (bookingId: string) => {
+    try {
+        await cancelBooking.mutateAsync({
+            bookingId,
+            reason: "User requested cancellation"
+        });
+        toast({
+            title: "Booking Cancelled",
+            description: "Your booking has been cancelled and refund initiated.",
+        });
+    } catch (error) {
+        toast({
+            title: "Cancellation Failed",
+            description: "Could not cancel booking. It may be too late.",
+            variant: "destructive",
+        });
+    }
+  };
+
+  const filteredBookings = bookings.filter((booking: any) => {
+    const trainName = booking?.journey?.trainName || "";
+    const trainNumber = booking?.journey?.trainNumber || "";
+    
+    const matchesSearch = trainName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          trainNumber.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (!matchesSearch) return false;
+
+    if (activeTab === "UPCOMING") return booking.status === "CONFIRMED" || booking.status === "PAYMENT_PENDING";
+    if (activeTab === "PAST") return booking.status === "COMPLETED"; // Or date check if 'COMPLETED' isn't used for past
     if (activeTab === "CANCELLED") return booking.status === "CANCELLED";
     return true;
   });
+
+  if (authLoading || bookingsLoading) {
+    return (
+        <div className="min-h-screen bg-background flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -121,7 +137,7 @@ export default function MyBookingsPage() {
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by train name or PNR..."
+              placeholder="Search by train name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 h-10"
@@ -150,9 +166,9 @@ export default function MyBookingsPage() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {filteredBookings.map((booking) => (
+            {filteredBookings.map((booking: any) => (
               <Card
-                key={booking.bookingId}
+                key={booking.id}
                 className="border-border bg-card/40 backdrop-blur-sm hover:bg-card/60 hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-md"
               >
                 <CardContent className="p-5">
@@ -165,10 +181,10 @@ export default function MyBookingsPage() {
                           </div>
                           <div>
                             <h4 className="font-semibold text-lg">
-                              {booking.trainName}
+                              {booking.journey.train.name}
                             </h4>
                             <p className="text-sm text-muted-foreground">
-                              {booking.trainNumber}
+                              {booking.journey.train.trainNumber}
                             </p>
                           </div>
                         </div>
@@ -181,7 +197,9 @@ export default function MyBookingsPage() {
                             booking.status === "COMPLETED" &&
                               "bg-blue-500/10 text-blue-700 dark:text-blue-400",
                             booking.status === "CANCELLED" &&
-                              "bg-red-500/10 text-red-700 dark:text-red-400"
+                              "bg-red-500/10 text-red-700 dark:text-red-400",
+                            booking.status === "PAYMENT_PENDING" &&
+                              "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400"
                           )}
                         >
                           {booking.status}
@@ -192,17 +210,17 @@ export default function MyBookingsPage() {
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <MapPin className="h-4 w-4" />
                           <span>
-                            {booking.fromStation} → {booking.toStation}
+                            {booking.reservation?.fromStation?.name || "Start"} → {booking.reservation?.toStation?.name || "End"}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Calendar className="h-4 w-4" />
-                          <span>{booking.journeyDate}</span>
+                          <span>{format(new Date(booking.journey.departureTime), "MMM dd, yyyy")}</span>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Clock className="h-4 w-4" />
                           <span>
-                            {booking.departureTime} - {booking.arrivalTime}
+                            {format(new Date(booking.journey.departureTime), "HH:mm")}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
@@ -215,26 +233,43 @@ export default function MyBookingsPage() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-2">
-                      <Link
-                        href={`/my-bookings/${booking.bookingId}`}
-                        className="block"
-                      >
+                       <Link
+                         href={`/my-bookings/${booking.id}`}
+                         className="block"
+                       >
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-2 bg-transparent"
+                          className="border-2 bg-transparent w-full"
                         >
                           View Details
                         </Button>
                       </Link>
-                      {booking.canCancel && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-2 text-red-600 hover:text-red-700 bg-transparent"
-                        >
-                          Cancel Booking
-                        </Button>
+                      
+                      {(booking.status === 'CONFIRMED' || booking.status === 'PAYMENT_PENDING') && (
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                variant="outline"
+                                size="sm"
+                                className="border-2 text-red-600 hover:text-red-700 bg-transparent"
+                                >
+                                Cancel Booking
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will cancel your booking and initiate a refund if applicable.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleCancelBooking(booking.id)} className="bg-red-600 hover:bg-red-700">Continue</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                       )}
                     </div>
                   </div>

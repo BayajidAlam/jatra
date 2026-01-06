@@ -1,65 +1,64 @@
 #!/bin/bash
 
-# Jatra Railway - Start All Services
-
-echo "🚀 Starting Jatra Railway Services..."
-
-# Function to run a service in a new terminal tab/window if possible, or background
-start_service() {
-    name=$1
-    path=$2
-    cmd=$3
-    port=$4
-
-    echo "▶️  Starting $name ($port)..."
-    
-    # Check if gnome-terminal is available (common on Linux)
-    if command -v gnome-terminal &> /dev/null; then
-        gnome-terminal --tab --title="$name" -- bash -c "cd $path && $cmd; exec bash"
-    else
-        # Fallback to background process
-        (cd $path && $cmd) &
-        echo "   Started in background (PID: $!)"
-    fi
+# Port cleanup function
+cleanup_ports() {
+    echo "Cleaning up ports (3000-3011, 30000)..."
+    for port in {3000..3011} 30000; do
+        pid=$(lsof -t -i:$port)
+        if [ -n "$pid" ]; then
+            kill -9 $pid 2>/dev/null
+        fi
+    done
 }
 
-# 1. API Gateway (Go)
-start_service "API Gateway" "apps/api-gateway" "go run main.go" "3000"
+cleanup_ports
 
-# 2. Auth Service
-start_service "Auth Service" "apps/auth-service" "pnpm dev" "3001"
+# Directory for logs
+mkdir -p logs
 
-# 3. Schedule Service
-start_service "Schedule Service" "apps/schedule-service" "pnpm dev" "3002"
+echo "Starting services..."
 
-# 4. Seat Reservation Service
-start_service "Seat Service" "apps/seat-reservation-service" "pnpm dev" "3003"
+# Start Backend Services
+cd apps/auth-service && pnpm start:dev > ../../logs/auth.log 2>&1 &
+echo "Started Auth Service"
 
-# 5. Payment Service
-start_service "Payment Service" "apps/payment-service" "pnpm dev" "3004"
+cd apps/user-service && pnpm start:dev > ../../logs/user.log 2>&1 &
+echo "Started User Service"
 
-# 6. Booking Service
-start_service "Booking Service" "apps/booking-service" "pnpm dev" "3005"
+cd apps/admin-service && pnpm start:dev > ../../logs/admin.log 2>&1 &
+echo "Started Admin Service"
 
-# 7. Ticket Service
-start_service "Ticket Service" "apps/ticket-service" "pnpm dev" "3006"
+cd apps/search-service && pnpm start:dev > ../../logs/search.log 2>&1 &
+echo "Started Search Service"
 
-# 8. Notification Service
-start_service "Notification Service" "apps/notification-service" "pnpm dev" "3007"
+cd apps/booking-service && pnpm start:dev > ../../logs/booking.log 2>&1 &
+echo "Started Booking Service"
 
-# 9. Search Service
-start_service "Search Service" "apps/search-service" "pnpm dev" "3008"
+cd apps/payment-service && pnpm start:dev > ../../logs/payment.log 2>&1 &
+echo "Started Payment Service"
 
-# 10. Reporting Service
-start_service "Reporting Service" "apps/reporting-service" "pnpm dev" "3009"
+cd apps/seat-reservation-service && pnpm start:dev > ../../logs/seat.log 2>&1 &
+echo "Started Seat Reservation Service"
 
-# 11. User Service
-start_service "User Service" "apps/user-service" "pnpm dev" "3010"
+cd apps/notification-service && pnpm start:dev > ../../logs/notification.log 2>&1 &
+echo "Started Notification Service"
 
-# 12. Admin Service
-start_service "Admin Service" "apps/admin-service" "pnpm dev" "3011"
+cd apps/schedule-service && pnpm start:dev > ../../logs/schedule.log 2>&1 &
+echo "Started Schedule Service"
 
-# 13. Web Frontend
-start_service "Web Frontend" "apps/web" "pnpm dev" "3012" # Assuming port, check next.config
+cd apps/reporting-service && pnpm start:dev > ../../logs/reporting.log 2>&1 &
+echo "Started Reporting Service"
 
-echo "✅ All services initiated!"
+cd apps/ticket-service && pnpm start:dev > ../../logs/ticket.log 2>&1 &
+echo "Started Ticket Service"
+
+# Start API Gateway
+cd apps/api-gateway && go run main.go > ../../logs/gateway.log 2>&1 &
+echo "Started API Gateway"
+
+# Start Web (Frontend)
+cd apps/web && pnpm dev > ../../logs/web.log 2>&1 &
+echo "Started Web Frontend"
+
+echo "All services started. Logs are in the logs/ directory."
+echo "Wait a few seconds for them to initialize..."

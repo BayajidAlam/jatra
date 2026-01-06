@@ -42,6 +42,8 @@ export interface BookingConfirmedEvent extends BaseEvent {
       fromStation: string;
       toStation: string;
     };
+    ticketNumber?: string;
+    pdfUrl?: string;
   };
 }
 
@@ -178,7 +180,7 @@ export interface SendEmailEvent extends BaseEvent {
     userId?: string;
     to: string;
     subject: string;
-    template: 'booking_confirmation' | 'payment_success' | 'ticket_generated' | 'booking_cancelled' | 'payment_failed';
+    template: 'booking_confirmation' | 'payment_success' | 'ticket_generated' | 'booking_cancelled' | 'payment_failed' | 'ticket-email';
     context: Record<string, any>;
   };
 }

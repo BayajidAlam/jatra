@@ -4,6 +4,7 @@ export enum PaymentMethod {
   MOBILE_BANKING = 'MOBILE_BANKING',
   NET_BANKING = 'NET_BANKING',
   WALLET = 'WALLET',
+  GATEWAY = 'GATEWAY',
 }
 
 export enum PaymentStatus {

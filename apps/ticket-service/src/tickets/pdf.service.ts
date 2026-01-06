@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import * as PDFDocument from "pdfkit";
+import PDFDocument from "pdfkit";
 import { promises as fs } from "fs";
 import { join } from "path";
 
@@ -40,7 +40,7 @@ export class PDFService {
       const filePath = join(this.storagePath, fileName);
 
       // Create PDF document
-      const doc = new (PDFDocument as any)({ size: "A4", margin: 50 });
+      const doc = new PDFDocument({ size: "A4", margin: 50 });
       const writeStream = require("fs").createWriteStream(filePath);
 
       doc.pipe(writeStream);

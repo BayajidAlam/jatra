@@ -111,7 +111,10 @@ const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentProps>(
       ref={contentRef}
       className={cn(
         "absolute z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        "right-0 mt-2", // Simple positioning for header use-case
+        "mt-2",
+        align === "start" && "left-0",
+        align === "end" && "right-0",
+        align === "center" && "left-1/2 -translate-x-1/2",
         className
       )}
       {...props}

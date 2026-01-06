@@ -1,0 +1,83 @@
+
+> @jatra/admin-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/admin-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 13:15:42 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTrainsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRoutesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStatsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJourneysModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCoachesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSeatsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSettingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPaymentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTrainsController {/admin/trains}:[39m[38;5;3m +19ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/trains, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/trains/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/trains, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/trains/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/trains/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mRoutesController {/admin/routes}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/routes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/routes/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/routes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/routes/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/routes/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mJourneysController {/admin/journeys}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/journeys, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/journeys/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/journeys, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/journeys/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/journeys/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStationsController {/admin/stations}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/stations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/stations/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/stations, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/stations/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/stations/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/admin/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/users/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/admin/bookings}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/bookings, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/bookings/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStatsController {/admin/stats}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/stats/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCoachesController {/admin/coaches}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/coaches, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/coaches/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/coaches, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/coaches/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/coaches/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSeatsController {/admin/seats}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/seats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/seats/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/seats, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/seats/bulk, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/seats/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/seats/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSettingsController {/admin/settings}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/settings, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/settings/:key, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/settings, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/settings/:key, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/settings/:key, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPaymentsController {/admin/payments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/payments/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/payments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/admin/payments/:id, GET} route[39m[38;5;3m +0ms[39m
+[31m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [31m  ERROR[39m [38;5;3m[RabbitMQService] [39m[31m❌ Failed to connect to RabbitMQ[39m
+[31m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [31m  ERROR[39m [38;5;3m[RabbitMQService] [39m[31mError: Handshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile."[39m
+[32m[Nest] 218254  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +0ms[39m
+🚀 Admin Service is running on: http://localhost:3010
+📚 Swagger documentation: http://localhost:3010/api/docs
+🔐 Admin operations - requires ADMIN role
