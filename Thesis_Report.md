@@ -199,7 +199,7 @@ This chapter outlines the engineering methodology used to build Jatra Railway. W
 The system follows a strict Microservices Architecture, comprising the following independent services:
 
 1.  **API Gateway**: The single entry point for all client requests, handling JWT authentication, rate limiting, and request routing.
-2.  **Auth Service**: Manages user registration, login, and secure token issuance using RS256 signatures.
+2.  **Auth Service**: Manages user registration, login, and secure token issuance using **HS256** (HMAC SHA-256) signatures.
 3.  **User Service**: Handles user profile management and role-based access control (RBAC) data.
 4.  **Search Service**: Optimized for high-speed train availability queries using caching strategies.
 5.  **Schedule Service**: Manages train routes, timings, and station information.
@@ -256,7 +256,7 @@ This ensures that if a user tries to book 4 seats, either ALL 4 are locked, or N
 ### 3.3.4 Security Architecture
 Security is enforced at multiple layers:
 1.  **Transport Layer**: All communication is encrypted via TLS 1.3 (handled by AWS ALB).
-2.  **API Gateway**: Validates JWT signatures signed by the Auth Service's private key (RS256).
+2.  **API Gateway**: Validates JWT signatures signed by the Auth Service's secret key (**HS256**).
 3.  **Role-Based Access Control (RBAC)**: The API Gateway inspects the `role` claim in the JWT. For example, `POST /admin/trains` is allowed only if `role == 'ADMIN'`.
 
 ## 3.4 Implementation Requirements
