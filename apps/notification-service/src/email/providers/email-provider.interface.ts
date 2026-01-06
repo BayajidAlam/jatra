@@ -5,6 +5,7 @@ export interface EmailProviderConfig {
   user?: string;
   password?: string;
   from?: string;
+  apiKey?: string; // For API-based providers like Resend
 }
 
 export interface SendEmailParams {

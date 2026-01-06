@@ -122,6 +122,24 @@ export class HttpRetryService {
     );
   }
 
+  /**
+   * DELETE request with retry
+   */
+  async delete<T>(
+    url: string,
+    serviceName: string,
+    config?: RetryConfig
+  ): Promise<T> {
+    return this.executeWithRetry(
+      async () => {
+        const response = await firstValueFrom(this.httpService.delete(url));
+        return response.data as T;
+      },
+      serviceName,
+      config
+    );
+  }
+
   private isClientError(error: any): boolean {
     if (error?.response?.status) {
       const status = error.response.status;

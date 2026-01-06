@@ -1,0 +1,32 @@
+
+> booking-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 15:50:53 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +13ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to train update events[39m
+[32m[Nest] 108734  - [39m01/05/2026, 3:50:54 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +77ms[39m
+🎟️  Booking Service is running on: http://localhost:3005
+📚 Swagger docs available at: http://localhost:3005/api/docs
+[32m[Nest] 108734  - [39m01/05/2026, 4:00:59 PM [32m    LOG[39m [38;5;3m[BookingsService] [39m[32mCreating booking for user c0cbb0c4-372b-46a7-b763-c3b4a19a3577[39m
+[95m[Nest] 108734  - [39m01/05/2026, 4:00:59 PM [95m  DEBUG[39m [38;5;3m[HttpRetryService] [39m[95mAttempt 1/4 for Seat Reservation Service[39m
+[32m[Nest] 108734  - [39m01/05/2026, 4:00:59 PM [32m    LOG[39m [38;5;3m[BookingsService] [39m[32m✅ Seats locked: 5b6aeeb2-4bd5-4c40-ac1c-308d906b84ed (Lock ID: lock_1767607259398_c0cbb0c4)[39m
+[32m[Nest] 108734  - [39m01/05/2026, 4:00:59 PM [32m    LOG[39m [38;5;3m[BookingsService] [39m[32m✅ Booking created: 1bd4f274-802f-4a90-bd97-992820cf026f[39m
+[95m[Nest] 108734  - [39m01/05/2026, 4:00:59 PM [95m  DEBUG[39m [38;5;3m[HttpRetryService] [39m[95mAttempt 1/4 for Payment Service[39m
+[32m[Nest] 108734  - [39m01/05/2026, 4:01:02 PM [32m    LOG[39m [38;5;3m[BookingsService] [39m[32m✅ Payment initiated: cd45e213-2fa7-40f8-8c1d-2018f5bad56a[39m

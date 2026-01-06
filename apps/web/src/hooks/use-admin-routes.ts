@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import apiClient from "@/lib/axios-client";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
@@ -26,16 +26,23 @@ export interface CreateRouteDto {
   }[];
 }
 
-export function useAdminRoutes() {
+export function useAdminRoutes(params?: { page?: number; limit?: number; search?: string }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const page = params?.page || 1;
+  const limit = params?.limit || 10;
+  const search = params?.search || "";
 
   const routesQuery = useQuery({
-    queryKey: ["admin", "routes"],
-    queryFn: async () => {
-      const { data } = await apiClient.get<Route[]>(API_ENDPOINTS.ADMIN.ROUTES);
+    queryKey: ["admin", "routes", page, limit, search],
+    queryFn: async (): Promise<{ data: Route[]; meta: any }> => {
+      const { data } = await apiClient.get<{ data: Route[]; meta: any }>(
+        API_ENDPOINTS.ADMIN.ROUTES,
+        { params: { page, limit, search } }
+      );
       return data;
     },
+    placeholderData: keepPreviousData,
   });
 
   const createRouteMutation = useMutation({
@@ -57,6 +64,30 @@ export function useAdminRoutes() {
       toast({
         title: "Error",
         description: error.response?.data?.message || "Failed to create route",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateRouteMutation = useMutation({
+    mutationFn: async ({ id, dto }: { id: string; dto: Partial<CreateRouteDto> }) => {
+      const { data } = await apiClient.patch<Route>(
+        `${API_ENDPOINTS.ADMIN.ROUTES}/${id}`,
+        dto
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "routes"] });
+      toast({
+        title: "Route Updated",
+        description: "The route has been updated successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to update route",
         variant: "destructive",
       });
     },
@@ -84,11 +115,14 @@ export function useAdminRoutes() {
   });
 
   return {
-    routes: routesQuery.data || [],
+    routes: routesQuery.data?.data || [],
+    pagination: routesQuery.data?.meta,
     isLoading: routesQuery.isLoading,
     isError: routesQuery.isError,
     createRoute: createRouteMutation.mutateAsync,
     isCreating: createRouteMutation.isPending,
+    updateRoute: updateRouteMutation.mutateAsync,
+    isUpdating: updateRouteMutation.isPending,
     deleteRoute: deleteRouteMutation.mutateAsync,
     isDeleting: deleteRouteMutation.isPending,
   };

@@ -47,6 +47,18 @@ export class TicketsController {
     return this.ticketsService.getTicket(ticketId);
   }
 
+  @Post(':id/email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ 
+    summary: 'Email ticket to user',
+    description: 'Sends the ticket PDF to the user\'s registered email'
+  })
+  @ApiResponse({ status: 200, description: 'Email sent successfully' })
+  @ApiResponse({ status: 404, description: 'Ticket not found' })
+  async emailTicket(@Param('id') ticketId: string) {
+    return this.ticketsService.emailTicket(ticketId);
+  }
+
   @Get('booking/:bookingId')
   @ApiOperation({ 
     summary: 'Get ticket by booking ID',

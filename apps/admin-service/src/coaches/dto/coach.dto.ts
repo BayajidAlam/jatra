@@ -1,5 +1,6 @@
 import { IsString, IsNotEmpty, IsInt, IsOptional, Min, IsEnum } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 enum CoachType {
   AC_BERTH = 'AC_BERTH',
@@ -48,6 +49,11 @@ export class UpdateCoachDto {
   @IsInt()
   @Min(1)
   totalSeats?: number;
+
+  @ApiPropertyOptional({ example: 'train-uuid' })
+  @IsOptional()
+  @IsString()
+  trainId?: string;
 }
 
 export class QueryCoachesDto {
@@ -55,13 +61,20 @@ export class QueryCoachesDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Type(() => Number)
   page?: number = 1;
 
-  @ApiPropertyOptional({ example: 20 })
+  @ApiPropertyOptional({ example: 10 })
   @IsOptional()
   @IsInt()
   @Min(1)
-  limit?: number = 20;
+  @Type(() => Number)
+  limit?: number = 10;
+
+  @ApiPropertyOptional({ example: 'C-101' })
+  @IsOptional()
+  @IsString()
+  search?: string;
 
   @ApiPropertyOptional({ example: 'train-uuid' })
   @IsOptional()

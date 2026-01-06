@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import apiClient from "@/lib/axios-client";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
@@ -32,24 +32,21 @@ interface SchedulesResponse {
   };
 }
 
-export function useAdminSchedules(params: { page?: number; limit?: number } = {}) {
-  const { page = 1, limit = 10 } = params;
+export function useAdminSchedules(params?: { page?: number; limit?: number; search?: string }) {
+  const { page = 1, limit = 10, search = "" } = params || {};
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<SchedulesResponse>({
-    queryKey: ["admin", "schedules", page, limit],
-    queryFn: async () => {
-      const { data } = await apiClient.get<SchedulesResponse>(API_ENDPOINTS.ADMIN.JOURNEYS, {
-        params: { page, limit },
-      });
+  const schedulesQuery = useQuery({
+    queryKey: ["admin", "schedules", page, limit, search],
+    queryFn: async (): Promise<SchedulesResponse> => {
+      const { data } = await apiClient.get<SchedulesResponse>(
+        API_ENDPOINTS.ADMIN.JOURNEYS,
+        { params: { page, limit, search } }
+      );
       return data;
     },
+    placeholderData: keepPreviousData,
   });
 
   const { mutateAsync: createSchedule, isPending: isCreating } = useMutation({
@@ -60,6 +57,30 @@ export function useAdminSchedules(params: { page?: number; limit?: number } = {}
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "schedules"] });
       toast({ title: "Success", description: "Schedule created successfully" });
+    },
+  });
+
+  const updateScheduleMutation = useMutation({
+    mutationFn: async ({ id, dto }: { id: string; dto: any }) => {
+      const { data } = await apiClient.patch<{ journey: Journey }>(
+        `${API_ENDPOINTS.ADMIN.JOURNEYS}/${id}`,
+        dto
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "schedules"] });
+      toast({
+        title: "Schedule Updated",
+        description: "The schedule has been updated successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to update schedule",
+        variant: "destructive",
+      });
     },
   });
 
@@ -75,13 +96,15 @@ export function useAdminSchedules(params: { page?: number; limit?: number } = {}
   });
 
   return {
-    schedules: data?.journeys ?? [],
-    pagination: data?.pagination,
-    isLoading,
-    error,
-    refetch,
+    schedules: schedulesQuery.data?.journeys ?? [],
+    pagination: schedulesQuery.data?.pagination,
+    isLoading: schedulesQuery.isLoading,
+    error: schedulesQuery.error,
+    refetch: schedulesQuery.refetch,
     createSchedule,
     isCreating,
+    updateSchedule: updateScheduleMutation.mutateAsync,
+    isUpdating: updateScheduleMutation.isPending,
     deleteSchedule,
     isDeleting,
   };

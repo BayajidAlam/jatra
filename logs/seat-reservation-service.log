@@ -1,0 +1,31 @@
+
+> seat-reservation-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/seat-reservation-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 13:07:14 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +16ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReservationsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLocksModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mLocksController {/locks}:[39m[38;5;3m +32ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locks/acquire, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locks/availability/:journeyId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locks/extend, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locks/:lockId, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locks/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReservationsController {/reservations}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reservations/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reservations/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reservations/user/:userId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reservations/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[LuaScriptService] [39m[32mLuaScriptService initialized (using simple Redis operations)[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RedisService] [39m[32mRedis Client Connected[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:16 PM [32m    LOG[39m [38;5;3m[RedisService] [39m[32mRedis Client Connected[39m
+[32m[Nest] 206191  - [39m01/06/2026, 1:07:17 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +49ms[39m
+🔒 Seat Reservation Service is running on: http://localhost:3003
+📚 Swagger docs available at: http://localhost:3003/api/docs
+ ELIFECYCLE  Command failed.

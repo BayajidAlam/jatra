@@ -1,0 +1,34 @@
+
+> @jatra/reporting-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/reporting-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 13:15:42 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:44 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:44 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +29ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:44 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:44 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:44 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSalesModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:44 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOperationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:44 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:44 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFinancialModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:44 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSalesController {/reports}:[39m[38;5;3m +334ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/revenue, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/bookings, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/trends, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOperationsController {/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/trains, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/routes, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/occupancy, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/reports/users}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/users/growth, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/users/activity, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/users/demographics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mFinancialController {/reports/financial}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/financial/summary, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/financial/by-route, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reports/financial/by-train, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218214  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +188ms[39m
+🚀 Reporting Service is running on: http://localhost:3011
+📚 Swagger documentation: http://localhost:3011/api/docs
+📊 Analytics and reports available

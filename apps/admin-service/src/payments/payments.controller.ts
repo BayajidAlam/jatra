@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 
-@Controller('api/admin/payments')
+@Controller('admin/payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 

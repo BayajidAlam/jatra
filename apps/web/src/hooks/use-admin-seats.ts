@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import apiClient from "@/lib/axios-client";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
@@ -22,7 +22,7 @@ interface Seat {
 }
 
 interface SeatsResponse {
-  seats: Seat[];
+  data: Seat[];
   pagination: {
     total: number;
     page: number;
@@ -31,24 +31,23 @@ interface SeatsResponse {
   };
 }
 
-export function useAdminSeats(params: { page?: number; limit?: number; coachId?: string } = {}) {
-  const { page = 1, limit = 20, coachId } = params;
+export function useAdminSeats(params?: { page?: number; limit?: number; search?: string }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const page = params?.page || 1;
+  const limit = params?.limit || 10;
+  const search = params?.search || "";
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<SeatsResponse>({
-    queryKey: ["admin", "seats", page, limit, coachId],
+  const seatsQuery = useQuery<SeatsResponse>({
+    queryKey: ["admin", "seats", page, limit, search],
     queryFn: async () => {
-      const { data } = await apiClient.get<SeatsResponse>(API_ENDPOINTS.ADMIN.SEATS, {
-        params: { page, limit, coachId },
-      });
+      const { data } = await apiClient.get<SeatsResponse>(
+        API_ENDPOINTS.ADMIN.SEATS,
+        { params: { page, limit, search } }
+      );
       return data;
     },
+    placeholderData: keepPreviousData,
   });
 
   const { mutateAsync: createSeat, isPending: isCreating } = useMutation({
@@ -76,7 +75,7 @@ export function useAdminSeats(params: { page?: number; limit?: number; coachId?:
 
   const { mutateAsync: updateSeat, isPending: isUpdating } = useMutation({
     mutationFn: async ({ id, ...updateData }: any & { id: string }) => {
-      const { data } = await apiClient.put(`${API_ENDPOINTS.ADMIN.SEATS}/${id}`, updateData);
+      const { data } = await apiClient.patch(`${API_ENDPOINTS.ADMIN.SEATS}/${id}`, updateData);
       return data;
     },
     onSuccess: () => {
@@ -97,11 +96,11 @@ export function useAdminSeats(params: { page?: number; limit?: number; coachId?:
   });
 
   return {
-    seats: data?.seats ?? [],
-    pagination: data?.pagination,
-    isLoading,
-    error,
-    refetch,
+    seats: seatsQuery.data?.data ?? [],
+    pagination: seatsQuery.data?.pagination,
+    isLoading: seatsQuery.isLoading,
+    isError: seatsQuery.isError,
+    refetch: seatsQuery.refetch,
     createSeat,
     isCreating,
     bulkCreateSeats,

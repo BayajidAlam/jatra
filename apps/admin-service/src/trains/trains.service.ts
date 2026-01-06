@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
+import { Prisma } from '@prisma/client';
 import { CreateTrainDto, UpdateTrainDto, QueryTrainsDto } from './dto/train.dto';
 
 @Injectable()
@@ -138,9 +139,18 @@ export class TrainsService {
       throw new ConflictException('Cannot delete train with active journeys');
     }
 
-    await this.prisma.train.delete({
-      where: { id },
-    });
+    try {
+      await this.prisma.train.delete({
+        where: { id },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2003') {
+          throw new ConflictException('Cannot delete train because it is referenced by other records (coaches, history, etc.)');
+        }
+      }
+      throw error;
+    }
 
     return { message: 'Train deleted successfully' };
   }

@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../../../node_modules/.prisma/client"
+//   output   = "../../../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -396,6 +396,7 @@ enum PaymentMethod {
   MOBILE_BANKING
   NET_BANKING
   WALLET
+  GATEWAY
 }
 
 enum PaymentStatus {

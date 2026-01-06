@@ -9,6 +9,7 @@ export interface DashboardStats {
     totalBookings: number;
     bookingGrowth: string;
     activeTrains: number;
+    activeTrainsGrowth: string;
     totalUsers: number;
     userGrowth: string;
   };

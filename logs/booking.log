@@ -1,0 +1,34 @@
+
+> booking-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 13:15:42 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +25ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBookingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBookingsController {/bookings}:[39m[38;5;3m +46ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/create, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/confirm, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/user/:userId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/cancel, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/email, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/:id/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bookings/ticket/:ticketNumber, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to payment failure events[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m👂 Subscribed to train update events[39m
+[32m[Nest] 218200  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +109ms[39m
+🎟️  Booking Service is running on: http://localhost:3005
+📚 Swagger docs available at: http://localhost:3005/api/docs
+[32m[Nest] 218200  - [39m01/06/2026, 1:24:00 PM [32m    LOG[39m [38;5;3m[BookingsService] [39m[32mCreating booking for user c0cbb0c4-372b-46a7-b763-c3b4a19a3577[39m
+[31m[Nest] 218200  - [39m01/06/2026, 1:24:00 PM [31m  ERROR[39m [38;5;3m[GlobalExceptionFilter] [39m[31mPOST /bookings/create - 500 - You can only purchase a maximum of 4 tickets per day. You have already booked 4 tickets today.[39m
+BadRequestException: You can only purchase a maximum of 4 tickets per day. You have already booked 4 tickets today.
+    at BookingsService.createBooking (/home/bayajidswe/My-files/my-projects/jatra-railway/apps/booking-service/src/bookings/bookings.service.ts:80:13)
+    at /home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/router/router-execution-context.js:46:28
+    at /home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_b41cd279f20296b26fba3bb741690ccb/node_modules/@nestjs/core/router/router-proxy.js:9:17

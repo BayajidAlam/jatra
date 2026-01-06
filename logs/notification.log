@@ -1,0 +1,27 @@
+
+> notification-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/notification-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 13:15:42 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +18ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[SmsService] [39m[32m📱 Initializing SMS provider: MOCK[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[MockSmsProvider] [39m[32m✅ Mock SMS provider initialized (no actual SMS sent)[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[EmailService] [39m[32m📧 Initializing email provider: MOCK[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[MockEmailProvider] [39m[32m✅ Mock email provider initialized (no actual emails sent)[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSmsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRabbitMQModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/notifications}:[39m[38;5;3m +23ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/user/:userId/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/notifications/:id/resend, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[RabbitMQConsumerService] [39m[32m✅ Connected to RabbitMQ and listening on queue: notification.events[39m
+[32m[Nest] 218199  - [39m01/06/2026, 1:15:46 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +56ms[39m
+📧 Notification Service is running on: http://localhost:3007
+📚 Swagger docs available at: http://localhost:3007/api/docs

@@ -58,7 +58,7 @@ export function TrainDialog({ initialData, trigger, open: controlledOpen, onOpen
     defaultValues: {
       name: "",
       trainNumber: "",
-      type: "Intercity",
+      type: "INTERCITY",
     },
   });
 
@@ -69,11 +69,11 @@ export function TrainDialog({ initialData, trigger, open: controlledOpen, onOpen
         trainNumber: initialData.trainNumber,
         type: initialData.type,
       });
-    } else if (!isEditing && open) {
+      } else if (!isEditing && open) {
        form.reset({
         name: "",
         trainNumber: "",
-        type: "Intercity",
+        type: "INTERCITY",
       });
     }
   }, [initialData, open, form, isEditing]);
@@ -148,10 +148,10 @@ export function TrainDialog({ initialData, trigger, open: controlledOpen, onOpen
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Intercity">Intercity</SelectItem>
-                <SelectItem value="Mail">Mail</SelectItem>
-                <SelectItem value="Commuter">Commuter</SelectItem>
-                <SelectItem value="Non-Stop">Non-Stop</SelectItem>
+                <SelectItem value="INTERCITY">Intercity</SelectItem>
+                <SelectItem value="MAIL_EXPRESS">Mail Express</SelectItem>
+                <SelectItem value="COMMUTER">Commuter</SelectItem>
+                <SelectItem value="LOCAL">Local</SelectItem>
               </SelectContent>
             </Select>
           </div>

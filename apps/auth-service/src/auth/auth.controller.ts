@@ -1,18 +1,22 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   HttpCode,
   HttpStatus,
   Res,
   Req,
+  UseGuards,
+  UnauthorizedException,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RefreshTokenDto } from "./dto/refresh-token.dto";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -39,6 +43,8 @@ export class AuthController {
     // Return user data without tokens
     return {
       user: result.user,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
       message: "Registration successful",
     };
   }
@@ -63,6 +69,8 @@ export class AuthController {
     // Return user data without tokens
     return {
       user: result.user,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
       message: "Login successful",
     };
   }
@@ -80,7 +88,7 @@ export class AuthController {
     const refreshToken = request.cookies?.refreshToken;
 
     if (!refreshToken) {
-      throw new Error("Refresh token not found");
+      throw new UnauthorizedException("Refresh token not found");
     }
 
     const result = await this.authService.refreshToken(refreshToken);
@@ -129,22 +137,45 @@ export class AuthController {
     response.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: "strict",
+      sameSite: "lax",
       maxAge: 15 * 60 * 1000, // 15 minutes
+      path: "/",
     });
 
     // Set refresh token cookie (7 days)
     response.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: "strict",
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: "/",
     });
+  }
+
+  @Get("me")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({ summary: "Get current user profile" })
+  @ApiResponse({ status: 200, description: "User profile retrieved successfully" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  async me(@Req() request: any) {
+    const user = request.user;
+    return {
+      user: user,
+    };
   }
 
   // Helper method to clear cookies
   private clearCookies(response: Response) {
-    response.clearCookie("accessToken");
-    response.clearCookie("refreshToken");
+    const isProduction = process.env.NODE_ENV === "production";
+    const cookieOptions = {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "lax" as const,
+      path: "/",
+    };
+
+    response.clearCookie("accessToken", cookieOptions);
+    response.clearCookie("refreshToken", cookieOptions);
   }
 }

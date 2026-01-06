@@ -147,6 +147,18 @@ export class BookingsController {
     return this.bookingsService.cancelBooking(bookingId, dto);
   }
 
+  @Post(":id/email")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "Resend confirmation email",
+    description: "Triggers a re-send of the booking confirmation email"
+  })
+  @ApiResponse({ status: 200, description: "Email queued" })
+  @ApiResponse({ status: 404, description: "Booking not found" })
+  async resendEmail(@Param("id") bookingId: string) {
+    return this.bookingsService.resendBookingEmail(bookingId);
+  }
+
   @Get(":id/status")
   @ApiOperation({
     summary: "Get booking status",
@@ -175,5 +187,16 @@ export class BookingsController {
   })
   async getBookingStatus(@Param("id") bookingId: string) {
     return this.bookingsService.getBookingStatus(bookingId);
+  }
+
+  @Get("ticket/:ticketNumber")
+  @ApiOperation({
+    summary: "Get booking by ticket number",
+    description: "Returns booking details associated with a ticket number"
+  })
+  @ApiResponse({ status: 200, description: "Booking details retrieved" })
+  @ApiResponse({ status: 404, description: "Ticket not found" })
+  async getBookingByTicketNumber(@Param("ticketNumber") ticketNumber: string) {
+    return this.bookingsService.getBookingByTicketNumber(ticketNumber);
   }
 }

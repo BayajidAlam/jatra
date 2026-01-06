@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './common/prisma.module';
 import { TrainsModule } from './trains/trains.module';
@@ -12,7 +12,9 @@ import { CoachesModule } from './coaches/coaches.module';
 import { SeatsModule } from './seats/seats.module';
 import { SettingsModule } from './settings/settings.module';
 import { PaymentsModule } from './payments/payments.module';
+import { RabbitMQService } from './common/rabbitmq.service';
 
+@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,10 +30,12 @@ import { PaymentsModule } from './payments/payments.module';
     BookingsModule,
     StatsModule,
     CoachesModule,
-    CoachesModule,
+    CoachesModule, // Duplicate removal
     SeatsModule,
     SettingsModule,
     PaymentsModule,
   ],
+  providers: [RabbitMQService],
+  exports: [RabbitMQService],
 })
 export class AppModule {}

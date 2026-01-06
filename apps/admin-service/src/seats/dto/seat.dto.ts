@@ -1,5 +1,6 @@
 import { IsString, IsNotEmpty, IsInt, IsOptional, Min, IsEnum, IsNumber } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 enum SeatType {
   BERTH_LOWER = 'BERTH_LOWER',
@@ -78,6 +79,11 @@ export class UpdateSeatDto {
   @IsNumber()
   @Min(0)
   baseFare?: number;
+
+  @ApiPropertyOptional({ example: 'coach-uuid' })
+  @IsOptional()
+  @IsString()
+  coachId?: string;
 }
 
 export class QuerySeatsDto {
@@ -85,13 +91,20 @@ export class QuerySeatsDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Type(() => Number)
   page?: number = 1;
 
-  @ApiPropertyOptional({ example: 20 })
+  @ApiPropertyOptional({ example: 10 })
   @IsOptional()
   @IsInt()
   @Min(1)
-  limit?: number = 20;
+  @Type(() => Number)
+  limit?: number = 10;
+
+  @ApiPropertyOptional({ example: '1A' })
+  @IsOptional()
+  @IsString()
+  search?: string;
 
   @ApiPropertyOptional({ example: 'coach-uuid' })
   @IsOptional()

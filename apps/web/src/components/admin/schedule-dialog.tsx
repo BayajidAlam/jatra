@@ -55,7 +55,7 @@ export function ScheduleDialog({ initialData, trigger, open: controlledOpen, onO
   
   const { toast } = useToast();
   const isEditing = !!initialData;
-  const { createSchedule, isCreating } = useAdminSchedules();
+  const { createSchedule, updateSchedule, isCreating, isUpdating } = useAdminSchedules();
   const { trains, isLoading: isLoadingTrains } = useAdminTrains({ limit: 100 });
   const { routes, isLoading: isLoadingRoutes } = useAdminRoutes();
 
@@ -107,7 +107,7 @@ export function ScheduleDialog({ initialData, trigger, open: controlledOpen, onO
       };
 
       if (isEditing) {
-        toast({ title: "Note", description: "Update journey not yet implemented in backend" });
+        await updateSchedule({ id: initialData.id, dto: payload });
       } else {
         await createSchedule(payload);
       }
@@ -209,8 +209,8 @@ export function ScheduleDialog({ initialData, trigger, open: controlledOpen, onO
             </Select>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isCreating}>
-              {isCreating ? "Creating..." : (isEditing ? "Save Changes" : "Create Schedule")}
+            <Button type="submit" disabled={isCreating || isUpdating}>
+              {(isCreating || isUpdating) ? "Saving..." : (isEditing ? "Save Changes" : "Create Schedule")}
             </Button>
           </DialogFooter>
         </form>

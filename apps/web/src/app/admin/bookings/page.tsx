@@ -32,12 +32,16 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { BookingDetailsDialog } from "@/components/admin/booking-details-dialog";
 import { useAdminBookings, AdminBooking } from "@/hooks/use-admin-bookings";
+import { SmartPagination } from "@/components/ui/smart-pagination";
+
+import { useDebounce } from "@/hooks/use-debounce";
 
 export default function BookingsPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 500);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
   const {
       bookings,
@@ -46,7 +50,8 @@ export default function BookingsPage() {
       updateBookingStatus,
   } = useAdminBookings({
       page: currentPage,
-      limit: itemsPerPage
+      limit: itemsPerPage,
+      search: debouncedSearch,
   });
   
   const totalItems = pagination?.total || 0;
@@ -196,33 +201,11 @@ export default function BookingsPage() {
                 <div className="text-sm text-muted-foreground">
                     Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalItems)} of {totalItems} bookings
                 </div>
-                <Pagination className="mx-0 w-auto">
-                    <PaginationContent>
-                        <PaginationItem>
-                            <PaginationPrevious 
-                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                            />
-                        </PaginationItem>
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                            <PaginationItem key={page}>
-                                <PaginationLink 
-                                    isActive={currentPage === page}
-                                    onClick={() => setCurrentPage(page)}
-                                    className="cursor-pointer"
-                                >
-                                    {page}
-                                </PaginationLink>
-                            </PaginationItem>
-                        ))}
-                        <PaginationItem>
-                            <PaginationNext 
-                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                            />
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
+                <SmartPagination 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
             </CardFooter>
         )}
       </Card>

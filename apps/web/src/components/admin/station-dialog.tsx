@@ -45,7 +45,7 @@ export function StationDialog({ initialData, trigger, open: controlledOpen, onOp
   
   const { toast } = useToast();
   const isEditing = !!initialData;
-  const { createStation, isCreating } = useAdminStations();
+  const { createStation, updateStation, isCreating, isUpdating } = useAdminStations();
 
   const form = useForm<StationFormValues>({
     resolver: zodResolver(stationSchema),
@@ -78,8 +78,7 @@ export function StationDialog({ initialData, trigger, open: controlledOpen, onOp
   const onSubmit = async (data: StationFormValues) => {
     try {
       if (isEditing) {
-        // Update station logic if implemented in hook/backend
-        toast({ title: "Note", description: "Update station not yet implemented in backend" });
+        await updateStation({ id: initialData.id, dto: data });
       } else {
         await createStation(data);
       }
@@ -157,8 +156,8 @@ export function StationDialog({ initialData, trigger, open: controlledOpen, onOp
             />
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isCreating}>
-              {isCreating ? "Saving..." : (isEditing ? "Save Changes" : "Save Station")}
+            <Button type="submit" disabled={isCreating || isUpdating}>
+              {(isCreating || isUpdating) ? "Saving..." : (isEditing ? "Save Changes" : "Save Station")}
             </Button>
           </DialogFooter>
         </form>

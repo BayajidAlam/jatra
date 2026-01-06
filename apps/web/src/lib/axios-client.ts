@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_BASE_URL, API_ENDPOINTS } from "./constants";
+import Cookies from "js-cookie";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -14,13 +15,14 @@ import { toast } from "@/hooks/use-toast";
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    // If we have a token in localStorage, add it to the header
-    // This is a fallback if cookies are not used or blocked
+    // If we have a token in cookies, add it to the header
+    // We rely on httpOnly cookies for auth, so no need to manually inject token
+    // unless strictly required by specific endpoints not covered by cookies.
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("accessToken");
-      if (token && !config.headers.Authorization) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+       const token = Cookies.get("client_access_token");
+       if (token) {
+         config.headers.Authorization = `Bearer ${token}`;
+       }
     }
     return config;
   },
@@ -44,11 +46,7 @@ apiClient.interceptors.response.use(
         // Retry the original request
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, redirect to login
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("accessToken");
-          window.location.href = "/login";
-        }
+        // Refresh failed
         return Promise.reject(refreshError);
       }
     }

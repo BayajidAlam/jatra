@@ -45,7 +45,43 @@ export class LocksService {
       throw new NotFoundException("Journey not found");
     }
 
-    // 2. Validate seats exist and belong to this train
+    // 2. Check 4-seat-per-day limit (based on journey date, not booking date)
+    const journeyDate = new Date(journey.departureTime);
+    journeyDate.setHours(0, 0, 0, 0);
+    const nextDay = new Date(journeyDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    // Find all reservations for this user on the same journey date
+    const reservationsForDate = await this.prisma.reservation.findMany({
+      where: {
+        userId: dto.userId,
+        journey: {
+          departureTime: {
+            gte: journeyDate,
+            lt: nextDay,
+          },
+        },
+        status: {
+          in: ["LOCKED", "CONFIRMED"],
+        },
+      },
+      select: {
+        seatIds: true,
+      },
+    });
+
+    const totalSeatsForDate = reservationsForDate.reduce(
+      (sum, res) => sum + res.seatIds.length,
+      0
+    );
+
+    if (totalSeatsForDate + dto.seatIds.length > 4) {
+      throw new BadRequestException(
+        `You can only book up to 4 seats per journey date. You have already booked ${totalSeatsForDate} seat(s) for ${journeyDate.toDateString()}.`
+      );
+    }
+
+    // 3. Validate seats exist and belong to this train
     const allSeats = journey.train.coaches.flatMap((coach) => coach.seats);
     const requestedSeats = allSeats.filter((seat) =>
       dto.seatIds.includes(seat.id)
@@ -197,11 +233,33 @@ export class LocksService {
     }
 
     // Check confirmed reservations in database
+    // IMPORTANT: Only consider reservations that overlap with the requested journey segment
+    const whereClause: any = {
+      journeyId,
+      status: "CONFIRMED",
+    };
+
+    // If station IDs are provided, filter by overlapping segments
+    if (dto.fromStationId && dto.toStationId) {
+      whereClause.OR = [
+        // Exact match
+        {
+          fromStationId: dto.fromStationId,
+          toStationId: dto.toStationId,
+        },
+        // Reservation starts before or at our start and ends after our start
+        {
+          fromStationId: dto.fromStationId,
+        },
+        // Reservation ends at or after our end and starts before our end
+        {
+          toStationId: dto.toStationId,
+        },
+      ];
+    }
+
     const confirmedReservations = await this.prisma.reservation.findMany({
-      where: {
-        journeyId,
-        status: "CONFIRMED",
-      },
+      where: whereClause,
     });
 
     const bookedSeats = confirmedReservations.flatMap((r) => r.seatIds);
@@ -211,12 +269,24 @@ export class LocksService {
       (seat) => !lockedSeats.includes(seat.id) && !bookedSeats.includes(seat.id)
     );
 
+    // Build full seat map with status
+    const seatMap = seatsToCheck.map(seat => {
+      let status = 'AVAILABLE';
+      if (bookedSeats.includes(seat.id)) status = 'BOOKED';
+      else if (lockedSeats.includes(seat.id)) status = 'LOCKED';
+      
+      return {
+        id: seat.id,
+        seatNumber: seat.seatNumber,
+        coachId: seat.coachId,
+        baseFare: seat.baseFare,
+        status
+      };
+    });
+
     return {
       journeyId,
-      totalSeats: seatsToCheck.length,
-      availableSeats: availableSeats.map((s) => s.id),
-      lockedSeats,
-      bookedSeats,
+      seats: seatMap,
       availableCount: availableSeats.length,
       lockedCount: lockedSeats.length,
       bookedCount: bookedSeats.filter((id) =>
@@ -224,6 +294,7 @@ export class LocksService {
       ).length,
     };
   }
+
 
   async extendLock(dto: ExtendLockDto) {
     // Find reservation

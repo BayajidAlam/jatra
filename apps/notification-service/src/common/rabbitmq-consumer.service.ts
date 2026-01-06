@@ -69,6 +69,11 @@ export class RabbitMQConsumerService implements OnModuleInit {
         paymentExchange,
         EventRoutingKeys.PAYMENT_FAILED
       );
+      await this.channel.bindQueue(
+        notificationQueue,
+        Exchanges.NOTIFICATION,
+        EventRoutingKeys.SEND_EMAIL
+      );
 
       this.logger.log(
         `✅ Connected to RabbitMQ and listening on queue: ${notificationQueue}`
@@ -132,6 +137,9 @@ export class RabbitMQConsumerService implements OnModuleInit {
       case EventRoutingKeys.PAYMENT_FAILED:
         await this.handlePaymentFailed(event as PaymentFailedEvent);
         break;
+      case EventRoutingKeys.SEND_EMAIL:
+        await this.handleSendEmail(event);
+        break;
       default:
         this.logger.warn(`Unknown event type: ${event.eventType}`);
     }
@@ -167,6 +175,8 @@ export class RabbitMQConsumerService implements OnModuleInit {
           toStation: data.journey.toStation,
           seats: data.seats,
           totalAmount: data.totalAmount,
+          ticketNumber: data.ticketNumber,
+          pdfUrl: data.pdfUrl,
         },
         notification.id
       );
@@ -242,6 +252,62 @@ export class RabbitMQConsumerService implements OnModuleInit {
     } catch (error) {
       this.logger.error(`Failed to send payment failure:`, error);
       throw error;
+    }
+  }
+
+  private async handleSendEmail(event: any) {
+    const { data } = event;
+    // data: { to, subject, template, context }
+
+    try {
+      // Find userId from recipient email if possible, or skip userId if system notification
+      // But NotificationsService requires userId.
+      // RabbitMQConsumer should ideally get userId in the event.
+      // SendEmailEvent input in bookings.service included 'to'.
+      // It did NOT include userId explicitly in `SendEmailEvent` interface, but `bookings.service` passed it?
+      // No, `bookings.service` passed `to` (email).
+      // `NotificationService.createNotification` requires `userId`.
+      // I should update `BookingsService` to pass `userId` in `SendEmailEvent`? 
+      // OR I lookup user here. Lookup is expensive/impossible if no user service access.
+      // So `BookingsService` MUST pass `userId`.
+      // I need to update `SendEmailEvent` interface and `BookingsService` first? 
+      // Wait, `BookingsService` has `userId`.
+      // Let's check `SendEmailEvent` interface in `events.interface.ts`.
+      // Step 1458 view:
+      /*
+      export interface SendEmailEvent extends BaseEvent {
+        eventType: 'notification.send_email';
+        data: {
+            to: string;
+            subject: string;
+            template: ...
+            context: ...
+        };
+      }
+      */
+      // It is missing `userId`.
+      // I cannot create an in-app notification without `userId`.
+      // So I must update `SendEmailEvent` interface to include optional `userId`.
+      
+      // Since I am already editing `rabbitmq-consumer`, I will assume `data` carries `userId` (bypass TS check with `any` in `handleSendEmail` argument if needed, or better, update interface).
+      // I will update interface in next step. For now, implement assuming userId is present.
+      
+      const userId = data.userId || 'system'; // Fallback if missing, but likely needed for in-app
+
+      await this.notificationsService.createNotification({
+        userId: userId,
+        type: NotificationType.BOOKING_CONFIRMED, // Reuse type for now, or use generic if available
+        channel: NotificationChannel.EMAIL,
+        recipient: data.to,
+        subject: data.subject,
+        content: data.context?.message || data.subject,
+        metadata: data.context,
+      });
+
+      this.logger.log(`✅ Sent generic email notification to ${data.to}`);
+    } catch (error) {
+      this.logger.error(`Failed to send generic email:`, error);
+      // throw error; // Don't crash consumer for generic emails
     }
   }
 

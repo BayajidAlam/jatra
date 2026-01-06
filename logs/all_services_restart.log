@@ -1,0 +1,5 @@
+
+> @jatra-railway/source@0.0.0 start:all /home/bayajidswe/My-files/my-projects/jatra-railway
+> pnpm -w -r --parallel start
+
+None of the selected packages has a "start" script

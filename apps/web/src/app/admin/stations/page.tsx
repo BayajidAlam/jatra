@@ -25,30 +25,29 @@ import { StationDialog } from "@/components/admin/station-dialog";
 import { DeleteConfirmDialog } from "@/components/admin/delete-confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminStations } from "@/hooks/use-admin-stations";
+import { SmartPagination } from "@/components/ui/smart-pagination";
+
+import { useDebounce } from "@/hooks/use-debounce";
 
 export default function StationsPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 500);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
   const { toast } = useToast();
 
   const {
     stations,
     isLoading,
     deleteStation,
-    isDeleting
-  } = useAdminStations();
+    isDeleting,
+    pagination,
+  } = useAdminStations({ page: currentPage, limit: itemsPerPage, search: debouncedSearch });
 
-  const filteredStations = stations.filter((station) =>
-    station.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    station.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    station.city.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredStations.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedStations = filteredStations.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = pagination?.totalPages || 1;
+  const totalItems = pagination?.total || 0;
+  const startIndex = (currentPage - 1) * itemsPerPage;const paginatedStations = stations;
 
   const handleDelete = async () => {
     if (deleteId) {
@@ -151,35 +150,13 @@ export default function StationsPage() {
         {totalPages > 1 && (
           <CardFooter className="flex items-center justify-between border-t dark:border-slate-800 py-4">
             <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredStations.length)} of {filteredStations.length} stations
+              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalItems)} of {totalItems} stations
             </div>
-            <Pagination className="mx-0 w-auto">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                  />
-                </PaginationItem>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink 
-                      isActive={currentPage === page}
-                      onClick={() => setCurrentPage(page)}
-                      className="cursor-pointer"
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            <SmartPagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </CardFooter>
         )}
       </Card>

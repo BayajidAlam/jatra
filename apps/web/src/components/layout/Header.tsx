@@ -8,10 +8,29 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
+import { useAuthStore } from "@/stores/auth-store";
+import { Settings, LogOut, User, LayoutDashboard } from "lucide-react";
+import { useNotifications } from "@/hooks/use-notifications";
 
 export default function Header() {
+  const { user, isAuthenticated, logout, isLoading } = useAuthStore();
+  const { notifications, unreadCount, markAsRead } = useNotifications();
+  
+  // Prevent hydration mismatch/flicker by valid check or mounting check
+  // But strictly for functionality:
+  const showAuthLinks = !isAuthenticated && !isLoading;
+  const showUserLinks = isAuthenticated && !isLoading;
   return (
     <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
       <div className="container mx-auto px-4 lg:px-8">
@@ -30,33 +49,50 @@ export default function Header() {
             >
               Search Trains
             </Link>
-            <a
-              href="#"
+            <Link
+              href="/schedule"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Schedule
-            </a>
-            <Link
-              href="/my-bookings"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              My Bookings
             </Link>
-            <Link
-              href="/my-tickets"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              My Tickets
-            </Link>
+            {showUserLinks && (
+              <>
+                {user?.role !== "ADMIN" && (
+                  <>
+                    <Link
+                      href="/my-bookings"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      My Bookings
+                    </Link>
+                    <Link
+                      href="/my-tickets"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      My Tickets
+                    </Link>
+                  </>
+                )}
+
+              </>
+            )}
           </nav>
 
           <div className="flex items-center gap-3">
             <ModeToggle />
-            <Popover>
+            {isLoading ? (
+               <div className="w-20 h-8 bg-muted animate-pulse rounded" />
+            ) : isAuthenticated ? (
+              <>
+                <Popover>
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
                   <Bell className="h-5 w-5" />
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full box-content border-2 border-background" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-bold border-2 border-background">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-0" align="end">
@@ -67,34 +103,25 @@ export default function Header() {
                   </Link>
                 </div>
                 <div className="max-h-[300px] overflow-y-auto">
-                    {[
-                      {
-                        title: "Booking Confirmed",
-                        desc: "Your booking for Suborno Express is confirmed.",
-                        time: "2h ago",
-                        unread: true
-                      },
-                      {
-                        title: "Payment Successful",
-                        desc: "Payment of BDT 1950 received.",
-                        time: "2h ago",
-                        unread: true
-                      },
-                      {
-                        title: "Train Update",
-                        desc: "Suborno Express (701) departing Platform 3.",
-                        time: "5h ago",
-                        unread: false
-                      }
-                    ].map((item, i) => (
-                      <div key={i} className={cn("p-4 border-b last:border-0 hover:bg-muted/50 transition-colors cursor-pointer", item.unread && "bg-muted/20")}>
-                        <div className="flex justify-between items-start mb-1">
-                          <p className="font-medium text-sm">{item.title}</p>
-                          <span className="text-[10px] text-muted-foreground">{item.time}</span>
+                    {notifications.length === 0 ? (
+                        <div className="p-8 text-center text-sm text-muted-foreground">
+                            No notifications
                         </div>
-                        <p className="text-xs text-muted-foreground line-clamp-2">{item.desc}</p>
-                      </div>
-                    ))}
+                    ) : (
+                        notifications.slice(0, 5).map((item) => (
+                        <div 
+                            key={item.id} 
+                            onClick={() => !item.isRead && markAsRead(item.id)}
+                            className={cn("p-4 border-b last:border-0 hover:bg-muted/50 transition-colors cursor-pointer", !item.isRead && "bg-muted/20")}
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <p className="font-medium text-sm truncate pr-2">{item.subject}</p>
+                            <span className="text-[10px] text-muted-foreground whitespace-nowrap">{new Date(item.createdAt).toLocaleDateString()}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-2">{item.content}</p>
+                        </div>
+                      ))
+                    )}
                 </div>
                 <div className="p-2 border-t bg-muted/20">
                   <Link href="/notifications">
@@ -105,17 +132,75 @@ export default function Header() {
                 </div>
               </PopoverContent>
             </Popover>
-
-            <Link href="/login">
-              <Button variant="ghost" className="hidden md:inline-flex text-sm">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button className="text-sm bg-primary hover:bg-primary/90">
-                Register
-              </Button>
-            </Link>
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 overflow-hidden hover:opacity-80 transition-opacity">
+                  <Avatar className="h-9 w-9 border dark:border-slate-700">
+                    <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`} alt={user?.name} />
+                    <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" sideOffset={8}>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user?.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex w-full items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+                {user?.role !== "ADMIN" && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/my-bookings" className="flex w-full items-center">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      <span>My Bookings</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                {user?.role === "ADMIN" && (
+                    <>
+                        <DropdownMenuSeparator />
+                         <DropdownMenuItem asChild>
+                            <Link href="/admin/dashboard" className="flex w-full items-center">
+                                <Settings className="mr-2 h-4 w-4" />
+                                <span>Admin Dashboard</span>
+                            </Link>
+                        </DropdownMenuItem>
+                    </>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={() => logout()}
+                  className="text-red-600 focus:text-red-600 cursor-pointer"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            </>
+            ) : (
+              <>
+                 <Link href="/login">
+                  <Button variant="ghost" className="hidden md:inline-flex text-sm">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button className="text-sm bg-primary hover:bg-primary/90">
+                    Register
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

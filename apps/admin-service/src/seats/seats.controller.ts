@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -13,7 +13,7 @@ import { SeatsService } from './seats.service';
 import { CreateSeatDto, UpdateSeatDto, QuerySeatsDto, BulkCreateSeatsDto } from './dto/seat.dto';
 
 @ApiTags('seats')
-@Controller('api/admin/seats')
+@Controller('admin/seats')
 export class SeatsController {
   constructor(private readonly seatsService: SeatsService) {}
 
@@ -21,7 +21,11 @@ export class SeatsController {
   @ApiOperation({ summary: 'Get all seats with pagination' })
   @ApiResponse({ status: 200, description: 'List of seats retrieved' })
   async findAll(@Query() query: QuerySeatsDto) {
-    return this.seatsService.findAll(query);
+    const page = query.page || 1;
+    const limit = query.limit || 10;
+    const search = query.search;
+    const skip = (page - 1) * limit;
+    return this.seatsService.findAll({ skip, take: limit, search });
   }
 
   @Get(':id')
@@ -48,7 +52,7 @@ export class SeatsController {
     return this.seatsService.bulkCreate(dto);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: 'Update seat' })
   @ApiResponse({ status: 200, description: 'Seat updated successfully' })
   @ApiResponse({ status: 404, description: 'Seat not found' })

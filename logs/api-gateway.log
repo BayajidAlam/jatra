@@ -1,0 +1,297 @@
+nohup: ignoring input
+2026/01/06 13:20:05 ✅ Configuration loaded successfully
+2026/01/06 13:20:05 🌐 API Gateway will run on port: 30000
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /health                   --> github.com/BayajidAlam/jatra/api-gateway/routes.SetupRoutes.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/auth/register     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/auth/login        --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/auth/refresh-token --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/auth/logout       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/auth/me           --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/users/me          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/users/me          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/trains            --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/trains/:id        --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/trains/number/:trainNumber --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/trains            --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/stations          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/stations/:id      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/stations/code/:code --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/stations          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/routes            --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/routes/:id        --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/routes            --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/journeys/search   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/journeys/:id      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/journeys/train/:trainId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/journeys          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/locks/acquire     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/locks/availability/:journeyId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/locks/check/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/locks/extend/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/locks/release/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/locks/user/me     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/bookings/create   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/bookings          --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/bookings/:id      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/bookings/user/:userId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/bookings/:id/confirm --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/bookings/:id/cancel --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/:id/pdf   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/tickets/generate  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/:id       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/tickets/:id/email --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/booking/:bookingId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/user/:userId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/tickets/:id/qr    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/tickets/validate  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/notifications/user/:userId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/notifications/:id/read --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/notifications/user/:userId/read-all --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/payments/initiate --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/payments/confirm  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/payments/:id      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/payments/reservation/:reservationId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/payments/user/:userId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/payments/:id/refund --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/payments/:id/cancel --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/gateway/webhook/sslcommerz/ipn --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/gateway/webhook   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/gateway/status/:transactionId --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/user/profile      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/user/profile      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/user/change-password --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/user/passengers   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] POST   /api/v1/user/passengers   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/user/passengers/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] DELETE /api/v1/user/passengers/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/user/preferences  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] PATCH  /api/v1/user/preferences  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (6 handlers)
+[GIN-debug] GET    /api/v1/search/journeys   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/search/autocomplete --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] GET    /api/v1/search/suggestions --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (5 handlers)
+[GIN-debug] POST   /api/v1/search/cache/invalidate --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/search/cache/stats --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/users       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/users/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/users/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/trains      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/trains/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/trains      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/trains/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/trains/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/stations    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/stations/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/stations    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/stations/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/stations/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/routes      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/routes      --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/routes/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/routes/:id  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/journeys    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/journeys/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/journeys    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/journeys/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/journeys/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/bookings    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/bookings/:id/status --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/coaches     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/coaches/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/coaches     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/coaches/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/coaches/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/seats       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/seats/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/seats       --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/seats/bulk  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/seats/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/seats/:id   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/settings    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/settings/:key --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] POST   /api/v1/admin/settings    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] PATCH  /api/v1/admin/settings/:key --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] DELETE /api/v1/admin/settings/:key --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/payments    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/payments/stats --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/payments/:id --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/admin/stats/dashboard --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/bookings  --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/bookings/export --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/revenue   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/revenue/export --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/trains    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/trains/export --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/users     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/users/export --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/daily     --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/weekly    --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/monthly   --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+[GIN-debug] GET    /api/v1/reports/dashboard --> github.com/BayajidAlam/jatra/api-gateway/proxy.ProxyRequest.func1 (7 handlers)
+2026/01/06 13:20:05 🚀 API Gateway starting on port 30000
+2026/01/06 13:20:05 📚 Health check available at: http://localhost:30000/health
+2026/01/06 13:20:05 🔐 JWT authentication enabled
+2026/01/06 13:20:05 ⚡ Rate limiting enabled
+2026/01/06 13:20:05 🌐 CORS enabled
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :30000
+2026/01/06 13:20:29 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 12.144022ms | IP: 127.0.0.1
+2026/01/06 13:20:42 [POST] /api/v1/bookings/98b102ed-25b8-45af-aa82-62f4a68133ea/email HTTP/1.1 | Status: 404 | Latency: 25.776µs | IP: 127.0.0.1
+2026/01/06 13:20:48 [POST] /api/v1/bookings/98b102ed-25b8-45af-aa82-62f4a68133ea/email HTTP/1.1 | Status: 404 | Latency: 97.303µs | IP: 127.0.0.1
+2026/01/06 13:21:00 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 34.823091ms | IP: 127.0.0.1
+2026/01/06 13:21:12 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 35.171574ms | IP: 127.0.0.1
+2026/01/06 13:21:12 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 26.159407ms | IP: 127.0.0.1
+2026/01/06 13:22:14 [GET] /api/v1/bookings/98b102ed-25b8-45af-aa82-62f4a68133ea HTTP/1.1 | Status: 304 | Latency: 32.139761ms | IP: 127.0.0.1
+2026/01/06 13:22:14 [GET] /api/v1/auth/me HTTP/1.1 | Status: 304 | Latency: 23.687052ms | IP: 127.0.0.1
+2026/01/06 13:22:14 [GET] /api/v1/auth/me HTTP/1.1 | Status: 304 | Latency: 4.864951ms | IP: 127.0.0.1
+2026/01/06 13:22:14 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 15.328744ms | IP: 127.0.0.1
+2026/01/06 13:22:31 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 12.264813ms | IP: 127.0.0.1
+2026/01/06 13:22:34 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 15.845851ms | IP: 127.0.0.1
+2026/01/06 13:22:40 [GET] /api/v1/auth/me HTTP/1.1 | Status: 304 | Latency: 9.882045ms | IP: 127.0.0.1
+2026/01/06 13:22:40 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 8.525035ms | IP: 127.0.0.1
+2026/01/06 13:22:42 [GET] /api/v1/auth/me HTTP/1.1 | Status: 304 | Latency: 7.781039ms | IP: 127.0.0.1
+2026/01/06 13:22:42 [GET] /api/v1/stations HTTP/1.1 | Status: 304 | Latency: 22.219683ms | IP: 127.0.0.1
+2026/01/06 13:22:43 [GET] /api/v1/locks/availability/c58426a3-5f8e-4438-b8bd-2f1a604cd170 HTTP/1.1 | Status: 404 | Latency: 20.723658ms | IP: 127.0.0.1
+2026/01/06 13:22:43 [GET] /api/v1/locks/availability/c58426a3-5f8e-4438-b8bd-2f1a604cd170 HTTP/1.1 | Status: 404 | Latency: 8.223085ms | IP: 127.0.0.1
+2026/01/06 13:22:43 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.616309ms | IP: 127.0.0.1
+2026/01/06 13:22:47 [GET] /api/v1/locks/availability/c58426a3-5f8e-4438-b8bd-2f1a604cd170 HTTP/1.1 | Status: 404 | Latency: 5.471302ms | IP: 127.0.0.1
+2026/01/06 13:22:47 [GET] /api/v1/locks/availability/c58426a3-5f8e-4438-b8bd-2f1a604cd170 HTTP/1.1 | Status: 404 | Latency: 5.157495ms | IP: 127.0.0.1
+2026/01/06 13:22:57 [GET] /api/v1/locks/availability/c58426a3-5f8e-4438-b8bd-2f1a604cd170 HTTP/1.1 | Status: 404 | Latency: 9.157801ms | IP: 127.0.0.1
+2026/01/06 13:22:57 [GET] /api/v1/locks/availability/c58426a3-5f8e-4438-b8bd-2f1a604cd170 HTTP/1.1 | Status: 404 | Latency: 6.520018ms | IP: 127.0.0.1
+2026/01/06 13:23:00 [GET] /api/v1/locks/availability/c58426a3-5f8e-4438-b8bd-2f1a604cd170 HTTP/1.1 | Status: 404 | Latency: 7.086748ms | IP: 127.0.0.1
+2026/01/06 13:23:00 [GET] /api/v1/locks/availability/c58426a3-5f8e-4438-b8bd-2f1a604cd170 HTTP/1.1 | Status: 404 | Latency: 6.84447ms | IP: 127.0.0.1
+2026/01/06 13:23:07 [GET] /api/v1/auth/me HTTP/1.1 | Status: 304 | Latency: 8.960482ms | IP: 127.0.0.1
+2026/01/06 13:23:07 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.346043ms | IP: 127.0.0.1
+2026/01/06 13:23:08 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.771527ms | IP: 127.0.0.1
+2026/01/06 13:23:08 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.47527ms | IP: 127.0.0.1
+2026/01/06 13:23:12 [POST] /api/v1/bookings/98b102ed-25b8-45af-aa82-62f4a68133ea/email HTTP/1.1 | Status: 404 | Latency: 99.57µs | IP: 127.0.0.1
+2026/01/06 13:23:18 [GET] /api/v1/stations HTTP/1.1 | Status: 304 | Latency: 5.863907ms | IP: 127.0.0.1
+2026/01/06 13:23:23 [GET] /api/v1/search/journeys HTTP/1.1 | Status: 200 | Latency: 46.340378ms | IP: 127.0.0.1
+2026/01/06 13:23:25 [GET] /api/v1/locks/availability/2aa8e004-7cd4-418d-8d20-f55cab3ef3f4 HTTP/1.1 | Status: 200 | Latency: 39.481743ms | IP: 127.0.0.1
+2026/01/06 13:23:25 [GET] /api/v1/locks/availability/2aa8e004-7cd4-418d-8d20-f55cab3ef3f4 HTTP/1.1 | Status: 304 | Latency: 29.497198ms | IP: 127.0.0.1
+2026/01/06 13:23:32 [GET] /api/v1/auth/me HTTP/1.1 | Status: 304 | Latency: 8.690076ms | IP: 127.0.0.1
+2026/01/06 13:23:32 [GET] /api/v1/locks/availability/2aa8e004-7cd4-418d-8d20-f55cab3ef3f4 HTTP/1.1 | Status: 304 | Latency: 39.922881ms | IP: 127.0.0.1
+2026/01/06 13:23:32 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 11.084159ms | IP: 127.0.0.1
+2026/01/06 13:23:39 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 16.813738ms | IP: 127.0.0.1
+2026/01/06 13:23:39 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 11.091287ms | IP: 127.0.0.1
+2026/01/06 13:23:42 [GET] /api/v1/stations HTTP/1.1 | Status: 304 | Latency: 7.809327ms | IP: 127.0.0.1
+2026/01/06 13:23:50 [GET] /api/v1/search/journeys HTTP/1.1 | Status: 200 | Latency: 27.962063ms | IP: 127.0.0.1
+2026/01/06 13:23:51 [GET] /api/v1/search/journeys HTTP/1.1 | Status: 200 | Latency: 6.303783ms | IP: 127.0.0.1
+2026/01/06 13:23:53 [GET] /api/v1/locks/availability/181ad717-7c77-4963-9851-9cc69b4ad194 HTTP/1.1 | Status: 200 | Latency: 31.388747ms | IP: 127.0.0.1
+2026/01/06 13:23:53 [GET] /api/v1/locks/availability/181ad717-7c77-4963-9851-9cc69b4ad194 HTTP/1.1 | Status: 304 | Latency: 25.316974ms | IP: 127.0.0.1
+2026/01/06 13:24:00 [POST] /api/v1/bookings/create HTTP/1.1 | Status: 500 | Latency: 39.814301ms | IP: 127.0.0.1
+2026/01/06 13:24:02 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 5.28071ms | IP: 127.0.0.1
+2026/01/06 13:24:09 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 11.425126ms | IP: 127.0.0.1
+2026/01/06 13:24:09 [GET] /api/v1/bookings/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 16.144284ms | IP: 127.0.0.1
+2026/01/06 13:24:32 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.861996ms | IP: 127.0.0.1
+2026/01/06 13:25:02 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.606796ms | IP: 127.0.0.1
+2026/01/06 13:25:32 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.947869ms | IP: 127.0.0.1
+2026/01/06 13:26:02 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 30.341435ms | IP: 127.0.0.1
+2026/01/06 13:26:32 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 15.60634ms | IP: 127.0.0.1
+2026/01/06 13:27:02 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.394266ms | IP: 127.0.0.1
+2026/01/06 13:27:32 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 41.782306ms | IP: 127.0.0.1
+2026/01/06 13:28:02 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.966617ms | IP: 127.0.0.1
+2026/01/06 13:28:32 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.436819ms | IP: 127.0.0.1
+2026/01/06 13:29:02 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.4516ms | IP: 127.0.0.1
+2026/01/06 13:29:32 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.369488ms | IP: 127.0.0.1
+2026/01/06 13:30:02 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.839118ms | IP: 127.0.0.1
+2026/01/06 13:30:32 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 6.447354ms | IP: 127.0.0.1
+2026/01/06 13:31:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 401 | Latency: 363.365µs | IP: 127.0.0.1
+2026/01/06 13:31:03 [POST] /api/v1/auth/refresh-token HTTP/1.1 | Status: 200 | Latency: 73.942978ms | IP: 127.0.0.1
+2026/01/06 13:31:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 29.799236ms | IP: 127.0.0.1
+2026/01/06 13:31:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 6.293188ms | IP: 127.0.0.1
+2026/01/06 13:32:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.28363ms | IP: 127.0.0.1
+2026/01/06 13:32:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 21.570999ms | IP: 127.0.0.1
+2026/01/06 13:33:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 14.206488ms | IP: 127.0.0.1
+2026/01/06 13:33:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.5398ms | IP: 127.0.0.1
+2026/01/06 13:34:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 6.738746ms | IP: 127.0.0.1
+2026/01/06 13:34:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 4.690187ms | IP: 127.0.0.1
+2026/01/06 13:35:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.21128ms | IP: 127.0.0.1
+2026/01/06 13:35:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 5.930949ms | IP: 127.0.0.1
+2026/01/06 13:36:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 37.865158ms | IP: 127.0.0.1
+2026/01/06 13:36:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 6.80165ms | IP: 127.0.0.1
+2026/01/06 13:37:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 8.41052ms | IP: 127.0.0.1
+2026/01/06 13:37:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 29.680183ms | IP: 127.0.0.1
+2026/01/06 13:38:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.004379ms | IP: 127.0.0.1
+2026/01/06 13:38:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 12.924499ms | IP: 127.0.0.1
+2026/01/06 13:39:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 13.189716ms | IP: 127.0.0.1
+2026/01/06 13:39:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.098911ms | IP: 127.0.0.1
+2026/01/06 13:40:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 3.838627ms | IP: 127.0.0.1
+2026/01/06 13:40:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.921629ms | IP: 127.0.0.1
+2026/01/06 13:41:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 18.308895ms | IP: 127.0.0.1
+2026/01/06 13:41:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 3.245417ms | IP: 127.0.0.1
+2026/01/06 13:42:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 5.987459ms | IP: 127.0.0.1
+2026/01/06 13:42:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 23.969168ms | IP: 127.0.0.1
+2026/01/06 13:43:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 6.061499ms | IP: 127.0.0.1
+2026/01/06 13:43:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 8.775863ms | IP: 127.0.0.1
+2026/01/06 13:44:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 8.229367ms | IP: 127.0.0.1
+2026/01/06 13:44:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 6.789543ms | IP: 127.0.0.1
+2026/01/06 13:45:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.852593ms | IP: 127.0.0.1
+2026/01/06 13:45:33 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 8.783537ms | IP: 127.0.0.1
+2026/01/06 13:46:03 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 401 | Latency: 225.115µs | IP: 127.0.0.1
+2026/01/06 13:46:03 [POST] /api/v1/auth/refresh-token HTTP/1.1 | Status: 200 | Latency: 44.273398ms | IP: 127.0.0.1
+2026/01/06 13:46:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 27.268869ms | IP: 127.0.0.1
+2026/01/06 13:46:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 8.736843ms | IP: 127.0.0.1
+2026/01/06 13:47:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 11.326394ms | IP: 127.0.0.1
+2026/01/06 13:47:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 30.403923ms | IP: 127.0.0.1
+2026/01/06 13:48:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 15.663527ms | IP: 127.0.0.1
+2026/01/06 13:48:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.299625ms | IP: 127.0.0.1
+2026/01/06 13:49:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 4.784694ms | IP: 127.0.0.1
+2026/01/06 13:49:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.280246ms | IP: 127.0.0.1
+2026/01/06 13:50:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.737061ms | IP: 127.0.0.1
+2026/01/06 13:50:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.321609ms | IP: 127.0.0.1
+2026/01/06 13:51:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 11.110632ms | IP: 127.0.0.1
+2026/01/06 13:51:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.315701ms | IP: 127.0.0.1
+2026/01/06 13:52:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 14.462261ms | IP: 127.0.0.1
+2026/01/06 13:52:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 19.829878ms | IP: 127.0.0.1
+2026/01/06 13:53:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.84234ms | IP: 127.0.0.1
+2026/01/06 13:53:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.59985ms | IP: 127.0.0.1
+2026/01/06 13:54:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.802516ms | IP: 127.0.0.1
+2026/01/06 13:54:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 14.241819ms | IP: 127.0.0.1
+2026/01/06 13:55:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 8.958677ms | IP: 127.0.0.1
+2026/01/06 13:55:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 4.925331ms | IP: 127.0.0.1
+2026/01/06 13:56:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 29.21289ms | IP: 127.0.0.1
+2026/01/06 13:56:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.361654ms | IP: 127.0.0.1
+2026/01/06 13:57:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.997115ms | IP: 127.0.0.1
+2026/01/06 13:57:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 36.652559ms | IP: 127.0.0.1
+2026/01/06 13:58:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.391285ms | IP: 127.0.0.1
+2026/01/06 13:58:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.553786ms | IP: 127.0.0.1
+2026/01/06 13:59:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 3.113003ms | IP: 127.0.0.1
+2026/01/06 13:59:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.5206ms | IP: 127.0.0.1
+2026/01/06 14:00:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.357466ms | IP: 127.0.0.1
+2026/01/06 14:00:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 2.571416ms | IP: 127.0.0.1
+2026/01/06 14:01:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 401 | Latency: 77.705µs | IP: 127.0.0.1
+2026/01/06 14:01:04 [POST] /api/v1/auth/refresh-token HTTP/1.1 | Status: 200 | Latency: 44.665055ms | IP: 127.0.0.1
+2026/01/06 14:01:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 40.227155ms | IP: 127.0.0.1
+2026/01/06 14:01:34 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 4.160361ms | IP: 127.0.0.1
+2026/01/06 14:02:04 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 5.31142ms | IP: 127.0.0.1
+2026/01/06 14:02:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 29.673088ms | IP: 127.0.0.1
+2026/01/06 14:03:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.548146ms | IP: 127.0.0.1
+2026/01/06 14:03:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 8.238334ms | IP: 127.0.0.1
+2026/01/06 14:04:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.482661ms | IP: 127.0.0.1
+2026/01/06 14:04:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.147469ms | IP: 127.0.0.1
+2026/01/06 14:05:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 3.586099ms | IP: 127.0.0.1
+2026/01/06 14:05:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 10.261571ms | IP: 127.0.0.1
+2026/01/06 14:06:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 27.253202ms | IP: 127.0.0.1
+2026/01/06 14:06:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 12.009499ms | IP: 127.0.0.1
+2026/01/06 14:07:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.563995ms | IP: 127.0.0.1
+2026/01/06 14:07:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 31.341775ms | IP: 127.0.0.1
+2026/01/06 14:08:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.656063ms | IP: 127.0.0.1
+2026/01/06 14:08:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.515953ms | IP: 127.0.0.1
+2026/01/06 14:09:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.308103ms | IP: 127.0.0.1
+2026/01/06 14:09:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 4.073611ms | IP: 127.0.0.1
+2026/01/06 14:10:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.375131ms | IP: 127.0.0.1
+2026/01/06 14:10:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 11.039223ms | IP: 127.0.0.1
+2026/01/06 14:11:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 15.486006ms | IP: 127.0.0.1
+2026/01/06 14:11:35 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.507417ms | IP: 127.0.0.1
+2026/01/06 14:12:05 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 7.949909ms | IP: 127.0.0.1
+2026/01/06 15:54:26 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 401 | Latency: 5.365062ms | IP: 127.0.0.1
+2026/01/06 15:54:26 [POST] /api/v1/auth/refresh-token HTTP/1.1 | Status: 200 | Latency: 21.095244ms | IP: 127.0.0.1
+2026/01/06 15:54:26 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 15.996324ms | IP: 127.0.0.1
+2026/01/06 15:54:56 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 6.436202ms | IP: 127.0.0.1
+2026/01/06 15:55:26 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 8.973857ms | IP: 127.0.0.1
+2026/01/06 15:55:56 [GET] /api/v1/notifications/user/c0cbb0c4-372b-46a7-b763-c3b4a19a3577 HTTP/1.1 | Status: 304 | Latency: 9.262445ms | IP: 127.0.0.1

@@ -1,40 +1,42 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
+import { Prisma } from '@prisma/client';
 import { CreateCoachDto, UpdateCoachDto, QueryCoachesDto } from './dto/coach.dto';
 
 @Injectable()
 export class CoachesService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(query: QueryCoachesDto) {
-    const { page = 1, limit = 20, trainId } = query;
-    const skip = (page - 1) * limit;
+  async findAll(params: { skip?: number; take?: number; search?: string } = {}) {
+    const { skip, take, search } = params;
 
-    const where = trainId ? { trainId } : {};
+    const where: Prisma.CoachWhereInput = search
+      ? {
+          OR: [
+            { coachCode: { contains: search, mode: 'insensitive' } },
+            { train: { name: { contains: search, mode: 'insensitive' } } },
+          ],
+        }
+      : {};
 
-    const [coaches, total] = await Promise.all([
+    const [data, total] = await Promise.all([
       this.prisma.coach.findMany({
-        where,
         skip,
-        take: limit,
-        include: {
-          train: true,
-          _count: {
-            select: { seats: true },
-          },
-        },
-        orderBy: { coachCode: 'asc' },
+        take,
+        where,
+        include: { train: true },
+        orderBy: { createdAt: 'desc' },
       }),
       this.prisma.coach.count({ where }),
     ]);
 
     return {
-      coaches,
+      data,
       pagination: {
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        page: skip !== undefined && take ? Math.floor(skip / take) + 1 : 1,
+        limit: take,
+        totalPages: take ? Math.ceil(total / take) : 1,
       },
     };
   }
@@ -88,11 +90,15 @@ export class CoachesService {
   async update(id: string, dto: UpdateCoachDto) {
     const coach = await this.findOne(id);
 
-    if (dto.coachCode) {
+    const targetTrainId = dto.trainId || coach.trainId;
+
+    if (dto.coachCode || dto.trainId) {
+      const targetCoachCode = dto.coachCode || coach.coachCode;
+      
       const existing = await this.prisma.coach.findFirst({
         where: {
-          trainId: coach.trainId,
-          coachCode: dto.coachCode,
+          trainId: targetTrainId,
+          coachCode: targetCoachCode,
           id: { not: id },
         },
       });
@@ -114,13 +120,18 @@ export class CoachesService {
   async remove(id: string) {
     await this.findOne(id);
 
-    // Check if coach has active journeys (via train)
-    // In a real system, we might want more complex checks, but for now we'll allow it if the user is careful.
-    // Or we could check if there are any upcoming journeys for the train this coach belongs to.
-    
-    await this.prisma.coach.delete({
-      where: { id },
-    });
+    try {
+      await this.prisma.coach.delete({
+        where: { id },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2003') {
+          throw new ConflictException('Cannot delete coach because it is referenced by other records (seats, etc.)');
+        }
+      }
+      throw error;
+    }
 
     return { message: 'Coach deleted successfully' };
   }

@@ -1,0 +1,29 @@
+
+> payment-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/payment-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 16:25:30 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[SSLCommerzService] [39m[32m✅ SSLCommerz initialized in SANDBOX mode[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[GatewayService] [39m[32m✅ Payment Gateway initialized with provider: SSLCOMMERZ[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGatewayModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPaymentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPaymentsController {/payments}:[39m[38;5;3m +12ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/payments/initiate, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/payments/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/payments/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/payments/reservation/:reservationId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/payments/user/:userId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/payments/:id/refund, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/payments/:id/cancel, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGatewayController {/gateway}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/gateway/webhook/sslcommerz/ipn, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/gateway/webhook, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/gateway/status/:transactionId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[RabbitMQService] [39m[32m✅ RabbitMQ connected and exchanges created[39m
+[32m[Nest] 26843  - [39m01/05/2026, 4:25:31 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +1ms[39m
+💳 Payment Service is running on: http://localhost:3004
+📚 Swagger docs available at: http://localhost:3004/api/docs

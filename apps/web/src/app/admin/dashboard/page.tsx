@@ -39,7 +39,7 @@ export default function AdminDashboardPage() {
     overview: { 
       totalRevenue: 0, revenueGrowth: "0", 
       totalBookings: 0, bookingGrowth: "0",
-      activeTrains: 0, 
+      activeTrains: 0, activeTrainsGrowth: "0",
       totalUsers: 0, userGrowth: "0"
     },
     charts: { revenue: [], traffic: [] },
@@ -108,8 +108,12 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">{overview.activeTrains}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Scheduled for today
+            <p className="text-xs text-muted-foreground flex items-center mt-1">
+              <Train className={cn("h-3 w-3 mr-1", isPositive(overview.activeTrainsGrowth) ? "text-emerald-500" : "text-amber-500")} />
+              <span className={cn("font-medium", isPositive(overview.activeTrainsGrowth) ? "text-emerald-500" : "text-amber-500")}>
+                 {isPositive(overview.activeTrainsGrowth) ? '+' : ''}{overview.activeTrainsGrowth}%
+              </span>
+              <span className="ml-1">scheduled for today</span>
             </p>
           </CardContent>
         </Card>

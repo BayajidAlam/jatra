@@ -121,7 +121,7 @@ export class SearchService {
     });
 
     // Fetch journeys
-    const journeys = await this.prisma.journey.findMany({
+    const validJourneys = await this.prisma.journey.findMany({
       where: {
         routeId: { in: routeIds },
         departureTime: {
@@ -150,10 +150,33 @@ export class SearchService {
             },
           },
         },
+        reservations: {
+          where: {
+            status: { in: ["CONFIRMED", "LOCKED"] },
+          },
+          select: {
+            seatIds: true,
+          },
+        },
       },
       orderBy: { departureTime: "asc" },
       skip,
       take,
+    });
+
+    const journeys = validJourneys.map((journey) => {
+        const bookedCount = journey.reservations.reduce(
+            (count, reservation) => count + reservation.seatIds.length,
+            0
+        );
+        
+        // Return journey with calculated availableSeats (exclude reservations from response if needed, but keeping for now is fine or using ...rest)
+        const { reservations, ...journeyData } = journey;
+        
+        return {
+            ...journeyData,
+            availableSeats: Math.max(0, journey.totalSeats - bookedCount),
+        };
     });
 
     const result = {

@@ -5,6 +5,7 @@ import {
   ConflictException,
   Logger,
 } from "@nestjs/common";
+import { v4 as uuidv4 } from "uuid";
 import { PrismaService } from "../common/prisma.service";
 import { RabbitMQService } from "../common/rabbitmq.service";
 import { GatewayService } from "../gateway/gateway.service";
@@ -38,13 +39,15 @@ export class PaymentsService {
           "Payment already completed for this reservation"
         );
       }
+      
+      // If payment is pending/processing, we allow re-initiation by updating the existing record
+      // This handles cases where user closed the window or transaction failed/expired without callback
       if (
         existingPayment.status === "PENDING" ||
         existingPayment.status === "PROCESSING"
       ) {
-        throw new ConflictException(
-          "Payment already in progress for this reservation"
-        );
+         this.logger.log(`Re-initiating payment for reservation ${dto.reservationId}`);
+         // We will proceed to update this record instead of creating a new one
       }
     }
 
@@ -64,21 +67,36 @@ export class PaymentsService {
       );
     }
 
+    // For GATEWAY method, we skip detail validation as it's handled by the hosted page
+    const customerPhone = dto.mobileNumber || (dto as any).customerPhone || "01700000000";
+
+    // Generate ID early to include in redirection URLs
+    // logic: Reuse existing ID if available to ensure consistency
+    let paymentId = uuidv4();
+    if (existingPayment) {
+        paymentId = existingPayment.id;
+    }
+    
+    // Unique ID <= 30 chars for SSLCommerz
+    const transactionId = `TXN_${Date.now()}_${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+
     // Process payment through gateway
     const gatewayResponse = await this.gatewayService.processPayment({
       amount: dto.amount,
-      currency: process.env.DEFAULT_CURRENCY || "BDT",
+      currency: dto.currency || process.env.DEFAULT_CURRENCY || "BDT",
       paymentMethod: dto.paymentMethod,
       customerName: dto.customerName || "Customer",
       customerEmail: dto.customerEmail || "customer@example.com",
-      customerPhone: dto.mobileNumber || "01700000000",
+      customerPhone,
       productName: `Railway Ticket - Reservation ${dto.reservationId}`,
-      successUrl: `${process.env.FRONTEND_URL}/payment/success`,
-      failUrl: `${process.env.FRONTEND_URL}/payment/failed`,
-      cancelUrl: `${process.env.FRONTEND_URL}/payment/cancel`,
+      successUrl: `${process.env.FRONTEND_URL}/payment/success?bookingId=${dto.bookingId}&paymentId=${paymentId}&tran_id=${transactionId}`,
+      failUrl: `${process.env.FRONTEND_URL}/payment/failed?bookingId=${dto.bookingId}&paymentId=${paymentId}&tran_id=${transactionId}`,
+      cancelUrl: `${process.env.FRONTEND_URL}/payment/cancel?bookingId=${dto.bookingId}&paymentId=${paymentId}&tran_id=${transactionId}`,
       ipnUrl: `${process.env.PAYMENT_SERVICE_URL}/gateway/webhook/sslcommerz/ipn`,
       cardDetails: dto.cardDetails,
       mobileNumber: dto.mobileNumber,
+      bookingId: dto.bookingId,
+      transactionId: transactionId,
     });
 
     // Create payment record
@@ -86,8 +104,21 @@ export class PaymentsService {
       Date.now() + this.paymentExpiryMinutes * 60 * 1000
     );
 
-    const payment = await this.prisma.payment.create({
-      data: {
+    const payment = await this.prisma.payment.upsert({
+      where: { reservationId: dto.reservationId },
+      update: {
+        amount: dto.amount,
+        currency: process.env.DEFAULT_CURRENCY || "BDT",
+        paymentMethod: dto.paymentMethod,
+        status: gatewayResponse.success ? "PROCESSING" : "FAILED",
+        transactionId: gatewayResponse.transactionId,
+        gatewayResponse: gatewayResponse as any,
+        failureReason: gatewayResponse.failureReason,
+        paidAt: gatewayResponse.success ? new Date() : null, // This might be premature if it's just processing, but following previous logic
+        updatedAt: new Date(),
+      },
+      create: {
+        id: paymentId,
         reservationId: dto.reservationId,
         userId: dto.userId,
         amount: dto.amount,
@@ -105,7 +136,7 @@ export class PaymentsService {
       `Payment initiated: ${payment.id}, Transaction: ${gatewayResponse.transactionId}`
     );
 
-    return {
+    const response = {
       paymentId: payment.id,
       transactionId: gatewayResponse.transactionId,
       status: payment.status,
@@ -117,8 +148,17 @@ export class PaymentsService {
             bankReference: gatewayResponse.bankReference,
           }
         : undefined,
+      gatewayUrl: gatewayResponse.gatewayPageURL,
       failureReason: gatewayResponse.failureReason,
     };
+
+    // Append paymentId to gatewayUrl for mock/callback flow
+    if (response.gatewayUrl && payment.id) {
+       const separator = response.gatewayUrl.includes('?') ? '&' : '?';
+       response.gatewayUrl = `${response.gatewayUrl}${separator}paymentId=${payment.id}`;
+    }
+
+    return response;
   }
 
   async confirmPayment(dto: ConfirmPaymentDto) {
@@ -280,7 +320,7 @@ export class PaymentsService {
     );
 
     if (!gatewayResponse.success) {
-      throw new BadRequestException("Refund failed at gateway");
+      throw new BadRequestException(`Refund failed at gateway: ${gatewayResponse.failureReason || 'Unknown reason'}`);
     }
 
     // Update payment

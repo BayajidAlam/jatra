@@ -57,6 +57,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     // Log the error
+    // Log the error
     if (status >= 500) {
       this.logger.error(
         `${request.method} ${request.url} - ${status} - ${this.getErrorMessage(

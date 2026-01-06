@@ -1,39 +1,47 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
+import { Prisma } from '@prisma/client';
 import { CreateSeatDto, UpdateSeatDto, QuerySeatsDto, BulkCreateSeatsDto } from './dto/seat.dto';
 
 @Injectable()
 export class SeatsService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(query: QuerySeatsDto) {
-    const { page = 1, limit = 20, coachId } = query;
-    const skip = (page - 1) * limit;
+  async findAll(params: { skip?: number; take?: number; search?: string } = {}) {
+    const { skip, take, search } = params;
 
-    const where = coachId ? { coachId } : {};
+    const where: Prisma.SeatWhereInput = search
+      ? {
+          OR: [
+            { seatNumber: { contains: search, mode: 'insensitive' } },
+            { coach: { coachCode: { contains: search, mode: 'insensitive' } } },
+            { coach: { train: { name: { contains: search, mode: 'insensitive' } } } },
+          ],
+        }
+      : {};
 
-    const [seats, total] = await Promise.all([
+    const [data, total] = await Promise.all([
       this.prisma.seat.findMany({
-        where,
         skip,
-        take: limit,
+        take,
+        where,
         include: {
           coach: {
             include: { train: true },
           },
         },
-        orderBy: { seatNumber: 'asc' },
+        orderBy: { createdAt: 'desc' },
       }),
       this.prisma.seat.count({ where }),
     ]);
 
     return {
-      seats,
+      data,
       pagination: {
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        page: skip !== undefined && take ? Math.floor(skip / take) + 1 : 1,
+        limit: take,
+        totalPages: take ? Math.ceil(total / take) : 1,
       },
     };
   }
@@ -109,11 +117,15 @@ export class SeatsService {
   async update(id: string, dto: UpdateSeatDto) {
     const seat = await this.findOne(id);
 
-    if (dto.seatNumber) {
+    const targetCoachId = dto.coachId || seat.coachId;
+
+    if (dto.seatNumber || dto.coachId) {
+      const targetSeatNumber = dto.seatNumber || seat.seatNumber;
+      
       const existing = await this.prisma.seat.findFirst({
         where: {
-          coachId: seat.coachId,
-          seatNumber: dto.seatNumber,
+          coachId: targetCoachId,
+          seatNumber: targetSeatNumber,
           id: { not: id },
         },
       });

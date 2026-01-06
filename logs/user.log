@@ -1,0 +1,29 @@
+
+> @jatra/user-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/user-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 13:15:42 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +18ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/user}:[39m[38;5;3m +23ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/profile, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/profile, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/profile, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPassengersController {/user/passengers}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/passengers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/passengers, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/passengers/:id, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/passengers/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPreferencesController {/user/preferences}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/preferences, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/preferences, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTravelHistoryController {/user/travel-history}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/user/travel-history, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 218253  - [39m01/06/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +245ms[39m
+🚀 User Service is running on: http://localhost:3008
+📚 Swagger documentation: http://localhost:3008/api/docs
+👤 Manage profiles, passengers, and preferences

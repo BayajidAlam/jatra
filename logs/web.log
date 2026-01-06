@@ -1,0 +1,52 @@
+
+> web@0.1.0 dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/web
+> next dev
+
+⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/bayajidswe/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/bayajidswe/My-files/my-projects/jatra-railway/apps/web/pnpm-lock.yaml
+   * /home/bayajidswe/My-files/my-projects/jatra-railway/pnpm-lock.yaml
+
+▲ Next.js 16.1.1 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.0.108:3001
+- Environments: .env.local
+
+✓ Starting...
+⨯ Unable to acquire lock at /home/bayajidswe/My-files/my-projects/jatra-railway/apps/web/.next/dev/lock, is another instance of next dev running?
+  Sug GET / 200 in 79ms (compile: 39ms, proxy.ts: 7ms, render: 32ms)
+ GET /my-bookings 200 in 63ms (compile: 37ms, proxy.ts: 4ms, render: 22ms)
+ GET /my-tickets 200 in 52ms (compile: 30ms, proxy.ts: 4ms, render: 17ms)
+ GET /my-tickets 200 in 61ms (compile: 4ms, proxy.ts: 7ms, render: 49ms)
+ GET /notifications 200 in 119ms (compile: 86ms, proxy.ts: 9ms, render: 24ms)
+ GET /my-tickets 200 in 16ms (compile: 2ms, proxy.ts: 3ms, render: 11ms)
+ GET /login 200 in 80ms (compile: 5ms, proxy.ts: 5ms, render: 71ms)
+ GET / 200 in 146ms (compile: 9ms, proxy.ts: 9ms, render: 129ms)
+ GET /booking/confirmation/98b102ed-25b8-45af-aa82-62f4a68133ea 200 in 440ms (compile: 412ms, proxy.ts: 4ms, render: 24ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 285ms
+ GET /booking/confirmation/98b102ed-25b8-45af-aa82-62f4a68133ea 200 in 639ms (compile: 205ms, proxy.ts: 5ms, render: 428ms)
+ GET / 200 in 81ms (compile: 13ms, proxy.ts: 8ms, render: 60ms)
+ GET /login 200 in 76ms (compile: 4ms, proxy.ts: 5ms, render: 66ms)
+ GET / 200 in 85ms (compile: 8ms, proxy.ts: 8ms, render: 69ms)
+ GET /booking/c58426a3-5f8e-4438-b8bd-2f1a604cd170?fromStationId=a24acffe-c6f8-4540-8945-47a57a232876&toStationId=e99de573-784b-463f-b9ed-53815016b105 200 in 475ms (compile: 424ms, proxy.ts: 7ms, render: 43ms)
+ GET /search-trains 200 in 64ms (compile: 25ms, proxy.ts: 4ms, render: 34ms)
+ GET /booking/passengers?seatIds=5b729b1f-903c-47a7-9131-14a147553025%2C73ce89b9-205f-4b76-afd4-03ce416fe119%2C47ea7bc3-a4d4-427a-9473-0ff197c62584&seatNumbers=A15%2CA16%2CA20&amount=6000&trainName=Suborno+Express&trainNumber=701&time=10%3A00+AM&date=Jan+15%2C+2025&journeyId=c58426a3-5f8e-4438-b8bd-2f1a604cd170&fromStationId=a24acffe-c6f8-4540-8945-47a57a232876&toStationId=e99de573-784b-463f-b9ed-53815016b105 200 in 86ms (compile: 48ms, proxy.ts: 3ms, render: 35ms)
+ GET /login 200 in 52ms (compile: 7ms, proxy.ts: 3ms, render: 43ms)
+ GET /login 200 in 82ms (compile: 9ms, proxy.ts: 7ms, render: 67ms)
+ GET /login 200 in 63ms (compile: 9ms, proxy.ts: 6ms, render: 48ms)
+ GET /my-tickets 200 in 45ms (compile: 9ms, proxy.ts: 7ms, render: 29ms)
+ GET /search-trains 200 in 36ms (compile: 10ms, proxy.ts: 9ms, render: 17ms)
+ GET /booking/2aa8e004-7cd4-418d-8d20-f55cab3ef3f4?fromStationId=a24acffe-c6f8-4540-8945-47a57a232876&toStationId=e99de573-784b-463f-b9ed-53815016b105 200 in 51ms (compile: 30ms, proxy.ts: 7ms, render: 14ms)
+ GET /booking/2aa8e004-7cd4-418d-8d20-f55cab3ef3f4?fromStationId=a24acffe-c6f8-4540-8945-47a57a232876&toStationId=e99de573-784b-463f-b9ed-53815016b105 200 in 91ms (compile: 37ms, proxy.ts: 1809µs, render: 52ms)
+ GET /my-tickets 200 in 19ms (compile: 4ms, proxy.ts: 5ms, render: 11ms)
+ GET / 200 in 19ms (compile: 6ms, proxy.ts: 2ms, render: 11ms)
+ GET /search-trains?from=a24acffe-c6f8-4540-8945-47a57a232876&to=e99de573-784b-463f-b9ed-53815016b105&date=2026-01-06 200 in 23ms (compile: 4ms, proxy.ts: 7ms, render: 12ms)
+ GET /booking/181ad717-7c77-4963-9851-9cc69b4ad194?fromStationId=a24acffe-c6f8-4540-8945-47a57a232876&toStationId=e99de573-784b-463f-b9ed-53815016b105 200 in 51ms (compile: 34ms, proxy.ts: 3ms, render: 13ms)
+ GET /booking/passengers?seatIds=f4bb3026-2e45-4d54-a15a-be16fc55db17%2C4b17282c-43ca-4118-88d7-6d137fffcfe0&seatNumbers=A5%2CA6&amount=4000&trainName=Suborno+Express&trainNumber=701&time=10%3A00+AM&date=Jan+15%2C+2025&journeyId=181ad717-7c77-4963-9851-9cc69b4ad194&fromStationId=a24acffe-c6f8-4540-8945-47a57a232876&toStationId=e99de573-784b-463f-b9ed-53815016b105 200 in 32ms (compile: 5ms, proxy.ts: 5ms, render: 21ms)
+ GET / 200 in 28ms (compile: 8ms, proxy.ts: 8ms, render: 12ms)
+ GET /my-tickets 200 in 27ms (compile: 7ms, proxy.ts: 7ms, render: 13ms)

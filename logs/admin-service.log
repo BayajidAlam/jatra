@@ -1,0 +1,19 @@
+
+> @jatra/admin-service@1.0.0 start:dev /home/bayajidswe/My-files/my-projects/jatra-railway/apps/admin-service
+> ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts
+
+[INFO] 13:07:14 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[32m[Nest] 206224  - [39m01/06/2026, 1:07:17 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[31m[Nest] 206224  - [39m01/06/2026, 1:07:17 PM [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39m[31m@prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.[39m
+Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+    at new PrismaClient (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@prisma+client@6.19.0_prisma@6.19.0_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/default.js:43:11)
+    at new PrismaService (/home/bayajidswe/My-files/my-projects/jatra-railway/apps/admin-service/src/common/prisma.service.ts:5:8)
+    at Injector.instantiateClass (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_6ee324c1921a1c6c0e69db7d70d61af1/node_modules/@nestjs/core/injector/injector.js:373:19)
+    at callback (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_6ee324c1921a1c6c0e69db7d70d61af1/node_modules/@nestjs/core/injector/injector.js:65:45)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at Injector.resolveConstructorParams (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_6ee324c1921a1c6c0e69db7d70d61af1/node_modules/@nestjs/core/injector/injector.js:145:24)
+    at Injector.loadInstance (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_6ee324c1921a1c6c0e69db7d70d61af1/node_modules/@nestjs/core/injector/injector.js:70:13)
+    at Injector.loadProvider (/home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_6ee324c1921a1c6c0e69db7d70d61af1/node_modules/@nestjs/core/injector/injector.js:98:9)
+    at /home/bayajidswe/My-files/my-projects/jatra-railway/node_modules/.pnpm/@nestjs+core@10.4.20_@nestjs+common@10.4.20_class-transformer@0.5.1_class-validator@0.1_6ee324c1921a1c6c0e69db7d70d61af1/node_modules/@nestjs/core/injector/instance-loader.js:56:13
+    at async Promise.all (index 3)
+ ELIFECYCLE  Command failed.

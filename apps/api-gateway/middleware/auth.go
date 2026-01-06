@@ -47,7 +47,12 @@ func JWTAuth() gin.HandlerFunc {
 		})
 
 		if err != nil || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
+			message := "Invalid or expired token"
+			if err != nil {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": message, "details": err.Error()})
+			} else {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": message})
+			}
 			c.Abort()
 			return
 		}

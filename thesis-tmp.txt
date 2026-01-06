@@ -1,0 +1,437 @@
+Thesis Title
+
+Submitted by
+Name
+ID-
+
+Name
+ID-
+
+
+BACHELOR OF SCIENCE IN
+COMPUTER SCIENCE AND ENGINEERING
+
+.
+
+
+Department of Computer Science and Engineering
+CCN University of Science and Technology
+Kotbari, Bangladesh January, 2026
+This thesis titled, “Title”, submitted by Name, Roll No.: ID-, Name, Roll No.: ID-, Session: Fall 2025, has been accepted as satisfactory in partial fulfillment of the requirement for the degree of BACHELOR OF SCIENCE in Computer Science and Engineering on 2nd August, 2025.
+
+
+BOARD OF EXAMINERS
+
+
+Name                                                                                                              Chairman
+Designation
+CCN University of Science and Technology
+
+
+
+
+
+Md. Saiful Islam	Member           Coordinator & Lecturer, Dept of CSE                                                              (Ex-officio) 
+CCN University of Science and Technology
+
+
+
+Name 							                                     Member
+Designation	(External)
+University
+
+
+
+
+
+
+Name	Member
+Designation 	Internal
+CCN University of Science and Technology
+
+
+
+
+CCN University of Science & TechnologyFont-size-14
+Cumilla-3506, Bangladesh
+JANUARY 2026Font-size-12
+
+
+
+
+
+APPROVALFont-size-14
+
+This Research/Project titled “Title of the project/research”, submitted by [Your Name] to the Department of Computer Science and Technology, CCN University of Science and Technology, has been accepted as satisfactory for the partial fulfillment of the requirements for the degree of B.Sc. in Computer Science and Engineering and approved as to its style and contents.Font-size-12 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DeclarationFont-size-14
+
+This is to certify that the work presented in this thesis entitled, “Title”, is the outcome of the research carried out by Name-1, Name-2 under the supervision of Supervisor Name, Department, Department of Computer Science and Engineering, CCN University of Science and Technology, Kotbari, Cumilla, Bangladesh.
+It is also declared that neither this thesis nor any part thereof has been submitted any- where else for the award of any degree, diploma, or other qualifications.Font-size-12 
+
+Submitted by:
+
+
+[Your Name]
+ID: xxxxxxx
+Department of Computer Science and Engineering
+CCN University of Science and Technology
+
+
+[Your Name]
+ID: xxxxxxx
+Department of Computer Science and Engineering
+CCN University of Science and Technology
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ACKNOWLEDGEMENTFont-size-14
+
+Thanks to Almighty Allah for giving us the strength and the ability to understand, learn and complete the research successfully.Font-size-12
+	
+I am really grateful and wish my profound my indebtedness to Supervisor [Name], [Designation], Department of Computer Science and Engineering, CCN University of Science and Technology. Deep knowledge & keen interest of my supervisor in the field of [Your research field] to carry out this research was really helpful. His/Her endless patience, scholarly guidance, continual encouragement, constant and energetic supervision, constructive criticism, valuable advice, reading many inferior draft and correcting them at all stage have made it possible to complete this research.
+
+I would like to express my heartiest gratitude to [Name of chairman of your department], Chairman, Department of Information and Communication Technology, for his kind help to finish my thesis and also to other faculty members and the staff of CSE department of CCN University of Science and Technology.
+
+I would like to thank my entire course mate in CCN University of Science and Technology, who took part in this discuss by providing valuable suggestions.
+
+Finally, I must acknowledge with due respect the constant support and patients of my parents.
+
+
+
+
+
+
+
+
+AbstractFont-size-14
+
+
+This is the abstract body.Font-size-12, Alignment- Justify
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TABLE OF CONTENTSFont-size-14
+CONTENTS                                                                                     PAGE                          
+ 
+BOARD OF EXAMINERSFont-size-14	ii
+APPROVAL…………………………………………………………… iii
+DECLARATIONS	iv
+ACKNOWLEDGEMENT	v
+ABSTRACT	vi 
+TABLE OF CONTENTS	vii
+LIST OF FIGURES	ix
+LIST OF TABLES	x
+CHAPTER 1: INTRODUCTION	1
+1.1 IntroductionFont-size-12	2
+1.2 Motivation	4
+1.3 Rationale of the Study	5
+1.4 Research Questions	5
+1.5 Expected Output	5
+1.6 Report Layout	5
+CHAPTER 2: BACKGROUND	7
+2.1 Introduction	8
+2.2 Related Works	8
+2.3 Research Summary	12
+2.4 Scope of the Problem	12
+2.5 Challenges	13
+CHAPTER 3: RESEARCH METHODOLOGY	14
+3.1 Introduction	15
+3.2 Research Subject and Instrumentation	15
+3.3 System Model	16
+3.4 Implementation Requirements	23
+CHAPTER 4: EXPERIMENTAL RESULTS AND DISCUSSION	27
+4.1 Introduction	28
+4.2 Experimental Results	28
+4.3 Descriptive Analysis	37
+4.4 Summary	41
+
+CHAPTER 5: CONCLUSION AND RECOMMENDATIONS	42
+5.1 Summary Of The Study	43
+   5.2 Conclusions	44
+5.3 Recommendations	44
+5.4 Implication for Further Study	44
+REFERENCES	45
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+LIST OF FIGURESFont-size-14
+FIGURESFont-size-12                                                                                        PAGE NO                          
+ 
+Figure 1.1: Sequence diagram	16
+Figure 1.2: Data flow diagram	17
+Figure 2.1: Implementation of the proposed system	17
+Figure 3.1: Activity diagram of the system	24
+Figure 4.1: Architecture diagram of the system	26
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+LIST OF TABLES
+TABLES                                                                                                        PAGE NO                          
+ 
+Table 4.1: Dataset 1	39
+Table 4.2: Comparison	40
+Table 4.3: Classification Report	40
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+CHAPTER 1Font-size-14
+INTRODUCTION
+
+
+
+	
+
+
+
+
+
+
+
+        1.1  IntroductionFont-size-14
+This is the introduction.Font-size-12,Alignment- Justify
+Introduction section start with the background history of the domain/research area. It must goes broader to narrower (specific) aspects of your works. Writings of this  section should be properly cited (Uses of AI are strictly prohibited) according to the standard referencing styles. 
+1.2 Motivation
+        1.2  Rationale of the Study
+        1.3  Research Questions 
+        1.4  Expected Output
+        1.5  Report Layout
+
+ 
+
+
+
+
+
+
+	
+
+
+
+CHAPTER 2Font-size-14
+BACKGROUND
+
+
+
+
+
+
+	
+
+2.1 Introduction2Font-size-14
+2.2 Related Works
+How to write a literature review [1].
+2.3 Research Summary
+2.4 Scope of the problem
+The Globality of Inflation in a Post-Covid World and Way Forward for Bangladesh [2].
+2.5 Challenges
+
+
+
+
+
+
+	
+
+
+
+CHAPTER 3Font-size-14
+RESEARCH METHODOLOGY
+
+
+
+	
+
+	
+
+3.1 IntroductionFont-size-14
+3.2 Research Subject and Instrumentation (Data collection / Data preparation)
+3.3 System Model /Architecture
+3.4 Implementation Requirements
+
+Figure 3.1: Activity Diagram of the systemFont-size-12, Alignment-Center
+
+
+
+
+
+
+	
+
+
+
+CHAPTER 4Font-size-14
+EXPERIMENTAL RESULTS AND DISCUSSION
+
+
+
+
+
+
+
+	
+
+4.1 IntroductionFont-size-14
+4.2 Experimental Results
+4.3 Discussion (should be Descriptive according to your findings)
+Table 4.1: Gas consumption of the smart contractsFont-size-10, Alignment-Center
+Item NameFS-10, Center
+Attribute 1
+Attribute 2
+Attribute 3
+Item 1
+306084
+0.00612168
+$7.94
+Item 2
+306072
+0.00612144
+$7.94
+Item 3
+306072
+0.00612144
+$7.94
+Item 4
+306084
+0.00612168
+$7.94
+Item 5
+2321137
+0.04642274
+$60.21
+
+4.4 Summary
+	
+
+
+
+
+
+
+	
+
+
+
+CHAPTER 5Font-size-14
+CONCLUSION AND RECOMMENDATIONS
+
+
+
+
+
+
+
+	
+
+5.1 Summary of the StudyFont-size-14
+5.2 Conclusions
+5.3 Recommendations
+5.4 Implication for Further Study
+REFERENCES: (Recommended IEEE referencing Style)
+[1] A. S. Denney and R. Tewksbury, “How to Write a Literature Review,” Journal of Criminal Justice Education, vol. 24, no. 2, pp. 218–234, Jun. 2013, doi: 10.1080/10511253.2012.730617.
+[2] Globality of inflation in post-Covid world and Bangladesh, available at, << https://shorturl.at/begDP >>, last accessed on 20-09-2022 at 07:50 AM.
