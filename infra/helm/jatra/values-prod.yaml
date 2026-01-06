@@ -36,10 +36,22 @@ ingress:
           service: api-gateway
   tls: [] # TLS handled by ALB via Certificate Manager (ACM)
 
-# Monitoring - Use CloudWatch Container Insights instead of self-hosted Prometheus/Grafana stack
+# Observability Strategy (Thesis Section 3.5.4)
 monitoring:
-  enabled: false # We will rely on AWS CloudWatch
-  prometheus:
-    enabled: false
-  grafana:
-    enabled: false
+  enabled: false # Self-hosted Prometheus disabled
+  
+  # AWS X-Ray for Distributed Tracing
+  xray:
+    enabled: true
+    image: amazon/aws-xray-daemon:latest
+    cpu: 256m
+    memory: 512Mi
+    
+  # AWS CloudWatch for Logs & Metrics
+  cloudwatch:
+    enabled: true
+    image: amazon/cloudwatch-agent:latest
+    retentionDays: 14
+    logging:
+      enabled: true
+      logGroup: "/aws/eks/jatra-railway/application"
